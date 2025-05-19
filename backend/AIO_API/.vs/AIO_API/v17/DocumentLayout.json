@@ -1,7 +1,24 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\iweatherforecastservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\iweatherforecastservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\weatherforecastservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\weatherforecastservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\controllers\\weatherforecastcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +26,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 3,
           "Children": [
             {
               "$type": "Bookmark",
@@ -22,6 +39,58 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Program.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Program.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Program.cs*",
+              "RelativeToolTip": "AIO_API\\Program.cs*",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAACAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T18:03:30.197Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "IWeatherForecastService.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\IWeatherForecastService.cs",
+              "RelativeDocumentMoniker": "AIO_API\\IWeatherForecastService.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\IWeatherForecastService.cs",
+              "RelativeToolTip": "AIO_API\\IWeatherForecastService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T18:01:37.899Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "WeatherForecastService.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\WeatherForecastService.cs",
+              "RelativeDocumentMoniker": "AIO_API\\WeatherForecastService.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\WeatherForecastService.cs",
+              "RelativeToolTip": "AIO_API\\WeatherForecastService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAIAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T18:00:47.969Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "WeatherForecastController.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Controllers\\WeatherForecastController.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Controllers\\WeatherForecastController.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Controllers\\WeatherForecastController.cs",
+              "RelativeToolTip": "AIO_API\\Controllers\\WeatherForecastController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAiAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T17:58:29.739Z",
+              "EditorCaption": ""
             }
           ]
         }
