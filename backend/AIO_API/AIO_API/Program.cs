@@ -1,4 +1,5 @@
 using AIO_API;
+using AIO_API.Interfaces;
 using AIO_API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddTransient<IWeatherForecastService, WeatherForecastService>();
+builder.Services.AddTransient<ICharacterService, CharacterService>();
 
 var app = builder.Build();
 
