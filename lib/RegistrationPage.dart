@@ -1,11 +1,5 @@
+// ignore: file_names
 import 'package:flutter/material.dart';
-
-void main() {
-  runApp(const MaterialApp(
-    home: RegistrationPage(),
-    debugShowCheckedModeBanner: false,
-  ));
-}
 
 class RegistrationPage extends StatefulWidget {
   const RegistrationPage({super.key});
@@ -37,7 +31,10 @@ class _RegistrationPageState extends State<RegistrationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Rejestracja')),
+      appBar: AppBar(
+        title: const Text('Zarejestruj się do AiE!'),
+        centerTitle: true,
+      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
