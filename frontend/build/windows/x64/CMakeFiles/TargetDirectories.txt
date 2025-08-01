@@ -1,0 +1,10 @@
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/CMakeFiles/INSTALL.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/CMakeFiles/ALL_BUILD.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/CMakeFiles/ZERO_CHECK.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/flutter/CMakeFiles/flutter_wrapper_plugin.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/flutter/CMakeFiles/flutter_wrapper_app.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/flutter/CMakeFiles/flutter_assemble.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/flutter/CMakeFiles/INSTALL.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/runner/CMakeFiles/aie.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/runner/CMakeFiles/INSTALL.dir
+C:/mb/STUDIA/P1/P1/aie/build/windows/x64/runner/CMakeFiles/ALL_BUILD.dir

@@ -1,16 +1,11 @@
-# aie
+# aie - ALEA IACTA EST
 
 A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+Aplikacja służy do zarządzania sesjami RPG
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Działa na dwuch instancjach serwera IIS osobno dla frondendu i osobno dla backendu
+Frontend jest pisany w Dart, z użyciem Flutter
+Backend jest pisany w ASP.NET Core 5/6 - Web API

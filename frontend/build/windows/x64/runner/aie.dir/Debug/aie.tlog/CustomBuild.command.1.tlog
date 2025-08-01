@@ -1,0 +1,10 @@
+^C:\MB\STUDIA\P1\P1\AIE\WINDOWS\RUNNER\CMAKELISTS.TXT
+setlocal
+"C:\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\CommonExtensions\Microsoft\CMake\CMake\bin\cmake.exe" -SC:/mb/STUDIA/P1/P1/aie/windows -BC:/mb/STUDIA/P1/P1/aie/build/windows/x64 --check-stamp-file C:/mb/STUDIA/P1/P1/aie/build/windows/x64/runner/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd
