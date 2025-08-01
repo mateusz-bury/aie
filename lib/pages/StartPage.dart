@@ -2,8 +2,7 @@ import 'package:aie/layouts/LayoutContainer.dart';
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'RegistrationPage.dart';
-import 'package:aie/buttons/LoginButton.dart';
-import 'package:aie/buttons/RegisterButton.dart';
+import 'package:aie/buttons/Button.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({super.key});
@@ -18,7 +17,7 @@ class StartPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const SizedBox(height: 20),
-              LoginButton(
+              Button(
                 'Logowanie',
                 onPressed: () {
                   Navigator.push(
@@ -28,7 +27,7 @@ class StartPage extends StatelessWidget {
                 },
               ),
               const SizedBox(height: 20),
-              RegisterButton(
+              Button(
                 'Rejestracja',
                 onPressed: () {
                   Navigator.push(

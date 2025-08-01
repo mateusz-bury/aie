@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'package:aie/pages/DiceRollerPage.dart';
 
 class LayoutContainer extends StatelessWidget {
   final Widget child;
@@ -15,8 +15,8 @@ class LayoutContainer extends StatelessWidget {
             Color.fromARGB(255, 0, 100, 255),
             Color.fromARGB(255, 100, 200, 255),
           ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
         ),
       ),
       child: Padding(
@@ -24,13 +24,23 @@ class LayoutContainer extends StatelessWidget {
         child: Column(
           children: [
             Row(
-              crossAxisAlignment: CrossAxisAlignment.center, // pionowe wyśrodkowanie
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Image.asset(
-                  'assets/images/dice.png',
-                  width: 50,
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DiceRollerPage(),
+                      ),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/images/dice.png',
+                    width: 50,
+                  ),
                 ),
-                const SizedBox(width: 30), // odstęp między obrazkiem a tekstem
+                const SizedBox(width: 30),
                 const Expanded(
                   child: Text(
                     'ALEA IACTA EST',
@@ -38,12 +48,13 @@ class LayoutContainer extends StatelessWidget {
                       fontSize: 30,
                       color: Colors.black,
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 20),
-            Expanded(child: child), 
+            Expanded(child: child),
           ],
         ),
       ),
