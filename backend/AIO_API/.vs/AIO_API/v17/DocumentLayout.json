@@ -1,0 +1,151 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\data\\aiedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\data\\aiedbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\services\\characterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\services\\characterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\controllers\\charactercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\controllers\\charactercontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\interfaces\\icharacterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\interfaces\\icharacterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\interfaces\\icharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\interfaces\\icharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|c:\\users\\48518\\documents\\github\\aio\\backend\\aio_api\\aio_api\\models\\playablecharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2F1720DC-ECAB-4FED-B65F-3776A1B5EB87}|AIO_API\\AIO_API.csproj|solutionrelative:aio_api\\models\\playablecharacter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 3,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e1b7d1f8-9b3c-49b1-8f4f-bfc63a88835d}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AieDbContext.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Data\\AieDbContext.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Data\\AieDbContext.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Data\\AieDbContext.cs",
+              "RelativeToolTip": "AIO_API\\Data\\AieDbContext.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAxwBYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T14:17:22.537Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "CharacterController.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Controllers\\CharacterController.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Controllers\\CharacterController.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Controllers\\CharacterController.cs",
+              "RelativeToolTip": "AIO_API\\Controllers\\CharacterController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T13:46:51.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "ICharacter.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Interfaces\\ICharacter.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Interfaces\\ICharacter.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Interfaces\\ICharacter.cs",
+              "RelativeToolTip": "AIO_API\\Interfaces\\ICharacter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAcAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T13:37:32.965Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CharacterService.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Services\\CharacterService.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Services\\CharacterService.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Services\\CharacterService.cs",
+              "RelativeToolTip": "AIO_API\\Services\\CharacterService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T13:33:41.957Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ICharacterService.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Interfaces\\ICharacterService.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Interfaces\\ICharacterService.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Interfaces\\ICharacterService.cs",
+              "RelativeToolTip": "AIO_API\\Interfaces\\ICharacterService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T13:31:44.566Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "PlayableCharacter.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Models\\PlayableCharacter.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Models\\PlayableCharacter.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Models\\PlayableCharacter.cs",
+              "RelativeToolTip": "AIO_API\\Models\\PlayableCharacter.cs",
+              "ViewState": "AgIAAAcAAAAAAAAAAAAgwAQAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-25T13:30:28.208Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Program.cs",
+              "RelativeDocumentMoniker": "AIO_API\\Program.cs",
+              "ToolTip": "C:\\Users\\48518\\Documents\\GitHub\\aio\\backend\\AIO_API\\AIO_API\\Program.cs",
+              "RelativeToolTip": "AIO_API\\Program.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-05-19T18:03:30.197Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
