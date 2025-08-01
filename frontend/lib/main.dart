@@ -1,4 +1,3 @@
-
 import 'package:aie/pages/startPage.dart';
 import 'package:flutter/material.dart';
 void main() {
