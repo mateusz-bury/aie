@@ -1,6 +1,6 @@
 # AIE - Alea Iacta EST
 
-![AIE Logo](assets/images/dice.png)  
+![AIE Logo](frontend/assets/images/aie.png)  
 
 ## Opis
 
@@ -12,7 +12,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 ## Funkcjonalności
 
 - Rejestracja i logowanie użytkowników  
-- Różne role użytkowników: administrator, gracz  
+- Różne role użytkowników: administrator, gracz, mistrz gry
 - Tworzenie i zarządzanie sesjami RPG  
 - Panel użytkownika z danymi i historią sesji  
 - Intuicyjny interfejs z gradientowym layoutem i responsywnym designem  
@@ -26,7 +26,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 - **Frontend:** Flutter (Dart)  
 - **Backend:** C# (.NET Web API)  
-- **Baza danych:** [tu wpisz używaną bazę, np. SQL Server, PostgreSQL, itp.]  
+- **Baza danych:** [SQL Server]  
 - **Kontrola wersji:** Git + GitHub
 
 ---
@@ -35,8 +35,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 ### Frontend (Flutter)
 
-1. Przejdź do katalogu `frontend`  
-2. Uruchom:  
+1. Uruchom:  
    ```bash
    flutter pub get
    flutter run
