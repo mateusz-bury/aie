@@ -37,5 +37,5 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 1. Uruchom w /frondend/
    
-   flutter pub get
-   flutter run
+  -  **flutter pub get**
+  -  **flutter run**

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
-
-
+import 'package:aie/service/AuthService.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -18,13 +17,24 @@ class _RegisterPageState extends State<RegisterPage> {
   final _repeatPasswordController = TextEditingController();
 
   void _submitRegister() {
-    if (_formKey.currentState!.validate()) {
-      final name = _nameController.text;
-      final email = _emailController.text;
-      final password = _passwordController.text;
+    final name = _nameController.text;
+    final email = _emailController.text;
+    final password = _passwordController.text;
 
-      // 🔐 Tutaj możesz dodać logikę rejestracji
-      print('Rejestracja: $name, $email, $password');
+    final registered = AuthService.register(
+      firstName: name,
+      lastName: '–', // lub dodaj pole nazwisko
+      email: email,
+      username: email.split('@')[0], // np. jan@example.com → jan
+      password: password,
+    );
+
+    if (registered) {
+      Navigator.pop(context); // wróć do logowania
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Użytkownik już istnieje')));
     }
   }
 
@@ -39,10 +49,10 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-   return LayoutContainer(
-    child: Scaffold(
-      backgroundColor: Colors.transparent,
-      body: Center(
+    return LayoutContainer(
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
             child: Form(
@@ -115,7 +125,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       }
                       return null;
                     },
-                    
                   ),
                   const SizedBox(height: 20),
                   TextFormField(
@@ -151,10 +160,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       ),
                       child: const Text(
                         'Zarejestruj się',
-                        style: TextStyle(
-                          fontSize: 20,
-                          color: Colors.black
-                        ),
+                        style: TextStyle(fontSize: 20, color: Colors.black),
                       ),
                     ),
                   ),
