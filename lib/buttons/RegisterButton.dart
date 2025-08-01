@@ -1,25 +1,25 @@
 import 'package:flutter/material.dart';
 
-class LoginPageButton extends StatelessWidget {
+class RegisterButton extends StatelessWidget {
   final String text;
   final VoidCallback onPressed;
 
-  const LoginPageButton(this.text, {required this.onPressed, super.key});
+  const RegisterButton(this.text, {required this.onPressed, super.key});
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      width: 200, // możesz dopasować
+      width: 200,
       height: 50,
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color.fromARGB(255, 74, 118, 238), // ciemnoniebieski
+          backgroundColor: Colors.blue[800], 
           foregroundColor: const Color.fromARGB(255, 0, 0, 0),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(50), // zaokrąglenie rogów
+            borderRadius: BorderRadius.circular(50),
           ),
-          elevation: 3, // lekki cień
+          elevation: 3,
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
         ),
         child: Text(
