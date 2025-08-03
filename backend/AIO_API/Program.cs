@@ -2,6 +2,8 @@ using AIO_API;
 using AIO_API.Data;
 using AIO_API.Interfaces;
 using AIO_API.Services;
+using AutoMapper;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddDbContext<AieDbContext>();
 builder.Services.AddTransient<PlayableCharacterSeeder>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 var app = builder.Build();
 
@@ -21,6 +24,7 @@ using (var scope = app.Services.CreateScope())
     seeder.Seed();
 }
 // Configure the HTTP request pipeline.
+
 
 app.UseHttpsRedirection();
 

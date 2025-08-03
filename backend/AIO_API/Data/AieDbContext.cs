@@ -1,4 +1,4 @@
-﻿using AIO_API.Models;
+﻿using AIO_API.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace AIO_API.Data

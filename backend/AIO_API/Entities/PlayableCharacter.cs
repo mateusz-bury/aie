@@ -1,6 +1,6 @@
 ﻿using AIO_API.Interfaces;
 
-namespace AIO_API.Models
+namespace AIO_API.Entities
 {
     public class PlayableCharacter : ICharacter
     {
@@ -8,9 +8,7 @@ namespace AIO_API.Models
         public string Name { get; set; }
         public string Race { get; set; }
         public string Career { get; set; }
-
         public short Age { get; set; }
-
         public int WeaponSkill { get; set; }
         //public int BallisticSkill { get; set; }
         //public int Strength { get; set; }

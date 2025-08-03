@@ -43,3 +43,61 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+
+
+# Flutter/Dart/Pub
+.dart_tool/
+.packages
+.buildlog/
+.pub/
+pubspec.lock
+
+# Flutter build outputs
+/build/
+flutter_*.png
+
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/.generated/
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Runner/GeneratedPluginRegistrant.*
+
+# Android
+**/android/local.properties
+**/android/app/debug
+**/android/app/profile
+**/android/app/release
+
+# IntelliJ / Android Studio
+*.iml
+.idea/
+.cache/
+.gradle/
+local.properties
+
+# VS Code
+.vscode/
+.history/
+
+# Other
+*.log
+*.tmp
+*.swp
+*.lock
+*.DS_Store
+
+# Web
+lib/generated_plugin_registrant.dart
+
+# Coverage
+coverage/
+
+# Firebase config files (opcjonalnie, jeśli nie chcesz ich trzymać w repo)
+# google-services.json
+# GoogleService-Info.plist
+
+# Symbolic links (dla Windows)
+symlink/
