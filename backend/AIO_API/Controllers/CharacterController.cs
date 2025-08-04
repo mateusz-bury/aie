@@ -7,8 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AIO_API.Controllers
 {
-    [ApiController]
     [Route("api/character")]
+    [ApiController]
     public class CharacterController : ControllerBase
     {
         private ICharacterService _characterService;
@@ -21,18 +21,8 @@ namespace AIO_API.Controllers
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute]int id, [FromBody] UpdatePlayableCharacterDto dto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var isUpdated = _characterService.Update(id, dto);
-
-            if (isUpdated)
-            {
-                return Ok();
-            }
-            return NotFound();
+            _characterService.Update(id, dto);
+            return Ok();
         }
 
 
@@ -40,22 +30,13 @@ namespace AIO_API.Controllers
         [HttpDelete("{id}")]
         public ActionResult Delete([FromRoute]int id)
         {
-            var isDeleted = _characterService.Delete(id);
-
-            if (isDeleted)
-            {
-                return NoContent();
-            }
-            return NotFound();
+            _characterService.Delete(id);
+            return NoContent();
         }
 
         [HttpPost]
         public ActionResult CreatePlayableCharacter([FromBody] CreatePlayableCharacterDto dto)
         {
-            if (!ModelState.IsValid) 
-            { 
-                return BadRequest(ModelState);
-            }
 
             var id = _characterService.Create(dto);
 
@@ -66,7 +47,6 @@ namespace AIO_API.Controllers
         public ActionResult<IEnumerable<PlayableCharacterDto>> GetAll()
         {
             var playableCharactersDto = _characterService.GetAll();
-
             return Ok(playableCharactersDto);
         }
 
@@ -74,11 +54,6 @@ namespace AIO_API.Controllers
         public ActionResult<PlayableCharacter> Get([FromRoute] int id)
         {
             var playableCharacterByIdDto = _characterService.GetById(id);
-
-            if(playableCharacterByIdDto == null)
-            {
-                return NotFound();
-            }
             return Ok(playableCharacterByIdDto);
         }
     }

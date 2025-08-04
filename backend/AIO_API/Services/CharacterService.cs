@@ -1,5 +1,6 @@
 ﻿using AIO_API.Data;
 using AIO_API.Entities;
+using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Migrations;
 using AIO_API.Models;
@@ -13,37 +14,41 @@ namespace AIO_API.Services
     {
         private readonly AieDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ILogger<CharacterService> _logger;
 
-        public CharacterService(AieDbContext dbContext, IMapper mapper)
+        public CharacterService(AieDbContext dbContext, IMapper mapper, ILogger<CharacterService> logger)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _logger = logger;
         }
 
-        public bool Update(int id, UpdatePlayableCharacterDto dto)
+        public void Update(int id, UpdatePlayableCharacterDto dto)
         {
             var playableCharacterById = _dbContext
                             .PlayableCharacter
                             .FirstOrDefault(p => p.id == id);
 
-            if (playableCharacterById == null) return false;
+            if (playableCharacterById == null)
+                throw new NotFoundException("Character not found");
 
             playableCharacterById.WeaponSkill = dto.WeaponSkill;
 
             _dbContext.SaveChanges();
-            return true;
         }
 
-        public bool Delete(int id)
+        public void Delete(int id)
         {
+            _logger.LogError($"Character with id: {id} DELETE action invoked");
+
             var playableCharacterById = _dbContext
                             .PlayableCharacter
                             .FirstOrDefault(p => p.id == id);
-            if (playableCharacterById == null) return false;
+            if (playableCharacterById == null)
+                throw new NotFoundException("Character not found");
 
             _dbContext.Remove(playableCharacterById);
             _dbContext.SaveChanges();
-            return true;
         }
 
         public PlayableCharacterDto GetById(int id)
@@ -52,7 +57,8 @@ namespace AIO_API.Services
                             .PlayableCharacter
                             .FirstOrDefault(p => p.id == id);
 
-            if (playableCharacterById == null) return null;
+            if (playableCharacterById == null) 
+                throw new NotFoundException("Character not found");
 
             var result = _mapper.Map<PlayableCharacterDto>(playableCharacterById);
 

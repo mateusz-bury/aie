@@ -10,6 +10,8 @@ namespace AIO_API.Entities
         public string Career { get; set; }
         public short Age { get; set; }
         public int WeaponSkill { get; set; }
+
+        public List<CharacterItem> CharacterItems { get; set; }
         //public int BallisticSkill { get; set; }
         //public int Strength { get; set; }
         //public int Toughness { get; set; }
@@ -24,6 +26,7 @@ namespace AIO_API.Entities
         //public int Magic { get; set; }
         //public int InsanityPoints { get; set; }
         //public int FatePoints { get; set; }
+
 
         //public List<string> Skills { get; set; } = new();
         //public List<string> Talents { get; set; } = new();

@@ -7,8 +7,8 @@ namespace AIO_API.Interfaces
         PlayableCharacterDto GetById(int id);
         int Create(CreatePlayableCharacterDto dto);
         IEnumerable<PlayableCharacterDto> GetAll();
-        bool Delete(int id);
-        bool Update(int id, UpdatePlayableCharacterDto dto);
+        void Delete(int id);
+        void Update(int id, UpdatePlayableCharacterDto dto);
         //Task<ICharacter> CreateCharacterAsync(ICharacter character);
         //Task<bool> UpdateCharacterAsync(int id, ICharacter updatedCharacter);
         //Task<bool> DeleteCharacterAsync(int id);
