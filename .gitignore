@@ -6,7 +6,7 @@
 pubspec.lock
 
 # Flutter build outputs
-/build/
+/frontend/build
 flutter_*.png
 
 # iOS
