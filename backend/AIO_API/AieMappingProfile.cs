@@ -1,5 +1,6 @@
-﻿using AIO_API.Entities;
+﻿using AIO_API.Entities.Character;
 using AIO_API.Models;
+
 using AutoMapper;
 
 namespace AIO_API
@@ -8,10 +9,10 @@ namespace AIO_API
     {
         public AieMappingProfile() 
         {
-            CreateMap<PlayableCharacter, PlayableCharacterDto>();
-            CreateMap<CreatePlayableCharacterDto, PlayableCharacter>();
-            CreateMap<UpdatePlayableCharacterDto, PlayableCharacter>();
-            CreateMap<PlayableCharacter, UpdatePlayableCharacterDto>();
+            CreateMap<Entities.Character.PlayableCharacter, PlayableCharacterDto>();
+            CreateMap<CreatePlayableCharacterDto, Entities.Character.PlayableCharacter>();
+            CreateMap<UpdatePlayableCharacterDto, Entities.Character.PlayableCharacter>();
+            CreateMap<Entities.Character.PlayableCharacter, UpdatePlayableCharacterDto>();
         }
     }
 }

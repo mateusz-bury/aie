@@ -1,5 +1,5 @@
-
-﻿using AIO_API.Entities;
+using AIO_API.Entities;
+using AIO_API.Entities.Character;
 
 
 namespace AIO_API.Data

@@ -1,4 +1,5 @@
 ﻿using AIO_API.Entities;
+using AIO_API.Entities.Items;
 
 namespace AIO_API.Data
 {

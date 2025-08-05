@@ -1,10 +1,12 @@
-﻿using AIO_API.Data;
-using AIO_API.Entities;
+﻿using AIO_API.Entities;
+using AIO_API.Entities.Character;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Migrations;
 using AIO_API.Models;
+
 using AutoMapper;
+
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -79,7 +81,7 @@ namespace AIO_API.Services
 
         public int Create(CreatePlayableCharacterDto dto)
         {
-            var playableCharacter = _mapper.Map<PlayableCharacter>(dto);
+            var playableCharacter = _mapper.Map<Entities.Character.PlayableCharacter>(dto);
             _dbContext.PlayableCharacter.Add(playableCharacter);
             _dbContext.SaveChanges();
 

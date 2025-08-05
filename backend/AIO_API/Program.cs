@@ -1,58 +1,86 @@
-using AIO_API;
+using System.Reflection;
 using AIO_API.Data;
+using AIO_API.Entities;
 using AIO_API.Interfaces;
 using AIO_API.Middleware;
 using AIO_API.Services;
+
 using AutoMapper;
-using Microsoft.Data.SqlClient;
+
+using Microsoft.OpenApi.Models;
+
 using NLog.Web;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//nlog
-
+// ---------- LOGGING ----------
 builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 builder.Host.UseNLog();
 
-// Add services to the container.
-
+// ---------- SERVICES ----------
 builder.Services.AddControllers();
-
-builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddDbContext<AieDbContext>();
-builder.Services.AddTransient<PlayableCharacterSeeder>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+// ---------- SEEDERS ----------
+builder.Services.AddTransient<PlayableCharacterSeeder>();
 builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddTransient<UsersSeeder>();
+builder.Services.AddTransient<RolesSeeder>();
+
+// ---------- MIDDLEWARE ----------
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
-builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<RequestTimeMiddleware>();
 
+// ---------- CUSTOM SERVICES ----------
+builder.Services.AddTransient<ICharacterService, CharacterService>();
+
+// ---------- SWAGGER ----------
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "AIE API",
+        Version = "v1"
+    });
+});
 
 var app = builder.Build();
 
+// ---------- SEED DATA ----------
 using (var scope = app.Services.CreateScope())
 {
     var playableCharacterSeeder = scope.ServiceProvider.GetRequiredService<PlayableCharacterSeeder>();
     playableCharacterSeeder.Seed();
-    var itemsSeeder = scope.ServiceProvider.GetRequiredService<ItemSeeder>();
-    itemsSeeder.Seed();
-    var characterItemsSeeder = scope.ServiceProvider.GetRequiredService<CharacterItemSeeder>();
-    characterItemsSeeder.Seed();
-}
-// Configure the HTTP request pipeline.
 
+    var itemSeeder = scope.ServiceProvider.GetRequiredService<ItemSeeder>();
+    itemSeeder.Seed();
+
+    var characterItemSeeder = scope.ServiceProvider.GetRequiredService<CharacterItemSeeder>();
+    characterItemSeeder.Seed();
+
+    var rolesSeeder = scope.ServiceProvider.GetRequiredService<RolesSeeder>();
+    rolesSeeder.Seed();
+
+    var usersSeeder = scope.ServiceProvider.GetRequiredService<UsersSeeder>();
+    usersSeeder.Seed();
+}
+
+// ---------- MIDDLEWARE PIPELINE ----------
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestTimeMiddleware>();
+
 app.UseHttpsRedirection();
 
+// ---------- SWAGGER UI ----------
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AIE API");
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "AIE API v1");
+    c.RoutePrefix = string.Empty; // <- otwiera swagger na http://localhost:<port>/
 });
 
 app.UseAuthorization();

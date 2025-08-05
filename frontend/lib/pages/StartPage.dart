@@ -26,18 +26,19 @@ class StartPage extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 20),
-              Button(
-                'Rejestracja',
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
-                },
-              ),
+              // const SizedBox(height: 20),
+              // Button(
+              //   'Rejestracja',
+              //   onPressed: () {
+              //     Navigator.push(
+              //       context
+              //       // ,
+              //       // MaterialPageRoute(
+              //         // builder: (context) => const RegisterPage(),
+              //       // ),
+              //     );
+              //   },
+              // ),
             ],
           ),
         ),

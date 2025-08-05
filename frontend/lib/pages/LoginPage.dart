@@ -1,7 +1,7 @@
+// lib/pages/LoginPage.dart
 import 'package:flutter/material.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
-import 'package:aie/service/AuthService.dart';
-import 'UserPage.dart'; // <- Zmień na swój docelowy widok po zalogowaniu
+import '../service/AuthService.dart';
+import 'UserPage.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -12,27 +12,28 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-  final _emailController = TextEditingController();
+  final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+  bool _isLoading = false;
 
   void _submitLogin() async {
-    final emailOrUsername = _emailController.text;
-    final password = _passwordController.text;
+    if (!_formKey.currentState!.validate()) return;
 
-    final success = AuthService.login(emailOrUsername, password);
+    setState(() => _isLoading = true);
+
+    final success = await AuthService.login(
+      _usernameController.text,
+      _passwordController.text,
+    );
+
+    setState(() => _isLoading = false);
 
     if (success) {
-      final user = AuthService.getCurrentUser()!;
+      final user = AuthService.getCurrentUser();
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder:
-              (_) => UserPage(
-                firstName: user.firstName,
-                lastName: user.lastName,
-                email: user.email,
-                username: user.username,
-              ),
+          builder: (_) => UserPage(user: user!),
         ),
       );
     } else {
@@ -44,91 +45,51 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return LayoutContainer(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Logowanie',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    controller: _emailController,
-                    label: 'Email lub login',
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Wprowadź login' : null,
-                  ),
-                  const SizedBox(height: 20),
-                  _buildTextField(
-                    controller: _passwordController,
-                    label: 'Hasło',
-                    obscureText: true,
-                    validator:
-                        (v) => v == null || v.isEmpty ? 'Wprowadź hasło' : null,
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: _submitLogin,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[800],
-                        foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                      ),
-                      child: const Text(
-                        'Zaloguj się',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Logowanie',
+                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(labelText: 'Login'),
+                  validator: (v) => v == null || v.isEmpty ? 'Wprowadź login' : null,
+                ),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: const InputDecoration(labelText: 'Hasło'),
+                  obscureText: true,
+                  validator: (v) => v == null || v.isEmpty ? 'Wprowadź hasło' : null,
+                ),
+                const SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: _isLoading ? null : _submitLogin,
+                  child: _isLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Zaloguj się'),
+                ),
+              ],
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    bool obscureText = false,
-    String? Function(String?)? validator,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      decoration: InputDecoration(
-        labelText: label,
-        filled: true,
-        fillColor: const Color.fromARGB(255, 230, 220, 220),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-      ),
-      validator: validator,
     );
   }
 }
