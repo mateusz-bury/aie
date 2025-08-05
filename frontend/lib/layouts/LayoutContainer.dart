@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aie/pages/DiceRollerPage.dart';
+import 'package:aie/pages/StartPage.dart';
 
 class LayoutContainer extends StatelessWidget {
   final Widget child;
@@ -23,9 +24,19 @@ class LayoutContainer extends StatelessWidget {
         padding: const EdgeInsets.only(top: 50, left: 20, right: 20),
         child: Column(
           children: [
-            Row(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                const SizedBox(height: 30),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => StartPage()),
+                    );
+                  },
+                  child: Image.asset('assets/images/aie_3.png'),
+                ),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -35,21 +46,7 @@ class LayoutContainer extends StatelessWidget {
                       ),
                     );
                   },
-                  child: Image.asset(
-                    'assets/images/dice.png',
-                    width: 50,
-                  ),
-                ),
-                const SizedBox(width: 30),
-                const Expanded(
-                  child: Text(
-                    'ALEA IACTA EST',
-                    style: TextStyle(
-                      fontSize: 30,
-                      color: Colors.black,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: Image.asset('assets/images/dice.png', width: 50),
                 ),
               ],
             ),

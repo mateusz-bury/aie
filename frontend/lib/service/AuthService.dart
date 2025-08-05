@@ -1,4 +1,3 @@
-// lib/service/AuthService.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
@@ -27,7 +26,7 @@ class AuthService {
   static User? _currentUser;
 
   static Future<bool> login(String username, String password) async {
-    final url = Uri.parse('http://localhost:7221/api/auth/login'); // ZMIEŃ na swój adres IP/port jeśli testujesz na emulatorze/telefonie
+    final url = Uri.parse('https://localhost:7221/api/auth/login');
 
     final response = await http.post(
       url,
@@ -48,4 +47,34 @@ class AuthService {
   }
 
   static User? getCurrentUser() => _currentUser;
+
+  // NOWA METODA REJESTRACJI
+  static Future<bool> register({
+    required String username,
+    required String password,
+    required String email,
+    required String firstName,
+    required String lastName,
+  }) async {
+    final url = Uri.parse('http://localhost:7221/api/auth/register');
+
+    final response = await http.post(
+      url,
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'username': username,
+        'password': password,
+        'email': email,
+        'firstName': firstName,
+        'lastName': lastName,
+      }),
+    );
+
+    if (response.statusCode == 201) {
+      // Załóżmy, że backend zwraca 201 Created przy sukcesie rejestracji
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
