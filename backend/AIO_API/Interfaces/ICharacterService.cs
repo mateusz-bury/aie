@@ -4,8 +4,13 @@ namespace AIO_API.Interfaces
 {
     public interface ICharacterService
     {
-        //Task<ICharacter> GetCharacterByIdAsync(int id);
-        //Task<IEnumerable<ICharacter>> GetAllCharactersAsync();
+
+        PlayableCharacterDto GetById(int id);
+        int Create(CreatePlayableCharacterDto dto);
+        IEnumerable<PlayableCharacterDto> GetAll();
+        void Delete(int id);
+        void Update(int id, UpdatePlayableCharacterDto dto);
+
         //Task<ICharacter> CreateCharacterAsync(ICharacter character);
         //Task<bool> UpdateCharacterAsync(int id, ICharacter updatedCharacter);
         //Task<bool> DeleteCharacterAsync(int id);
