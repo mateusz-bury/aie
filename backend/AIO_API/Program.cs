@@ -16,7 +16,6 @@ builder.Logging.ClearProviders();
 builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 builder.Host.UseNLog();
 
-
 // Add services to the container.
 
 builder.Services.AddControllers();
@@ -24,12 +23,14 @@ builder.Services.AddControllers();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddDbContext<AieDbContext>();
 builder.Services.AddTransient<PlayableCharacterSeeder>();
+
 builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<RequestTimeMiddleware>();
+
 
 var app = builder.Build();
 

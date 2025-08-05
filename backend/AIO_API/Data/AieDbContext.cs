@@ -1,4 +1,6 @@
+
 ﻿using AIO_API.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace AIO_API.Data
@@ -6,6 +8,7 @@ namespace AIO_API.Data
     public class AieDbContext : DbContext
     {
         public DbSet<PlayableCharacter> PlayableCharacter { get; set; }
+
         public DbSet<CharacterItem> CharacterItems { get; set; }
         public DbSet<Item> Items { get; set; }
 
@@ -32,7 +35,6 @@ namespace AIO_API.Data
                 .Property(p => p.Age)
                 .IsRequired();
 
-
             modelBuilder.Entity<CharacterItem>()
                 .HasKey(ci => new { ci.CharacterId, ci.ItemId });
 
@@ -45,6 +47,7 @@ namespace AIO_API.Data
                 .HasOne(ci => ci.Item)
                 .WithMany()
                 .HasForeignKey(ci => ci.ItemId);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

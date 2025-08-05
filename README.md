@@ -35,7 +35,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 ### Frontend (Flutter)
 
-1. Uruchom:  
-   ```bash
-   flutter pub get
-   flutter run
+1. Uruchom w /frondend/
+   
+  -  **flutter pub get**
+  -  **flutter run**

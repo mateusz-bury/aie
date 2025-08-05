@@ -12,6 +12,7 @@ namespace AIO_API.Services
 {
     public class CharacterService : ICharacterService
     {
+
         private readonly AieDbContext _dbContext;
         private readonly IMapper _mapper;
         private readonly ILogger<CharacterService> _logger;
