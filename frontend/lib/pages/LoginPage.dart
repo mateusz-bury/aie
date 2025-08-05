@@ -1,6 +1,8 @@
 // lib/pages/LoginPage.dart
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
+import '../layouts/LayoutContainer.dart';
+import '../buttons/Button.dart';
 import 'UserPage.dart';
 
 class LoginPage extends StatefulWidget {
@@ -51,8 +53,10 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+  Widget build(BuildContext context) { 
+    return LayoutContainer(
+      child: Scaffold(
+      backgroundColor: Colors.transparent,
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(24),
@@ -63,7 +67,10 @@ class _LoginPageState extends State<LoginPage> {
               children: [
                 const Text(
                   'Logowanie',
-                  style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 28, 
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black
+                    ),
                 ),
                 const SizedBox(height: 20),
                 TextFormField(
@@ -79,17 +86,18 @@ class _LoginPageState extends State<LoginPage> {
                   validator: (v) => v == null || v.isEmpty ? 'Wprowadź hasło' : null,
                 ),
                 const SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: _isLoading ? null : _submitLogin,
-                  child: _isLoading
-                      ? const CircularProgressIndicator()
-                      : const Text('Zaloguj się'),
+                Button(
+                  'Zaloguj się!',
+                  onPressed: _submitLogin,
+                  
                 ),
               ],
             ),
           ),
         ),
       ),
-    );
+    ),
+    )
+    ;
   }
 }

@@ -9,10 +9,13 @@ environment:
   sdk: ^3.7.2
 
 dependencies:
+
   flutter:
     sdk: flutter
+  flutter_arc_text: ^1.0.0
   cupertino_icons: ^1.0.8
   http: ^1.4.0
+  
 
 dev_dependencies:
   flutter_test:
@@ -23,11 +26,4 @@ flutter:
   uses-material-design: true
 
   assets: 
-    - assets/images/dice.png
-    - assets/images/dice-1.png
-    - assets/images/dice-2.png
-    - assets/images/dice-3.png
-    - assets/images/dice-4.png
-    - assets/images/dice-5.png
-    - assets/images/dice-6.png
-
+    - assets/images/
