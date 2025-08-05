@@ -1,9 +1,9 @@
-import 'package:aie/pages/startPage.dart';
 import 'package:flutter/material.dart';
+import 'pages/LoginPage.dart';
+import 'package:aie/pages/StartPage.dart';
+
 void main() {
-  runApp(
-    const MyApp(),
-  );
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,10 +12,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false, 
-      home: StartPage(),
+      title: 'AIE Logowanie',
+      theme: ThemeData(primarySwatch: Colors.blue),
+      home: const StartPage(),
     );
   }
 }
-
-
