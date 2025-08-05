@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AIO_API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1f1c11017d97281bc5a849824bfd224c09bd0446")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+1479af8f6dd637ea60434ab49ac091dc0d17b7b1")]
 [assembly: System.Reflection.AssemblyProductAttribute("AIO_API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AIO_API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
