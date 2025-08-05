@@ -1,4 +1,6 @@
-﻿using AIO_API.Models;
+
+﻿using AIO_API.Entities;
+
 using Microsoft.EntityFrameworkCore;
 
 namespace AIO_API.Data
@@ -6,6 +8,10 @@ namespace AIO_API.Data
     public class AieDbContext : DbContext
     {
         public DbSet<PlayableCharacter> PlayableCharacter { get; set; }
+
+        public DbSet<CharacterItem> CharacterItems { get; set; }
+        public DbSet<Item> Items { get; set; }
+
 
         private string _connectionString = "Server=localhost\\SQLEXPRESS;Database=AieDb;Trusted_Connection=True;";
 
@@ -28,6 +34,20 @@ namespace AIO_API.Data
             modelBuilder.Entity<PlayableCharacter>()
                 .Property(p => p.Age)
                 .IsRequired();
+
+            modelBuilder.Entity<CharacterItem>()
+                .HasKey(ci => new { ci.CharacterId, ci.ItemId });
+
+            modelBuilder.Entity<CharacterItem>()
+                .HasOne(ci => ci.Character)
+                .WithMany(p => p.CharacterItems)
+                .HasForeignKey(ci => ci.CharacterId);
+
+            modelBuilder.Entity<CharacterItem>()
+                .HasOne(ci => ci.Item)
+                .WithMany()
+                .HasForeignKey(ci => ci.ItemId);
+
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

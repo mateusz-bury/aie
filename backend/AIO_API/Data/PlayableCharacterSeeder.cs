@@ -1,4 +1,6 @@
-﻿using AIO_API.Models;
+
+﻿using AIO_API.Entities;
+
 
 namespace AIO_API.Data
 {
