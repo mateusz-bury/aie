@@ -23,16 +23,6 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AieDbContext>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowLocalhost",
-        policy =>
-        {
-            policy.WithOrigins("http://localhost:56588")
-                  .AllowAnyHeader()
-                  .AllowAnyMethod();
-        });
-});
 
 
 // ---------- SEEDERS ----------
@@ -94,8 +84,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "AIE API v1");
     c.RoutePrefix = string.Empty; // <- otwiera swagger na http://localhost:<port>/
 });
-app.UseCors("AllowLocalhost");
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
