@@ -28,7 +28,8 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFlutterApp",
         policy =>
         {
-            policy.WithOrigins("http://localhost:62861") // tu wpisz port z b³êdu
+            int port = 62861; // @Kuba - tu musz zmieniæ numer portu fluttera, próbowa³em go na szytywno ustawiæ w .json flattera ale jakoœ nie chce mi to dzialaæ - musisz popatrzeæ u siebie 
+            policy.WithOrigins($"http://localhost:{port}") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
