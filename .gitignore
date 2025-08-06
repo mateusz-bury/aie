@@ -5,6 +5,7 @@
 .pub/
 pubspec.lock
 
+
 # Flutter build outputs
 /frontend/build
 flutter_*.png
