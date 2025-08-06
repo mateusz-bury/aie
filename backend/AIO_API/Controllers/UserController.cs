@@ -52,6 +52,16 @@ namespace AIO_API.Controllers
                 return Ok(user);
             }
         }
+
+        [HttpPost]
+        public ActionResult<User> Create([FromBody] UserDTO userDto)
+        {
+            var user = _mapper.Map<User>(userDto);
+            _dbContext.Users.Add(user);
+            _dbContext.SaveChanges();
+            return Created($"/api/user/{user.Id}", user);
+        }
+
     }
 
     

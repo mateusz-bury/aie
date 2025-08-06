@@ -1,8 +1,7 @@
-import 'package:aie/layouts/LayoutContainer.dart';
+// lib/pages/StartPage.dart
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
-import 'RegistrationPage.dart';
-import 'package:aie/buttons/Button.dart';
+import 'package:aie/layouts/LayoutContainer.dart';
 
 class StartPage extends StatelessWidget {
   const StartPage({super.key});
@@ -16,28 +15,23 @@ class StartPage extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 20),
-              Button(
-                'Logowanie',
+              const SizedBox(height: 40),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
                   );
                 },
-              ),
-              const SizedBox(height: 20),
-              Button(
-                'Rejestracja',
-                onPressed: () {
-                  Navigator.push(
-                    context
-                    ,
-                    MaterialPageRoute(
-                      builder: (context) => const RegisterPage(),
-                    ),
-                  );
-                },
+                child: const Text(
+                  'Logowanie',
+                  style:TextStyle(
+                    color: Colors.black
+                  ),
+                  ),
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
 import 'package:aie/service/AuthService.dart';
+import 'package:aie/pages/UserPage.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});

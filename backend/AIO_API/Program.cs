@@ -23,6 +23,17 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<AieDbContext>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowFlutterApp",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:62861") // tu wpisz port z b³êdu
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+});
+
 
 
 // ---------- SEEDERS ----------
@@ -76,6 +87,8 @@ app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestTimeMiddleware>();
 
 app.UseHttpsRedirection();
+
+app.UseCors("AllowFlutterApp");
 
 // ---------- SWAGGER UI ----------
 app.UseSwagger();

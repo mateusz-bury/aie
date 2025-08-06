@@ -2,10 +2,13 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Flutter Emulator",
+      "name": "Flutter Web",
       "request": "launch",
       "type": "dart",
-      "deviceId": "POCO_X3_PRO"  
+      "args": [
+        "-d",
+        "chrome",
+        "--web-port=58000"]
     }
   ]
 }

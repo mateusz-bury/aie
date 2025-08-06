@@ -1,6 +1,7 @@
 // lib/pages/UserPage.dart
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
+import 'package:aie/layouts/LayoutContainer.dart';
 
 class UserPage extends StatelessWidget {
   final User user;
@@ -9,7 +10,8 @@ class UserPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+  return LayoutContainer(
+      child: Scaffold(
       appBar: AppBar(title: const Text('Witaj')),
       body: Padding(
         padding: const EdgeInsets.all(16),
@@ -23,6 +25,7 @@ class UserPage extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
