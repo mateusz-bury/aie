@@ -2,7 +2,6 @@
 using AIO_API.Entities;
 using AIO_API.Entities.Users;
 using AIO_API.Models;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace AIO_API.Controllers

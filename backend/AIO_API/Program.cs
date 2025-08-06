@@ -25,14 +25,16 @@ builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowLocalhost",
+    options.AddPolicy("AllowFlutterApp",
         policy =>
         {
-            policy.WithOrigins("http://localhost:56588")
+            int port = 62861; // @Kuba - tu musz zmieniæ numer portu fluttera, próbowa³em go na szytywno ustawiæ w .json flattera ale jakoœ nie chce mi to dzialaæ - musisz popatrzeæ u siebie 
+            policy.WithOrigins($"http://localhost:{port}") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
         });
 });
+
 
 
 // ---------- SEEDERS ----------
@@ -87,6 +89,8 @@ app.UseMiddleware<RequestTimeMiddleware>();
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowFlutterApp");
+
 // ---------- SWAGGER UI ----------
 app.UseSwagger();
 app.UseSwaggerUI(c =>
@@ -94,8 +98,6 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "AIE API v1");
     c.RoutePrefix = string.Empty; // <- otwiera swagger na http://localhost:<port>/
 });
-app.UseCors("AllowLocalhost");
-app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
