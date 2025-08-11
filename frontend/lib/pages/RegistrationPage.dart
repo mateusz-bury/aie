@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
 import 'package:aie/service/AuthService.dart';
-import 'package:aie/pages/UserPage.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -24,9 +23,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
     final registered = AuthService.register(
       firstName: name,
-      lastName: '–', // lub dodaj pole nazwisko
+      lastName: '–', 
       email: email,
-      username: email.split('@')[0], // np. jan@example.com → jan
+      username: email.split('@')[0], 
       password: password,
     );
 
@@ -39,7 +38,7 @@ class _RegisterPageState extends State<RegisterPage> {
     );
 
     if (success == true) {
-      Navigator.pop(context); // wróć do logowania
+      Navigator.pop(context); 
     } else {
       ScaffoldMessenger.of(
         context,
