@@ -3,8 +3,7 @@ using AIO_API.Entities.Character;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Migrations;
-using AIO_API.Models;
-
+using AIO_API.Models.CharacterDto;
 using AutoMapper;
 
 using Microsoft.AspNetCore.Mvc;

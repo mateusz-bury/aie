@@ -31,12 +31,11 @@ namespace AIO_API.Data
             {
                 new User
                 {
-                    Id = 1,
                     Email = "admin@aie.com",
                     FirstName = "Admin",
                     LastName = "Systemowy",
                     Username = "admin",
-                    RoleId = 3,
+                    RoleId = 6,
                     PasswordHash = "admin", 
                 }
             };

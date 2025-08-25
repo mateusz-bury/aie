@@ -25,7 +25,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "AIO_API.Models.CreatePlayableCharacterDto",
+        "Type": "AIO_API.Models.CharacterDto.CreatePlayableCharacterDto",
         "IsRequired": true
       }
     ],
@@ -41,7 +41,116 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[AIO_API.Models.PlayableCharacterDto, AIO_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[AIO_API.Models.CharacterDto.PlayableCharacterDto, AIO_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AIO_API.Controllers.CharacterItemController",
+    "Method": "Post",
+    "RelativePath": "api/character/{characterid}/item",
+    "HttpMethod": "POST",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "characterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "dto",
+        "Type": "AIO_API.Models.EquipementDto.CreateCharacterItemDto",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": []
+  },
+  {
+    "ContainingType": "AIO_API.Controllers.CharacterItemController",
+    "Method": "GetAll",
+    "RelativePath": "api/character/{characterid}/item",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "characterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.List\u00601[[AIO_API.Models.EquipementDto.CharacterItemDto, AIO_API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AIO_API.Controllers.CharacterItemController",
+    "Method": "Get",
+    "RelativePath": "api/character/{characterid}/item/{itemId}",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "characterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AIO_API.Models.EquipementDto.CharacterItemDto",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "AIO_API.Controllers.CharacterItemController",
+    "Method": "Delete",
+    "RelativePath": "api/character/{characterid}/item/{itemId}",
+    "HttpMethod": "DELETE",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [
+      {
+        "Name": "characterId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      },
+      {
+        "Name": "itemId",
+        "Type": "System.Int32",
+        "IsRequired": true
+      }
+    ],
+    "ReturnTypes": [
+      {
+        "Type": "AIO_API.Models.EquipementDto.CharacterItemDto",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -66,7 +175,7 @@
       },
       {
         "Name": "dto",
-        "Type": "AIO_API.Models.UpdatePlayableCharacterDto",
+        "Type": "AIO_API.Models.CharacterDto.UpdatePlayableCharacterDto",
         "IsRequired": true
       }
     ],

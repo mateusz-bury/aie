@@ -1,8 +1,7 @@
 ﻿using AIO_API.Data;
 using AIO_API.Entities.Character;
 using AIO_API.Interfaces;
-using AIO_API.Models;
-
+using AIO_API.Models.CharacterDto;
 using AutoMapper;
 
 using Microsoft.AspNetCore.Mvc;

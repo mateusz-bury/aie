@@ -119,23 +119,6 @@ namespace AIO_API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Roles");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Gracz"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Mistrz Gry"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Admin"
-                        });
                 });
 
             modelBuilder.Entity("AIO_API.Entities.Users.User", b =>
@@ -174,18 +157,6 @@ namespace AIO_API.Migrations
                     b.HasIndex("RoleId");
 
                     b.ToTable("Users");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Email = "admin@aie.com",
-                            FirstName = "Admin",
-                            LastName = "Systemowy",
-                            PasswordHash = "admin",
-                            RoleId = 3,
-                            Username = "admin"
-                        });
                 });
 
             modelBuilder.Entity("AIO_API.Entities.Character.CharacterItem", b =>

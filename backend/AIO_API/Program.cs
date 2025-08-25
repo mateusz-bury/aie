@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFlutterApp",
         policy =>
         {
-            int port = 54720; // @Kuba - tu musz zmieniæ numer portu fluttera, próbowa³em go na szytywno ustawiæ w .json flattera ale jakoœ nie chce mi to dzialaæ - musisz popatrzeæ u siebie 
+            int port = 55910; // @Kuba - tu musz zmieniæ numer portu fluttera, próbowa³em go na szytywno ustawiæ w .json flattera ale jakoœ nie chce mi to dzialaæ - musisz popatrzeæ u siebie 
             policy.WithOrigins($"http://localhost:{port}") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
@@ -43,6 +43,7 @@ builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
 builder.Services.AddTransient<UsersSeeder>();
 builder.Services.AddTransient<RolesSeeder>();
+builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
 
 // ---------- MIDDLEWARE ----------
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -50,6 +51,7 @@ builder.Services.AddScoped<RequestTimeMiddleware>();
 
 // ---------- CUSTOM SERVICES ----------
 builder.Services.AddTransient<ICharacterService, CharacterService>();
+builder.Services.AddTransient<ICharacterItemService, CharacterItemService>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();
