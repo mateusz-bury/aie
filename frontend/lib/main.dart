@@ -11,7 +11,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'AIE App',
+      title: 'AIE Application',
       debugShowCheckedModeBanner: false,
       home: const StartPage(),
     );
