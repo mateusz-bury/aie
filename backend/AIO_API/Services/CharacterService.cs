@@ -5,7 +5,6 @@ using AIO_API.Interfaces;
 using AIO_API.Migrations;
 using AIO_API.Models.CharacterDto;
 using AutoMapper;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
