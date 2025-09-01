@@ -57,3 +57,8 @@ symlink/
 =======
 # Pliki tymczasowe Visual Studio
 backend/.vs/
+backend/AIO_API/obj/
+backend/AIO_API/bin/
+backend/AIO_API/.vs/
+
+
