@@ -1,4 +1,5 @@
-﻿using AIO_API.Interfaces;
+﻿using AIO_API.Entities.Campaigns;
+using AIO_API.Interfaces;
 
 namespace AIO_API.Entities.Character
 {
@@ -9,8 +10,8 @@ namespace AIO_API.Entities.Character
         public string Race { get; set; }
         public string Career { get; set; }
         public short Age { get; set; }
-        public int WeaponSkill { get; set; }
-
+        public int CampaignId { get; set; }
+        public Campaign Campaign { get; set; }
         public List<CharacterItem> CharacterItems { get; set; }
         //public int BallisticSkill { get; set; }
         //public int Strength { get; set; }

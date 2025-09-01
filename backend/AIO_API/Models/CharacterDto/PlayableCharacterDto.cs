@@ -9,7 +9,8 @@ namespace AIO_API.Models.CharacterDto
         public string Race { get; set; }
         public string Career { get; set; }
         public short Age { get; set; }
-        public int WeaponSkill { get; set; }
+        public int CampaignId { get; set; }
+
 
         public List<CharacterItem> CharacterItems { get; set; }
     }

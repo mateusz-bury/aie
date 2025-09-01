@@ -15,6 +15,7 @@ namespace AIO_API.Models.CharacterDto
         public string Career { get; set; }
         [Required]
         public short Age { get; set; }
-        public int WeaponSkill { get; set; }
+        [Required]
+        public int CamapinId { get; set; }
     }
 }

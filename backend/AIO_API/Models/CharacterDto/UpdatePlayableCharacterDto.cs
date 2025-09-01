@@ -4,6 +4,6 @@ namespace AIO_API.Models.CharacterDto
 {
     public class UpdatePlayableCharacterDto
     {
-        public int WeaponSkill { get; set; }
+        public string Career { get; set; }
     }
 }

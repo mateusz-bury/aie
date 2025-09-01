@@ -5,6 +5,8 @@ using AutoMapper;
 using AIO_API.Models.CharacterDto;
 using AIO_API.Entities.Character;
 using AIO_API.Models.EquipementDto;
+using AIO_API.Entities.Campaigns;
+using AIO_API.Models;
 
 namespace AIO_API
 {
@@ -37,6 +39,8 @@ namespace AIO_API
                 .ForMember(dto => dto.Price, m => m.MapFrom(ci => ci.Item.Price))
                 .ForMember(dto => dto.Weight, m => m.MapFrom(ci => ci.Item.Weight));
 
+
+            CreateMap<Campaign, CampaignDto>();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace AIO_API.Services
             if (playableCharacterById == null)
                 throw new NotFoundException("Character not found");
 
-            playableCharacterById.WeaponSkill = dto.WeaponSkill;
+            playableCharacterById.Career = dto.Career;
 
             _dbContext.SaveChanges();
         }
@@ -79,7 +79,7 @@ namespace AIO_API.Services
 
         public int Create(CreatePlayableCharacterDto dto)
         {
-            var playableCharacter = _mapper.Map<Entities.Character.PlayableCharacter>(dto);
+            var playableCharacter = _mapper.Map<PlayableCharacter>(dto);
             _dbContext.PlayableCharacter.Add(playableCharacter);
             _dbContext.SaveChanges();
 

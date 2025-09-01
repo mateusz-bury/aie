@@ -33,14 +33,16 @@ namespace AIO_API.Data
                     Name = "Aldred",
                     Race = "Człowiek",
                     Career = "Wojownik",
-                    Age = 25
+                    Age = 25,
+                    CampaignId = 1
                 },
                 new PlayableCharacter()
                 {
                     Name = "Meliret",
                     Race = "Elf",
                     Career = "Rzecznik Rodu",
-                    Age = 150
+                    Age = 150,
+                    CampaignId = 1
                 }
             };
 

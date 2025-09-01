@@ -43,6 +43,7 @@ builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
 builder.Services.AddTransient<UsersSeeder>();
 builder.Services.AddTransient<RolesSeeder>();
+builder.Services.AddTransient<CampaignSeeder>();
 builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
 
 // ---------- MIDDLEWARE ----------
@@ -52,6 +53,7 @@ builder.Services.AddScoped<RequestTimeMiddleware>();
 // ---------- CUSTOM SERVICES ----------
 builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddTransient<ICharacterItemService, CharacterItemService>();
+builder.Services.AddTransient<ICampaignService, CampaignService>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();
@@ -69,6 +71,9 @@ var app = builder.Build();
 // ---------- SEED DATA ----------
 using (var scope = app.Services.CreateScope())
 {
+    var campaignSeeder = scope.ServiceProvider.GetRequiredService<CampaignSeeder>();
+    campaignSeeder.Seed();
+
     var playableCharacterSeeder = scope.ServiceProvider.GetRequiredService<PlayableCharacterSeeder>();
     playableCharacterSeeder.Seed();
 
