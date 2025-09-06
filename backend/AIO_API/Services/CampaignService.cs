@@ -2,9 +2,7 @@
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Models;
-using AIO_API.Models.CharacterDto;
 using AutoMapper;
-using Microsoft.EntityFrameworkCore;
 
 namespace AIO_API.Services
 {

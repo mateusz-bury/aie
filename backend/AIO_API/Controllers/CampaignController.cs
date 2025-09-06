@@ -22,5 +22,7 @@ namespace AIO_API.Controllers
             var campaignById = _campaignService.GetById(id);
             return Ok(campaignById);
         }
+
+
     }
 }

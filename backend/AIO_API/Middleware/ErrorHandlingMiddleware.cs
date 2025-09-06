@@ -16,6 +16,11 @@ namespace AIO_API.Middleware
             {
                 await next.Invoke(context);
             }
+            catch(BadRequestException badRequestException)
+            {
+                context.Response.StatusCode = 400;
+                await context.Response.WriteAsync(badRequestException.Message);
+            }
             catch(NotFoundException notFoundException)
             {
                 context.Response.StatusCode = 404;

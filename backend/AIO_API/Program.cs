@@ -1,12 +1,20 @@
 using System.Reflection;
+using System.Text;
+using AIO_API;
 using AIO_API.Data;
 using AIO_API.Entities;
+using AIO_API.Entities.Users;
 using AIO_API.Interfaces;
 using AIO_API.Middleware;
+using AIO_API.Models.UserDTO;
+using AIO_API.Models.Validators;
 using AIO_API.Services;
 
 using AutoMapper;
-
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
 using NLog.Web;
@@ -19,7 +27,7 @@ builder.Logging.SetMinimumLevel(Microsoft.Extensions.Logging.LogLevel.Trace);
 builder.Host.UseNLog();
 
 // ---------- SERVICES ----------
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddFluentValidation();
 builder.Services.AddDbContext<AieDbContext>();
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
@@ -35,8 +43,25 @@ builder.Services.AddCors(options =>
         });
 });
 
-
-
+var autheniticationSettings = new AuthenticationSettings();
+builder.Configuration.GetSection("Authentication").Bind(autheniticationSettings);
+builder.Services.AddSingleton(autheniticationSettings);
+builder.Services.AddAuthentication(option =>
+{
+    option.DefaultAuthenticateScheme = "Bearer";
+    option.DefaultScheme = "Bearer";
+    option.DefaultChallengeScheme = "Bearer";
+}).AddJwtBearer(cfg =>
+{
+    cfg.RequireHttpsMetadata = false;
+    cfg.SaveToken = true;
+    cfg.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidIssuer = autheniticationSettings.JwtIssuer,
+        ValidAudience = autheniticationSettings.JwtIssuer,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(autheniticationSettings.JwtKey)),
+    };
+});
 // ---------- SEEDERS ----------
 builder.Services.AddTransient<PlayableCharacterSeeder>();
 builder.Services.AddTransient<ItemSeeder>();
@@ -44,8 +69,6 @@ builder.Services.AddTransient<CharacterItemSeeder>();
 builder.Services.AddTransient<UsersSeeder>();
 builder.Services.AddTransient<RolesSeeder>();
 builder.Services.AddTransient<CampaignSeeder>();
-builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
-
 // ---------- MIDDLEWARE ----------
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
 builder.Services.AddScoped<RequestTimeMiddleware>();
@@ -54,6 +77,10 @@ builder.Services.AddScoped<RequestTimeMiddleware>();
 builder.Services.AddTransient<ICharacterService, CharacterService>();
 builder.Services.AddTransient<ICharacterItemService, CharacterItemService>();
 builder.Services.AddTransient<ICampaignService, CampaignService>();
+builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();
@@ -93,6 +120,8 @@ using (var scope = app.Services.CreateScope())
 // ---------- MIDDLEWARE PIPELINE ----------
 app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseMiddleware<RequestTimeMiddleware>();
+
+app.UseAuthentication();
 
 app.UseHttpsRedirection();
 
