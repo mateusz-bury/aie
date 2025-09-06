@@ -28,7 +28,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFlutterApp",
         policy =>
         {
-            int port = 61823; // @Kuba - tu musz zmieniæ numer portu fluttera, próbowa³em go na szytywno ustawiæ w .json flattera ale jakoœ nie chce mi to dzialaæ - musisz popatrzeæ u siebie 
+            int port = 61823; // @Kuba - tu musz zmieniï¿½ numer portu fluttera, prï¿½bowaï¿½em go na szytywno ustawiï¿½ w .json flattera ale jakoï¿½ nie chce mi to dzialaï¿½ - musisz popatrzeï¿½ u siebie 
             policy.WithOrigins($"http://localhost:{port}") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
@@ -43,6 +43,8 @@ builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
 builder.Services.AddTransient<UsersSeeder>();
 builder.Services.AddTransient<RolesSeeder>();
+builder.Services.AddTransient<CampaignSeeder>();
+builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
 
 // ---------- MIDDLEWARE ----------
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -50,6 +52,8 @@ builder.Services.AddScoped<RequestTimeMiddleware>();
 
 // ---------- CUSTOM SERVICES ----------
 builder.Services.AddTransient<ICharacterService, CharacterService>();
+builder.Services.AddTransient<ICharacterItemService, CharacterItemService>();
+builder.Services.AddTransient<ICampaignService, CampaignService>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();
@@ -67,6 +71,9 @@ var app = builder.Build();
 // ---------- SEED DATA ----------
 using (var scope = app.Services.CreateScope())
 {
+    var campaignSeeder = scope.ServiceProvider.GetRequiredService<CampaignSeeder>();
+    campaignSeeder.Seed();
+
     var playableCharacterSeeder = scope.ServiceProvider.GetRequiredService<PlayableCharacterSeeder>();
     playableCharacterSeeder.Seed();
 

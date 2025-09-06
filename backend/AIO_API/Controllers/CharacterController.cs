@@ -1,10 +1,8 @@
 ﻿using AIO_API.Data;
 using AIO_API.Entities.Character;
 using AIO_API.Interfaces;
-using AIO_API.Models;
-
+using AIO_API.Models.CharacterDto;
 using AutoMapper;
-
 using Microsoft.AspNetCore.Mvc;
 
 namespace AIO_API.Controllers
@@ -55,7 +53,7 @@ namespace AIO_API.Controllers
 
 
        [HttpGet("{id}")]
-        public ActionResult<Entities.Character.PlayableCharacter> Get([FromRoute] int id)
+        public ActionResult<PlayableCharacter> Get([FromRoute] int id)
         {
             var playableCharacterByIdDto = _characterService.GetById(id);
             return Ok(playableCharacterByIdDto);

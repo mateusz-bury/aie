@@ -3,10 +3,8 @@ using AIO_API.Entities.Character;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Migrations;
-using AIO_API.Models;
-
+using AIO_API.Models.CharacterDto;
 using AutoMapper;
-
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -35,7 +33,7 @@ namespace AIO_API.Services
             if (playableCharacterById == null)
                 throw new NotFoundException("Character not found");
 
-            playableCharacterById.WeaponSkill = dto.WeaponSkill;
+            playableCharacterById.Career = dto.Career;
 
             _dbContext.SaveChanges();
         }
@@ -81,7 +79,7 @@ namespace AIO_API.Services
 
         public int Create(CreatePlayableCharacterDto dto)
         {
-            var playableCharacter = _mapper.Map<Entities.Character.PlayableCharacter>(dto);
+            var playableCharacter = _mapper.Map<PlayableCharacter>(dto);
             _dbContext.PlayableCharacter.Add(playableCharacter);
             _dbContext.SaveChanges();
 

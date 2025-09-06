@@ -1,3 +1,0 @@
-﻿<Project>
-  <Import Project="..\build\AIO_API.props" />
-</Project>

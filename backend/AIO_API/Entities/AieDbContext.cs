@@ -1,3 +1,4 @@
+using AIO_API.Entities.Campaigns;
 using AIO_API.Entities.Character;
 using AIO_API.Entities.Items;
 using AIO_API.Entities.Users;
@@ -19,6 +20,10 @@ namespace AIO_API.Entities
         public DbSet<PlayableCharacter> PlayableCharacter { get; set; }
         public DbSet<CharacterItem> CharacterItems { get; set; }
         public DbSet<Item> Items { get; set; }
+
+
+        public DbSet<Campaign> Campaigns { get; set; }
+
 
 
         public AieDbContext(DbContextOptions<AieDbContext> options): base(options)
@@ -61,6 +66,10 @@ namespace AIO_API.Entities
                 .HasOne(ci => ci.Item)
                 .WithMany()
                 .HasForeignKey(ci => ci.ItemId);
+
+            modelBuilder.Entity<Campaign>()
+                .Property(p => p.CreateDate)
+                .HasColumnType("datetime");
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
