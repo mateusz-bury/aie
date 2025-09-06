@@ -8,6 +8,9 @@ pubspec.lock
 
 # Flutter build outputs
 /frontend/build
+/frontend/linux
+/frontend/macos
+/frontend/Windows
 flutter_*.png
 
 # iOS
