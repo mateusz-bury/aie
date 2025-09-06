@@ -29,9 +29,9 @@ namespace AIO_API.Data
         {
             return new List<Role>()
             {
-                new Role { Id = 1, Name = "Gracz" },
-                new Role { Id = 2, Name = "Mistrz Gry" },
-                new Role { Id = 3, Name = "Admin" }
+                new Role { Name = "Gracz" },
+                new Role { Name = "Mistrz Gry" },
+                new Role { Name = "Admin" }
             };
         }
     }

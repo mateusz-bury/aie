@@ -1,4 +1,4 @@
-﻿using AIO_API.Models;
+﻿using AIO_API.Models.CharacterDto;
 
 namespace AIO_API.Interfaces
 {
