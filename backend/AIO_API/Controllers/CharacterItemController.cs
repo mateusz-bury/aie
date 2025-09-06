@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace AIO_API.Controllers
 {
-    [Route("api/character/{characterid}/item")]
+    [Route("api/character/{characterId}/item")]
     [ApiController]
     public class CharacterItemController : ControllerBase
     {
