@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
 import 'package:aie/pages/AccountSettingPage.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
+import 'package:aie/layouts/UserPageLeyout.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -41,10 +41,10 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutContainer(
+    return UserPageLeyout(
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Witaj, ${widget.user.firstName}!'),
+          title: Text('Witaj, ${widget.user.username}!'),
           actions: [
             IconButton(
               icon: const Icon(Icons.settings),
@@ -108,14 +108,14 @@ class _UserPageState extends State<UserPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${widget.user.firstName} ${widget.user.lastName}',
+                    '${widget.user.username}',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    widget.user.email,
+                    widget.user.username,
                     style: const TextStyle(color: Colors.transparent),
                   ),
                   Text(
