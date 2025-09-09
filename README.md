@@ -36,6 +36,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 ### Frontend (Flutter)
 
 1. Należy pobrać repozytorium 
-```git clone https://github.com/mateusz-bury/aie.git
+```bash
+git clone https://github.com/mateusz-bury/aie.git
    
 
