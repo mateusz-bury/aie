@@ -2,6 +2,7 @@
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Models;
+using AIO_API.Models.CharacterDto;
 using AutoMapper;
 
 namespace AIO_API.Services
@@ -31,6 +32,18 @@ namespace AIO_API.Services
             var result = _mapper.Map<CampaignDto>(CampaignById);
 
             return result;
+        }
+
+        public IEnumerable<CampaignDto> GetAll(int userId)
+        {
+            var allCampaigns = _dbContext.
+                                   Campaigns.
+                                   Where(pc => pc.UserId == userId).
+                                   ToList();
+
+            var allCampaignsDto = _mapper.Map<List<CampaignDto>>(allCampaigns);
+
+            return allCampaignsDto;
         }
 
     }

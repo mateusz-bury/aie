@@ -30,7 +30,7 @@ namespace AIO_API.Entities
         { 
         }
 
-        private string _connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=AieDb;Trusted_Connection=True;";
+        //private string _connectionString = "Server=(localdb)\\MSSQLLocalDB;Database=AieDb;Trusted_Connection=True;";
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -70,11 +70,18 @@ namespace AIO_API.Entities
             modelBuilder.Entity<Campaign>()
                 .Property(p => p.CreateDate)
                 .HasColumnType("datetime");
+
+
+            modelBuilder.Entity<Campaign>()
+            .HasOne(c => c.User)         
+            .WithMany()                   
+            .HasForeignKey(c => c.UserId) 
+            .OnDelete(DeleteBehavior.NoAction);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connectionString);
+         //   optionsBuilder.UseSqlServer(_connectionString);
         }
     }
 }

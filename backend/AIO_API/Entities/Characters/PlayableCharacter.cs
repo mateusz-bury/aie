@@ -1,4 +1,5 @@
 ﻿using AIO_API.Entities.Campaigns;
+using AIO_API.Entities.Users;
 using AIO_API.Interfaces;
 
 namespace AIO_API.Entities.Character
@@ -12,6 +13,9 @@ namespace AIO_API.Entities.Character
         public short Age { get; set; }
         public int CampaignId { get; set; }
         public Campaign Campaign { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
+
         public List<CharacterItem> CharacterItems { get; set; }
         //public int BallisticSkill { get; set; }
         //public int Strength { get; set; }

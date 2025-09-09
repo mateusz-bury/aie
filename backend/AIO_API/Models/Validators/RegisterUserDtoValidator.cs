@@ -16,7 +16,8 @@ namespace AIO_API.Models.Validators
                 .MinimumLength(6);
 
             RuleFor(x => x.ConfirmPassword)
-                .Equal(e => e.Password);
+                .Equal(e => e.Password)
+                .WithMessage("Pole 'ConfirmPassword' musi być takie samo jak 'Password'.");
 
             RuleFor(x => x.Email)
                 .Custom((value, context) =>
