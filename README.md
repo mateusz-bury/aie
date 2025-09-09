@@ -33,10 +33,25 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 ## Instalacja i uruchomienie
 
-### Frontend (Flutter)
+### Backend (.NET Web API)
 
 1. Należy pobrać repozytorium 
 ```bash
-git clone https://github.com/mateusz-bury/aie.git
+   git clone https://github.com/mateusz-bury/aie.git
+```
+2. W folderze ./backend w należy uruchomić rozwiązanie AIO_API.sln
+3. W PowerShellu należy stworzyć plik mi gracyjny i założyć bazę danych
+```pwsh
+   add-migration
+```
+```pwsh
+   update-database
+```
+4. Uruchamiamy Program.cs
    
+### Frontend (Flutter Dart)
 
+1. W folderze ./frontend uruchamiamy komende
+```bash
+   flutter-run
+```
