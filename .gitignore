@@ -11,6 +11,7 @@ pubspec.lock
 /frontend/linux
 /frontend/macos
 /frontend/Windows
+/frontend/windows
 flutter_*.png
 
 # iOS

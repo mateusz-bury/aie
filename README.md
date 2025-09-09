@@ -35,7 +35,7 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 ### Frontend (Flutter)
 
-1. Uruchom w /frondend/
+1. Należy pobrać repozytorium 
+```git clone https://github.com/mateusz-bury/aie.git
    
-  -  **flutter pub get**
-  -  **flutter run**
+
