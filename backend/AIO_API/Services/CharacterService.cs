@@ -66,10 +66,11 @@ namespace AIO_API.Services
             return result;
         }
 
-        public IEnumerable<PlayableCharacterDto> GetAll()
+        public IEnumerable<PlayableCharacterDto> GetAll(int userId)
         {
             var playableCharacters = _dbContext.
                                    PlayableCharacter.
+                                   Where(pc => pc.UserId == userId).
                                    ToList();
 
             var playableCharactersDto = _mapper.Map<List<PlayableCharacterDto>>(playableCharacters);

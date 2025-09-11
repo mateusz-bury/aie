@@ -34,7 +34,8 @@ namespace AIO_API.Data
                     Race = "Człowiek",
                     Career = "Wojownik",
                     Age = 25,
-                    CampaignId = 1
+                    CampaignId = 1,
+                    UserId = 2
                 },
                 new PlayableCharacter()
                 {
@@ -42,7 +43,8 @@ namespace AIO_API.Data
                     Race = "Elf",
                     Career = "Rzecznik Rodu",
                     Age = 150,
-                    CampaignId = 1
+                    CampaignId = 1,
+                    UserId = 2
                 }
             };
 

@@ -14,6 +14,7 @@ using AutoMapper;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -28,7 +29,10 @@ builder.Host.UseNLog();
 
 // ---------- SERVICES ----------
 builder.Services.AddControllers().AddFluentValidation();
-builder.Services.AddDbContext<AieDbContext>();
+builder.Services.AddDbContext<AieDbContext>(option =>
+{
+    option.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+});
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 builder.Services.AddCors(options =>
@@ -36,7 +40,7 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowFlutterApp",
         policy =>
         {
-            int port = 56093; // @Kuba - tu musz zmieni� numer portu fluttera, pr�bowa�em go na szytywno ustawi� w .json flattera ale jako� nie chce mi to dziala� - musisz popatrze� u siebie 
+            int port = 50000;
             policy.WithOrigins($"http://localhost:{port}") 
                   .AllowAnyHeader()
                   .AllowAnyMethod();
@@ -63,11 +67,11 @@ builder.Services.AddAuthentication(option =>
     };
 });
 // ---------- SEEDERS ----------
+builder.Services.AddTransient<UsersSeeder>();
+builder.Services.AddTransient<RolesSeeder>();
 builder.Services.AddTransient<PlayableCharacterSeeder>();
 builder.Services.AddTransient<ItemSeeder>();
 builder.Services.AddTransient<CharacterItemSeeder>();
-builder.Services.AddTransient<UsersSeeder>();
-builder.Services.AddTransient<RolesSeeder>();
 builder.Services.AddTransient<CampaignSeeder>();
 // ---------- MIDDLEWARE ----------
 builder.Services.AddScoped<ErrorHandlingMiddleware>();
@@ -81,6 +85,7 @@ builder.Services.AddScoped<ICharacterItemService, CharacterItemService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
 builder.Services.AddScoped<IValidator<RegisterUserDto>, RegisterUserDtoValidator>();
+builder.Services.AddScoped<IValidator<ChangePasswordDto>, ChangePasswordDtoValidator>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();
@@ -98,6 +103,12 @@ var app = builder.Build();
 // ---------- SEED DATA ----------
 using (var scope = app.Services.CreateScope())
 {
+    var rolesSeeder = scope.ServiceProvider.GetRequiredService<RolesSeeder>();
+    rolesSeeder.Seed();
+
+    var usersSeeder = scope.ServiceProvider.GetRequiredService<UsersSeeder>();
+    usersSeeder.Seed();
+
     var campaignSeeder = scope.ServiceProvider.GetRequiredService<CampaignSeeder>();
     campaignSeeder.Seed();
 
@@ -109,12 +120,6 @@ using (var scope = app.Services.CreateScope())
 
     var characterItemSeeder = scope.ServiceProvider.GetRequiredService<CharacterItemSeeder>();
     characterItemSeeder.Seed();
-
-    var rolesSeeder = scope.ServiceProvider.GetRequiredService<RolesSeeder>();
-    rolesSeeder.Seed();
-
-    var usersSeeder = scope.ServiceProvider.GetRequiredService<UsersSeeder>();
-    usersSeeder.Seed();
 }
 
 // ---------- MIDDLEWARE PIPELINE ----------
@@ -128,6 +133,8 @@ app.UseHttpsRedirection();
 app.UseCors("AllowFlutterApp");
 
 // ---------- SWAGGER UI ----------
+
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
