@@ -32,7 +32,8 @@ namespace AIO_API.Data
                 {
                     Name = "1000 Tronów",
                     Description = "Kampania seedowana",
-                    CreateDate = DateTime.Now
+                    CreateDate = DateTime.Now,
+                    UserId = 2
                 }
             };
 

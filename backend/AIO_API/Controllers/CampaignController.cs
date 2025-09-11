@@ -1,6 +1,8 @@
 ﻿using AIO_API.Entities.Campaigns;
 using AIO_API.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AIO_API.Controllers
 {
@@ -23,6 +25,14 @@ namespace AIO_API.Controllers
             return Ok(campaignById);
         }
 
+        [HttpGet]
+        [Authorize]
+        public ActionResult<IEnumerable<Campaign>> GetAll()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
+            var allCampaign = _campaignService.GetAll(userId);
+            return Ok(allCampaign);
+        }
     }
 }

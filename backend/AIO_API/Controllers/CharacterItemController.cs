@@ -3,6 +3,7 @@ using AIO_API.Entities;
 using AIO_API.Entities.Items;
 using AIO_API.Models.EquipementDto;
 using AIO_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ namespace AIO_API.Controllers
 {
     [Route("api/character/{characterId}/item")]
     [ApiController]
+    [Authorize]
     public class CharacterItemController : ControllerBase
     {
         private readonly ICharacterItemService _characterItemService;

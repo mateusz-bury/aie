@@ -53,5 +53,5 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 
 1. W folderze ./frontend uruchamiamy komende
 ```bash
-   flutter-run
+   .\flutter-run
 ```

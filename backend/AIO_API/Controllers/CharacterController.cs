@@ -2,8 +2,11 @@
 using AIO_API.Entities.Character;
 using AIO_API.Interfaces;
 using AIO_API.Models.CharacterDto;
+using AIO_API.Models.UserDTO;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace AIO_API.Controllers
 {
@@ -12,7 +15,6 @@ namespace AIO_API.Controllers
     public class CharacterController : ControllerBase
     {
         private ICharacterService _characterService;
-
         public CharacterController(ICharacterService characterService)
         {
             _characterService = characterService;
@@ -37,6 +39,7 @@ namespace AIO_API.Controllers
         [HttpPost]
         public ActionResult CreatePlayableCharacter([FromBody] CreatePlayableCharacterDto dto)
         {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
             var id = _characterService.Create(dto);
 
@@ -44,9 +47,12 @@ namespace AIO_API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public ActionResult<IEnumerable<PlayableCharacterDto>> GetAll()
         {
-            var playableCharactersDto = _characterService.GetAll();
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var playableCharactersDto = _characterService.GetAll(userId);
             return Ok(playableCharactersDto);
         }
 

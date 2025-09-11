@@ -1,7 +1,9 @@
 ﻿using AIO_API.Models.UserDTO;
 using AIO_API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Identity.Client;
+using System.Security.Claims;
 
 namespace AIO_API.Controllers
 {
@@ -30,6 +32,17 @@ namespace AIO_API.Controllers
             string token = _accountService.GenerateJwt(dto);
 
             return Ok(token);
+        }
+
+        [HttpPut("changePassword")]
+        [Authorize]
+        public ActionResult ChangePassword([FromBody] ChangePasswordDto dto)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            _accountService.ChangePassword(userId, dto);
+
+            return Ok("Password has been changed successfully.");
         }
     }
 }
