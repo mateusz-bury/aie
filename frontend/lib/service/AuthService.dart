@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
-/// Klasa reprezentująca użytkownika po zalogowaniu
+//użytkownik 
 class User {
   final String firstName;
   final String lastName;
@@ -25,11 +25,11 @@ class User {
   }
 }
 
-/// Serwis do obsługi uwierzytelniania
+//uwierzytelnienia
 class AuthService {
   static const String baseUrl = 'https://localhost:7221/api/auth';
 
-  /// Logowanie użytkownika – zwraca obiekt User po poprawnym zalogowaniu
+  // logowanie
   static Future<User?> login(String username, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final headers = {
@@ -58,7 +58,7 @@ class AuthService {
     }
   }
 
-  /// Rejestracja użytkownika (opcjonalnie, jeśli potrzebujesz)
+  // rejestracja 
   static Future<bool> register({
   required String firstName,
   required String lastName,
