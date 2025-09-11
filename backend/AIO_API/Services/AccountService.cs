@@ -15,6 +15,8 @@ namespace AIO_API.Services
     {
         void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginDto dto);
+        void ChangePassword(int userId, ChangePasswordDto dto);
+
     }
     public class AccountService : IAccountService
     {
@@ -84,5 +86,25 @@ namespace AIO_API.Services
 
             return tokenHandler.WriteToken(token);
         }
+
+        public void ChangePassword(int userId, ChangePasswordDto dto)
+        {
+            var user = _dbContext.Users.FirstOrDefault(u => u.Id == userId);
+            if (user is null)
+            {
+                throw new NotFoundException("User not found");
+            }
+
+            var result = _passwordHasher.VerifyHashedPassword(user, user.PasswordHash, dto.CurrentPassword);
+            if (result == PasswordVerificationResult.Failed)
+            {
+                throw new BadRequestException("Current password is invalid");
+            }
+
+            user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
+
+            _dbContext.SaveChanges();
+        }
+
     }
 }

@@ -41,7 +41,12 @@ namespace AIO_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Campaigns");
                 });
@@ -93,9 +98,14 @@ namespace AIO_API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
                     b.HasKey("id");
 
                     b.HasIndex("CampaignId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("PlayableCharacter");
                 });
@@ -186,6 +196,17 @@ namespace AIO_API.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("AIO_API.Entities.Campaigns.Campaign", b =>
+                {
+                    b.HasOne("AIO_API.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("AIO_API.Entities.Character.CharacterItem", b =>
                 {
                     b.HasOne("AIO_API.Entities.Character.PlayableCharacter", "Character")
@@ -213,7 +234,15 @@ namespace AIO_API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("AIO_API.Entities.Users.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Campaign");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("AIO_API.Entities.Users.User", b =>

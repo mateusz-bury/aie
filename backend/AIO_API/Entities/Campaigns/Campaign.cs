@@ -1,4 +1,6 @@
-﻿namespace AIO_API.Entities.Campaigns
+﻿using AIO_API.Entities.Users;
+
+namespace AIO_API.Entities.Campaigns
 {
     public class Campaign
     {
@@ -6,5 +8,7 @@
         public string Name { get; set; }
         public string Description { get; set; }
         public DateTime CreateDate { get; set; }
+        public int UserId { get; set; }
+        public User User { get; set; }
     }
 }

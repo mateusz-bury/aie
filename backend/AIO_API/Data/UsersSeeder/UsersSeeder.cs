@@ -1,44 +1,49 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-using AIO_API.Entities;
+﻿using AIO_API.Entities;
 using AIO_API.Entities.Users;
+using Microsoft.AspNetCore.Identity;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AIO_API.Data
 {
     public class UsersSeeder
     {
         private readonly AieDbContext _dbContext;
+        private readonly IPasswordHasher<User> _passwordHasher;
 
-        public UsersSeeder(AieDbContext dbContext)
+        public UsersSeeder(AieDbContext dbContext, IPasswordHasher<User> passwordHasher)
         {
             _dbContext = dbContext;
+            _passwordHasher = passwordHasher;
         }
 
         public void Seed()
         {
-            if (!_dbContext.Users.Any())
+            if (_dbContext.Database.CanConnect())
             {
-                var users = GetUsers();
-                _dbContext.Users.AddRange(users);
-                _dbContext.SaveChanges();
+                if (!_dbContext.Users.Any())
+                {
+                    var users = GetUsers();
+                    _dbContext.Users.AddRange(users);
+                    _dbContext.SaveChanges();
+                }
             }
         }
 
         private IEnumerable<User> GetUsers()
         {
-            return new List<User>()
+            var admin = new User
             {
-                new User
-                {
-                    Email = "admin@aie.com",
-                    FirstName = "Admin",
-                    LastName = "Systemowy",
-                    Username = "admin",
-                    RoleId = 6,
-                    PasswordHash = "admin", 
-                }
+                Email = "admin@aie.com",
+                FirstName = "Admin",
+                LastName = "Systemowy",
+                Username = "admin",
+                RoleId = 6
             };
+
+            admin.PasswordHash = _passwordHasher.HashPassword(admin, "admin");
+
+            return new List<User> { admin };
         }
     }
 }
