@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// Klasa reprezentująca użytkownika po zalogowaniu
 class User {
@@ -20,33 +21,66 @@ class User {
       firstName: json['firstName'] ?? '',
       lastName: json['lastName'] ?? '',
       email: json['email'] ?? '',
-      username: json['username'] ?? '',
+      username: json['userName'] ?? '',
     );
   }
 }
 
 /// Serwis do obsługi uwierzytelniania
 class AuthService {
-  static const String baseUrl = 'https://localhost:7221/api/auth';
+  static const String baseUrl = 'https://localhost:7221/api/account';
+  static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  /// Logowanie użytkownika – zwraca obiekt User po poprawnym zalogowaniu
-  static Future<User?> login(String username, String password) async {
-    final url = Uri.parse('$baseUrl/login');
+  static Future<void> _saveToken(String token) async {
+    await _storage.write(key: 'auth_token', value: token);
+  }
+
+  static Future<String?> getToken() async {
+    return await _storage.read(key: 'auth_token');
+  }
+
+  static Future<User?> fetchCurrentUser() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final url = Uri.parse('$baseUrl/user');
     final headers = {
       'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
     };
 
-    final body = jsonEncode({
-      'username': username,
-      'password': password,
-    });
+    final response = await http.get(url, headers: headers);
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> json = jsonDecode(response.body);
+      return User.fromJson(json);
+    } else {
+      print('Błąd pobierania danych użytkownika: ${response.statusCode}');
+      print('Treść: ${response.body}');
+      return null;
+    }
+  }
+
+  /// Logowanie użytkownika – zwraca obiekt User po poprawnym zalogowaniu
+  static Future<User?> login(String email, String password) async {
+    final url = Uri.parse('$baseUrl/login');
+    final headers = {'Content-Type': 'application/json'};
+
+    final body = jsonEncode({'email': email, 'password': password});
 
     try {
       final response = await http.post(url, headers: headers, body: body);
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> json = jsonDecode(response.body);
-        return User.fromJson(json);
+        final String token = response.body.trim();
+
+        if (token.isEmpty) {
+          print('Brak tokena w odpowiedzi logowania');
+          return null;
+        }
+
+        await _saveToken(token);
+
+        return await fetchCurrentUser();
       } else {
         print('Błąd logowania: ${response.statusCode}');
         print('Treść: ${response.body}');
@@ -60,38 +94,73 @@ class AuthService {
 
   /// Rejestracja użytkownika (opcjonalnie, jeśli potrzebujesz)
   static Future<bool> register({
-  required String firstName,
-  required String lastName,
-  required String email,
-  required String username,
-  required String password,
-}) async {
-  final url = Uri.parse('$baseUrl/register');
-  final headers = {
-    'Content-Type': 'application/json',
-  };
+    required String firstName,
+    required String lastName,
+    required String email,
+    required String username,
+    required String password,
+    required String repeatPassword,
+  }) async {
+    final url = Uri.parse('$baseUrl/register');
+    final headers = {'Content-Type': 'application/json'};
 
-  final body = jsonEncode({
-    'firstName': firstName,
-    'lastName': lastName,
-    'email': email,
-    'username': username,
-    'password': password,
-  });
+    final body = jsonEncode({
+      'firstName': firstName,
+      'lastName': lastName,
+      'email': email,
+      'username': username,
+      'password': password,
+      'confirmPassword': repeatPassword,
+    });
 
-  try {
-    final response = await http.post(url, headers: headers, body: body);
+    try {
+      final response = await http.post(url, headers: headers, body: body);
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      return true;
-    } else {
-      print('Błąd rejestracji: ${response.statusCode}');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return true;
+      } else {
+        print('Błąd rejestracji: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('Wyjątek podczas rejestracji: $e');
       return false;
     }
-  } catch (e) {
-    print('Wyjątek podczas rejestracji: $e');
-    return false;
   }
-}
 
+  static Future<bool> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    final token = await getToken();
+    if (token == null) return false;
+
+    final url = Uri.parse('$baseUrl/changePassword');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final body = jsonEncode({
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+      'confirmPassword': confirmPassword,
+    });
+
+    try {
+      final response = await http.put(url, headers: headers, body: body);
+
+      if (response.statusCode == 200) {
+        return true;
+      } else {
+        print('Błąd zmiany hasła: ${response.statusCode}');
+        print('Treść: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Wyjątek podczas zmiany hasła: $e');
+      return false;
+    }
+  }
 }

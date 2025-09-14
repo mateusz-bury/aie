@@ -23,7 +23,9 @@ namespace AIO_API.Controllers
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute]int id, [FromBody] UpdatePlayableCharacterDto dto)
         {
-            _characterService.Update(id, dto);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value)
+                ;
+            _characterService.Update(id, userId, dto);
             return Ok();
         }
 
@@ -47,7 +49,6 @@ namespace AIO_API.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<IEnumerable<PlayableCharacterDto>> GetAll()
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);

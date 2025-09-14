@@ -1,4 +1,5 @@
-﻿using AIO_API.Models.UserDTO;
+﻿using AIO_API.Entities.Users;
+using AIO_API.Models.UserDTO;
 using AIO_API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -43,6 +44,17 @@ namespace AIO_API.Controllers
             _accountService.ChangePassword(userId, dto);
 
             return Ok("Password has been changed successfully.");
+        }
+
+        [HttpGet("user")]
+        [Authorize]
+        public ActionResult Get()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var userInfo = _accountService.Get(userId);
+
+            return Ok(userInfo);
         }
     }
 }

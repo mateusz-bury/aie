@@ -1,7 +1,9 @@
 ﻿using AIO_API.Entities;
 using AIO_API.Entities.Users;
 using AIO_API.Exceptions;
+using AIO_API.Models.CharacterDto;
 using AIO_API.Models.UserDTO;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -16,18 +18,20 @@ namespace AIO_API.Services
         void RegisterUser(RegisterUserDto dto);
         string GenerateJwt(LoginDto dto);
         void ChangePassword(int userId, ChangePasswordDto dto);
-
+        public UserDto Get(int userId);
     }
     public class AccountService : IAccountService
     {
         private readonly AieDbContext _dbContext;
         private readonly IPasswordHasher<User> _passwordHasher;
         private readonly AuthenticationSettings _authenticationSettings;
-        public AccountService(AieDbContext dbContext, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings)
+        private readonly IMapper _mapper;
+        public AccountService(AieDbContext dbContext, IPasswordHasher<User> passwordHasher, AuthenticationSettings authenticationSettings, IMapper mapper)
         {
             _dbContext = dbContext;
             _passwordHasher = passwordHasher;
             _authenticationSettings = authenticationSettings;
+            _mapper = mapper;
         }
         public void RegisterUser(RegisterUserDto dto)
         {
@@ -38,7 +42,7 @@ namespace AIO_API.Services
                 FirstName = dto.FirstName,
                 LastName = dto.LastName,
                 Username = dto.UserName,
-                RoleId = dto.RoleId
+                RoleId = 4
             };
 
             var hashedPassword = _passwordHasher.HashPassword(newUser, dto.Password);
@@ -104,6 +108,20 @@ namespace AIO_API.Services
             user.PasswordHash = _passwordHasher.HashPassword(user, dto.NewPassword);
 
             _dbContext.SaveChanges();
+        }
+
+        public UserDto Get(int userId)
+        {
+            var userDto = _dbContext
+                            .Users
+                            .FirstOrDefault(u => u.Id == userId);
+
+            if (userDto == null)
+                throw new NotFoundException("Users not found");
+
+            var result = _mapper.Map<UserDto>(userDto);
+
+            return result;
         }
 
     }

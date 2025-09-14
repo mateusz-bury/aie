@@ -24,17 +24,23 @@ namespace AIO_API.Services
             _logger = logger;
         }
 
-        public void Update(int id, UpdatePlayableCharacterDto dto)
+        public void Update(int id, int userId, UpdatePlayableCharacterDto dto)
         {
             var playableCharacterById = _dbContext
                             .PlayableCharacter
+                            .Where(pc => pc.UserId == userId)
                             .FirstOrDefault(p => p.id == id);
 
             if (playableCharacterById == null)
                 throw new NotFoundException("Character not found");
 
-            playableCharacterById.Career = dto.Career;
+            //playableCharacterById.Career = dto.Career;
+            //playableCharacterById.Name = dto.Name;
+            //playableCharacterById.Race = dto.Race;
+            //playableCharacterById.Age = dto.Age;
+            //playableCharacterById.Agility = dto.Agility;
 
+            _dbContext.Entry(playableCharacterById).CurrentValues.SetValues(dto);
             _dbContext.SaveChanges();
         }
 

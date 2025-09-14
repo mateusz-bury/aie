@@ -1,8 +1,11 @@
-// lib/pages/UserPage.dart
+import 'package:aie/models/Campaign.dart';
+import 'package:aie/models/Character.dart';
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
 import 'package:aie/pages/AccountSettingPage.dart';
 import 'package:aie/layouts/UserPageLeyout.dart';
+import '../service/CharacterService.dart';
+import '../service/CampaignService.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -14,8 +17,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  List<Map<String, dynamic>> campaigns = [];
-  List<Map<String, dynamic>> characters = [];
+  List<Campaign> campaigns = [];
+  List<Character> characters = [];
 
   @override
   void initState() {
@@ -24,18 +27,12 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> _loadUserData() async {
-    // TODO: api kampanie
+    final fetchedCampaigns = await CampaignService.fetchCampaigns();
+    final fetchedCharacters = await CharacterService.fetchCharacters();
 
     setState(() {
-      // placeholdery dla kampani i postaci
-      campaigns = [
-        {"name": "Kampania 1", "description": "Opis kampanii 1..."},
-        {"name": "Kampania 2", "description": "Opis kampanii 2..."},
-      ];
-      characters = [
-        {"name": "Postać 1", "class": "Wojownik", "level": 5},
-        {"name": "Postać 2", "class": "Mag", "level": 3},
-      ];
+      campaigns = fetchedCampaigns;
+      characters = fetchedCharacters;
     });
   }
 
@@ -44,6 +41,7 @@ class _UserPageState extends State<UserPage> {
     return UserPageLeyout(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text('Witaj, ${widget.user.username}!'),
           actions: [
             IconButton(
@@ -100,7 +98,7 @@ class _UserPageState extends State<UserPage> {
           children: [
             const CircleAvatar(
               radius: 30,
-              backgroundImage: AssetImage('assets/images/default_avatar.png'),
+              //backgroundImage: AssetImage('assets/images/default_avatar.png'),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -139,9 +137,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildCampaignsList() {
-    if (campaigns.isEmpty) {
-      return const Text("Brak kampanii");
-    }
+    if (campaigns.isEmpty) return const Text("Brak kampanii");
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -151,11 +147,9 @@ class _UserPageState extends State<UserPage> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.flag),
-                    title: Text(c["name"]),
-                    subtitle: Text(c["description"]),
-                    onTap: () {
-                      // TODO: api kampani
-                    },
+                    title: Text(c.name),
+                    subtitle: Text(c.description),
+                    onTap: () {},
                   ),
                   const Divider(height: 0),
                 ],
@@ -166,9 +160,7 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildCharactersList() {
-    if (characters.isEmpty) {
-      return const Text("Brak postaci");
-    }
+    if (characters.isEmpty) return const Text("Brak postaci");
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Column(
@@ -178,13 +170,9 @@ class _UserPageState extends State<UserPage> {
                 children: [
                   ListTile(
                     leading: const Icon(Icons.person),
-                    title: Text(ch["name"]),
-                    subtitle: Text(
-                      "Klasa: ${ch["class"]}, Poziom: ${ch["level"]}",
-                    ),
-                    onTap: () {
-                      // TODO: api PlayableCharakter
-                    },
+                    title: Text(ch.name),
+                    subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
+                    onTap: () {},
                   ),
                   const Divider(height: 0),
                 ],

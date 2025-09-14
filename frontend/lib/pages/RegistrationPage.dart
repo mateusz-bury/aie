@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
 import 'package:aie/service/AuthService.dart';
+import 'LoginPage.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,29 +17,26 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
 
-  void _submitRegister() {
+  void _submitRegister() async {
     final name = _nameController.text;
     final email = _emailController.text;
     final password = _passwordController.text;
+    final repeatPassword = _repeatPasswordController.text;
 
-    final registered = AuthService.register(
+    final registered = await AuthService.register(
       firstName: name,
-      lastName: '–', 
+      lastName: '–',
       email: email,
-      username: email.split('@')[0], 
+      username: email.split('@')[0],
       password: password,
+      repeatPassword: repeatPassword,
     );
 
-    final success = AuthService.register(
-      username: 'nowyUser',
-      password: 'tajnehaslo',
-      email: 'mail@example.com',
-      firstName: 'Jan',
-      lastName: 'Kowalski',
-    );
-
-    if (success == true) {
-      Navigator.pop(context); 
+    if (registered == true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginPage()),
+      );
     } else {
       ScaffoldMessenger.of(
         context,
@@ -76,11 +74,10 @@ class _RegisterPageState extends State<RegisterPage> {
                       color: Colors.black,
                     ),
                   ),
-                  const SizedBox(height: 20,),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _nameController,
                     decoration: InputDecoration(
-                      
                       labelText: 'Imię',
                       filled: true,
                       fillColor: Colors.transparent,

@@ -22,10 +22,10 @@ namespace AIO_API
 
 
             // User maping
-            CreateMap<User, UserDTO>()
-                .ForMember(u => u.Id, c => c.MapFrom(u => u.Id))
-                .ForMember(u => u.Username, c => c.MapFrom(u => u.Username))
-                .ForMember(u => u.RoleId, c => c.MapFrom(u => u.Role));
+            CreateMap<User, UserDto>();
+                //.ForMember(u => u.Id, c => c.MapFrom(u => u.Id))
+                //.ForMember(u => u.UserName, c => c.MapFrom(u => u.Username))
+                //.ForMember(u => u.RoleId, c => c.MapFrom(u => u.Role));
 
             CreateMap<CreateCharacterItemDto, CharacterItem>();
 
