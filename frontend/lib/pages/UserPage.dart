@@ -2,10 +2,11 @@ import 'package:aie/models/Campaign.dart';
 import 'package:aie/models/Character.dart';
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
-import 'package:aie/pages/AccountSettingPage.dart';
+import 'AccountSettingPage.dart';
 import 'package:aie/layouts/UserPageLeyout.dart';
 import '../service/CharacterService.dart';
 import '../service/CampaignService.dart';
+import 'CampaignPage.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -59,7 +60,7 @@ class _UserPageState extends State<UserPage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-                //AuthService.logout();
+                AuthService.logOut();
                 Navigator.pop(context);
               },
             ),
@@ -149,7 +150,14 @@ class _UserPageState extends State<UserPage> {
                     leading: const Icon(Icons.flag),
                     title: Text(c.name),
                     subtitle: Text(c.description),
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CampaignPage(campaignId: c.id),
+                        ),
+                      );
+                    },
                   ),
                   const Divider(height: 0),
                 ],

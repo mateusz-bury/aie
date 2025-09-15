@@ -6,7 +6,7 @@ using AIO_API.Models.CharacterDto;
 using AIO_API.Entities.Character;
 using AIO_API.Models.EquipementDto;
 using AIO_API.Entities.Campaigns;
-using AIO_API.Models;
+using AIO_API.Models.CampaignDto;
 
 namespace AIO_API
 {
@@ -14,7 +14,6 @@ namespace AIO_API
     {
         public AieMappingProfile()
         {
-
             CreateMap<PlayableCharacter, PlayableCharacterDto>();
             CreateMap<PlayableCharacter, UpdatePlayableCharacterDto>();
             CreateMap<CreatePlayableCharacterDto, PlayableCharacter>();
@@ -41,6 +40,7 @@ namespace AIO_API
 
 
             CreateMap<Campaign, CampaignDto>();
+            CreateMap<Campaign, CampaignByIdDto>();
         }
     }
 }

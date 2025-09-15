@@ -19,9 +19,12 @@ namespace AIO_API.Controllers
 
 
         [HttpGet("{id}")]
+        [Authorize]
         public ActionResult<Campaign> Get([FromRoute] int id)
         {
-            var campaignById = _campaignService.GetById(id);
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
+
+            var campaignById = _campaignService.GetById(id, userId);
             return Ok(campaignById);
         }
 

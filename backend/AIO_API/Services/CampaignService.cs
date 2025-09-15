@@ -1,9 +1,10 @@
 ﻿using AIO_API.Entities;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
-using AIO_API.Models;
+using AIO_API.Models.CampaignDto;
 using AIO_API.Models.CharacterDto;
 using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 
 namespace AIO_API.Services
 {
@@ -20,16 +21,18 @@ namespace AIO_API.Services
             _logger = logger;
         }
 
-        public CampaignDto GetById(int id)
+        public CampaignByIdDto GetById(int id, int userId)
         {
             var CampaignById = _dbContext
                             .Campaigns
+                            .Include(ci => ci.PlayableCharacters)
+                            .Where(pc => pc.UserId == userId)
                             .FirstOrDefault(p => p.Id == id);
 
             if (CampaignById == null)
                 throw new NotFoundException("Character not found");
 
-            var result = _mapper.Map<CampaignDto>(CampaignById);
+            var result = _mapper.Map<CampaignByIdDto>(CampaignById);
 
             return result;
         }

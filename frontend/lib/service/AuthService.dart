@@ -39,6 +39,10 @@ class AuthService {
     return await _storage.read(key: 'auth_token');
   }
 
+  static Future<void> logOut() async {
+    await _storage.delete(key: 'auth_token');
+  }
+
   static Future<User?> fetchCurrentUser() async {
     final token = await getToken();
     if (token == null) return null;

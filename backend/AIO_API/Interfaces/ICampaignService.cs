@@ -1,10 +1,10 @@
-﻿using AIO_API.Models;
+﻿using AIO_API.Models.CampaignDto;
 
 namespace AIO_API.Interfaces
 {
     public interface ICampaignService
     {
-        public CampaignDto GetById(int id);
+        public CampaignByIdDto GetById(int id, int userId);
         public IEnumerable<CampaignDto> GetAll(int userId);
     }
 }
