@@ -34,12 +34,6 @@ namespace AIO_API.Services
             if (playableCharacterById == null)
                 throw new NotFoundException("Character not found");
 
-            //playableCharacterById.Career = dto.Career;
-            //playableCharacterById.Name = dto.Name;
-            //playableCharacterById.Race = dto.Race;
-            //playableCharacterById.Age = dto.Age;
-            //playableCharacterById.Agility = dto.Agility;
-
             _dbContext.Entry(playableCharacterById).CurrentValues.SetValues(dto);
             _dbContext.SaveChanges();
         }

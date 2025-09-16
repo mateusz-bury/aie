@@ -1,4 +1,3 @@
-// lib/pages/AccountSettingsPage.dart
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
 import 'package:aie/layouts/LayoutContainer.dart';

@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// Klasa reprezentująca użytkownika po zalogowaniu
 class User {
   final String firstName;
   final String lastName;
@@ -26,7 +25,6 @@ class User {
   }
 }
 
-/// Serwis do obsługi uwierzytelniania
 class AuthService {
   static const String baseUrl = 'https://localhost:7221/api/account';
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -64,7 +62,6 @@ class AuthService {
     }
   }
 
-  /// Logowanie użytkownika – zwraca obiekt User po poprawnym zalogowaniu
   static Future<User?> login(String email, String password) async {
     final url = Uri.parse('$baseUrl/login');
     final headers = {'Content-Type': 'application/json'};
@@ -96,7 +93,6 @@ class AuthService {
     }
   }
 
-  /// Rejestracja użytkownika (opcjonalnie, jeśli potrzebujesz)
   static Future<bool> register({
     required String firstName,
     required String lastName,

@@ -1,4 +1,3 @@
-// lib/service/CharacterService.dart
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:aie/service/AuthService.dart';
@@ -43,6 +42,48 @@ class CharacterService {
     } else {
       throw Exception(
         'Błąd pobierania postaci o id $id: ${response.statusCode}',
+      );
+    }
+  }
+
+  static Future<void> updateCharacter(PlayableCharacter character) async {
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception('Brak tokena autoryzacyjnego');
+    }
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/${character.id}'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'id': character.id,
+        'name': character.name,
+        'race': character.race,
+        'career': character.career,
+        'age': character.age,
+        'campaignId': character.campaignId,
+        'ballisticSkill': character.ballisticSkill,
+        'strength': character.strength,
+        'toughness': character.toughness,
+        'agility': character.agility,
+        'intelligence': character.intelligence,
+        'willPower': character.willPower,
+        'fellowship': character.fellowship,
+        'attacks': character.attacks,
+        'wounds': character.wounds,
+        'movement': character.movement,
+        'magic': character.magic,
+        'insanityPoints': character.insanityPoints,
+        'fatePoints': character.fatePoints,
+      }),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception(
+        'Błąd aktualizacji postaci: ${response.statusCode} ${response.body}',
       );
     }
   }

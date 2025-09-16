@@ -65,7 +65,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Zmiana hasła'),
-        automaticallyImplyLeading: true, // pokaże strzałkę powrotu
+        automaticallyImplyLeading: true,
       ),
       body: Center(
         child: SingleChildScrollView(

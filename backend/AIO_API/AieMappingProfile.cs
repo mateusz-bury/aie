@@ -41,6 +41,8 @@ namespace AIO_API
 
             CreateMap<Campaign, CampaignDto>();
             CreateMap<Campaign, CampaignByIdDto>();
+            CreateMap<CreateCampaignDto, Campaign>();
+
         }
     }
 }

@@ -50,4 +50,72 @@ class CampaignService {
       );
     }
   }
+
+  static Future<bool> updateCampaign(
+    int campaignId,
+    String name,
+    String description,
+  ) async {
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception("Brak tokena - użytkownik nie jest zalogowany");
+    }
+
+    final body = jsonEncode({'name': name, 'description': description});
+
+    final response = await http.put(
+      Uri.parse('$baseUrl/$campaignId'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200 || response.statusCode == 204) {
+      return true;
+    } else if (response.statusCode == 400) {
+      throw Exception("Nieprawidłowe dane wysłane do serwera (400)");
+    } else if (response.statusCode == 401) {
+      throw Exception("Brak autoryzacji – zaloguj się ponownie (401)");
+    } else if (response.statusCode == 404) {
+      throw Exception("Kampania o ID $campaignId nie istnieje (404)");
+    } else {
+      throw Exception(
+        "Błąd podczas aktualizacji kampanii (status ${response.statusCode})",
+      );
+    }
+  }
+
+  static Future<int> createCampaign(String name, String description) async {
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception("Brak tokena - użytkownik nie jest zalogowany");
+    }
+
+    final body = jsonEncode({'name': name, 'description': description});
+
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: body,
+    );
+
+    if (response.statusCode == 200) {
+      // Zakładamy, że serwer zwraca nową kampanię w body
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return data['id'] as int;
+    } else if (response.statusCode == 400) {
+      throw Exception("Nieprawidłowe dane wysłane do serwera (400)");
+    } else if (response.statusCode == 401) {
+      throw Exception("Brak autoryzacji – zaloguj się ponownie (401)");
+    } else {
+      throw Exception(
+        "Błąd podczas tworzenia kampanii (status ${response.statusCode})",
+      );
+    }
+  }
 }

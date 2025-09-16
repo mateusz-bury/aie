@@ -7,6 +7,8 @@ import 'package:aie/layouts/UserPageLeyout.dart';
 import '../service/CharacterService.dart';
 import '../service/CampaignService.dart';
 import 'CampaignPage.dart';
+import 'PlayableCharacterPage.dart';
+import 'CreateCampaignPage.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -76,9 +78,11 @@ class _UserPageState extends State<UserPage> {
                 _buildProfileCard(),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Moje kampanie'),
+                const SizedBox(height: 8),
                 _buildCampaignsList(),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Moje postacie'),
+                const SizedBox(height: 8),
                 _buildCharactersList(),
               ],
             ),
@@ -97,10 +101,7 @@ class _UserPageState extends State<UserPage> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 30,
-              //backgroundImage: AssetImage('assets/images/default_avatar.png'),
-            ),
+            const CircleAvatar(radius: 30),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -138,15 +139,16 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildCampaignsList() {
-    if (campaigns.isEmpty) return const Text("Brak kampanii");
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children:
-            campaigns.map((c) {
-              return Column(
-                children: [
-                  ListTile(
+    List<Widget> campaignWidgets =
+        campaigns
+            .map(
+              (c) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ListTile(
                     leading: const Icon(Icons.flag),
                     title: Text(c.name),
                     subtitle: Text(c.description),
@@ -159,34 +161,73 @@ class _UserPageState extends State<UserPage> {
                       );
                     },
                   ),
-                  const Divider(height: 0),
-                ],
+                ),
+              ),
+            )
+            .toList();
+
+    // Dodajemy przycisk "Utwórz nową kampanię"
+    campaignWidgets.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.blue),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text(
+              "Utwórz nową kampanię",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateCampaignPage()),
               );
-            }).toList(),
+            },
+          ),
+        ),
       ),
     );
+
+    if (campaignWidgets.isEmpty) return const Text("Brak kampanii");
+
+    return Column(children: campaignWidgets);
   }
 
   Widget _buildCharactersList() {
     if (characters.isEmpty) return const Text("Brak postaci");
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children:
-            characters.map((ch) {
-              return Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(ch.name),
-                    subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
-                    onTap: () {},
+    return Column(
+      children:
+          characters
+              .map(
+                (ch) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: ListTile(
+                      leading: const Icon(Icons.person),
+                      title: Text(ch.name),
+                      subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    PlayableCharacterPage(characterId: ch.id),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  const Divider(height: 0),
-                ],
-              );
-            }).toList(),
-      ),
+                ),
+              )
+              .toList(),
     );
   }
 }

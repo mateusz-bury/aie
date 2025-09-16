@@ -1,4 +1,3 @@
-// lib/pages/StartPage.dart
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
 import 'RegistrationPage.dart';
