@@ -29,7 +29,7 @@ namespace AIO_API.Controllers
                 .Users
                 .ToList();
 
-            var userDTOs = _mapper.Map<List<UserDTO>>(user);
+            var userDTOs = _mapper.Map<List<UserDto>>(user);
 
             return Ok(userDTOs);
 
@@ -48,13 +48,13 @@ namespace AIO_API.Controllers
             }
             else
             {
-                var userDto = _mapper.Map<UserDTO>(user);
+                var userDto = _mapper.Map<UserDto>(user);
                 return Ok(user);
             }
         }
 
         [HttpPost]
-        public ActionResult<User> Create([FromBody] UserDTO userDto)
+        public ActionResult<User> Create([FromBody] UserDto userDto)
         {
             var user = _mapper.Map<User>(userDto);
             _dbContext.Users.Add(user);

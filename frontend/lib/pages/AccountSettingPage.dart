@@ -1,7 +1,7 @@
-// lib/pages/AccountSettingsPage.dart
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
+import 'ChangePasswordPage.dart';
 
 class AccountSettingsPage extends StatelessWidget {
   final User user;
@@ -19,7 +19,10 @@ class AccountSettingsPage extends StatelessWidget {
               leading: const Icon(Icons.lock),
               title: const Text('Zmień hasło'),
               onTap: () {
-                // TODO: API zmiany hasła
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const ChangePasswordPage()),
+                );
               },
             ),
             const Divider(),

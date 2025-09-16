@@ -1,8 +1,14 @@
-// lib/pages/UserPage.dart
+import 'package:aie/models/Campaign.dart';
+import 'package:aie/models/Character.dart';
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
-import 'package:aie/pages/AccountSettingPage.dart';
+import 'AccountSettingPage.dart';
 import 'package:aie/layouts/UserPageLeyout.dart';
+import '../service/CharacterService.dart';
+import '../service/CampaignService.dart';
+import 'CampaignPage.dart';
+import 'PlayableCharacterPage.dart';
+import 'CreateCampaignPage.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -14,8 +20,8 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  List<Map<String, dynamic>> campaigns = [];
-  List<Map<String, dynamic>> characters = [];
+  List<Campaign> campaigns = [];
+  List<Character> characters = [];
 
   @override
   void initState() {
@@ -24,18 +30,12 @@ class _UserPageState extends State<UserPage> {
   }
 
   Future<void> _loadUserData() async {
-    // TODO: api kampanie
+    final fetchedCampaigns = await CampaignService.fetchCampaigns();
+    final fetchedCharacters = await CharacterService.fetchCharacters();
 
     setState(() {
-      // placeholdery dla kampani i postaci
-      campaigns = [
-        {"name": "Kampania 1", "description": "Opis kampanii 1..."},
-        {"name": "Kampania 2", "description": "Opis kampanii 2..."},
-      ];
-      characters = [
-        {"name": "Postać 1", "class": "Wojownik", "level": 5},
-        {"name": "Postać 2", "class": "Mag", "level": 3},
-      ];
+      campaigns = fetchedCampaigns;
+      characters = fetchedCharacters;
     });
   }
 
@@ -44,6 +44,7 @@ class _UserPageState extends State<UserPage> {
     return UserPageLeyout(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: Text('Witaj, ${widget.user.username}!'),
           actions: [
             IconButton(
@@ -61,7 +62,7 @@ class _UserPageState extends State<UserPage> {
             IconButton(
               icon: const Icon(Icons.logout),
               onPressed: () {
-                //AuthService.logout();
+                AuthService.logOut();
                 Navigator.pop(context);
               },
             ),
@@ -77,9 +78,11 @@ class _UserPageState extends State<UserPage> {
                 _buildProfileCard(),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Moje kampanie'),
+                const SizedBox(height: 8),
                 _buildCampaignsList(),
                 const SizedBox(height: 20),
                 _buildSectionTitle('Moje postacie'),
+                const SizedBox(height: 8),
                 _buildCharactersList(),
               ],
             ),
@@ -98,10 +101,7 @@ class _UserPageState extends State<UserPage> {
         padding: const EdgeInsets.all(16),
         child: Row(
           children: [
-            const CircleAvatar(
-              radius: 30,
-              backgroundImage: AssetImage('assets/images/default_avatar.png'),
-            ),
+            const CircleAvatar(radius: 30),
             const SizedBox(width: 16),
             Expanded(
               child: Column(
@@ -139,58 +139,95 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildCampaignsList() {
-    if (campaigns.isEmpty) {
-      return const Text("Brak kampanii");
-    }
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children:
-            campaigns.map((c) {
-              return Column(
-                children: [
-                  ListTile(
+    List<Widget> campaignWidgets =
+        campaigns
+            .map(
+              (c) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: ListTile(
                     leading: const Icon(Icons.flag),
-                    title: Text(c["name"]),
-                    subtitle: Text(c["description"]),
+                    title: Text(c.name),
+                    subtitle: Text(c.description),
                     onTap: () {
-                      // TODO: api kampani
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CampaignPage(campaignId: c.id),
+                        ),
+                      );
                     },
                   ),
-                  const Divider(height: 0),
-                ],
+                ),
+              ),
+            )
+            .toList();
+
+    // Dodajemy przycisk "Utwórz nową kampanię"
+    campaignWidgets.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.blue),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text(
+              "Utwórz nową kampanię",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CreateCampaignPage()),
               );
-            }).toList(),
+            },
+          ),
+        ),
       ),
     );
+
+    if (campaignWidgets.isEmpty) return const Text("Brak kampanii");
+
+    return Column(children: campaignWidgets);
   }
 
   Widget _buildCharactersList() {
-    if (characters.isEmpty) {
-      return const Text("Brak postaci");
-    }
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Column(
-        children:
-            characters.map((ch) {
-              return Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(ch["name"]),
-                    subtitle: Text(
-                      "Klasa: ${ch["class"]}, Poziom: ${ch["level"]}",
+    if (characters.isEmpty) return const Text("Brak postaci");
+    return Column(
+      children:
+          characters
+              .map(
+                (ch) => Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
                     ),
-                    onTap: () {
-                      // TODO: api PlayableCharakter
-                    },
+                    child: ListTile(
+                      leading: const Icon(Icons.person),
+                      title: Text(ch.name),
+                      subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (context) =>
+                                    PlayableCharacterPage(characterId: ch.id),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                  const Divider(height: 0),
-                ],
-              );
-            }).toList(),
-      ),
+                ),
+              )
+              .toList(),
     );
   }
 }

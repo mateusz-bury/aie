@@ -80,6 +80,15 @@ namespace AIO_API.Migrations
                     b.Property<short>("Age")
                         .HasColumnType("smallint");
 
+                    b.Property<int>("Agility")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Attacks")
+                        .HasColumnType("int");
+
+                    b.Property<int>("BallisticSkill")
+                        .HasColumnType("int");
+
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
 
@@ -87,6 +96,24 @@ namespace AIO_API.Migrations
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
+
+                    b.Property<int>("FatePoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Fellowship")
+                        .HasColumnType("int");
+
+                    b.Property<int>("InsanityPoints")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Intelligence")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Magic")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Movement")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -98,7 +125,19 @@ namespace AIO_API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int>("Strength")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Toughness")
+                        .HasColumnType("int");
+
                     b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("WillPower")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Wounds")
                         .HasColumnType("int");
 
                     b.HasKey("id");

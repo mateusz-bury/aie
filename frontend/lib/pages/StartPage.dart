@@ -1,6 +1,6 @@
-// lib/pages/StartPage.dart
 import 'package:flutter/material.dart';
 import 'LoginPage.dart';
+import 'RegistrationPage.dart';
 import 'package:aie/layouts/LayoutContainer.dart';
 
 class StartPage extends StatelessWidget {
@@ -28,10 +28,23 @@ class StartPage extends StatelessWidget {
                 },
                 child: const Text(
                   'Logowanie',
-                  style:TextStyle(
-                    color: Colors.black
-                  ),
-                  ),
+                  style: TextStyle(color: Colors.black),
+                ),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.transparent,
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const RegisterPage()),
+                  );
+                },
+                child: const Text(
+                  'Rejestracja',
+                  style: TextStyle(color: Colors.black),
+                ),
               ),
             ],
           ),

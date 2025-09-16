@@ -1,4 +1,5 @@
-﻿using AIO_API.Entities.Users;
+﻿using AIO_API.Entities.Character;
+using AIO_API.Entities.Users;
 
 namespace AIO_API.Entities.Campaigns
 {
@@ -10,5 +11,7 @@ namespace AIO_API.Entities.Campaigns
         public DateTime CreateDate { get; set; }
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public ICollection<PlayableCharacter> PlayableCharacters { get; set; }
     }
 }

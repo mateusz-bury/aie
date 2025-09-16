@@ -1,4 +1,3 @@
-// lib/pages/LoginPage.dart
 import 'package:flutter/material.dart';
 import 'package:aie/service/AuthService.dart';
 import 'UserPage.dart';
@@ -72,14 +71,12 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     const Text(
-                      'Zaloguj się', 
-                      style: TextStyle(
-                        fontSize: 24,
-                        color: Colors.black
-                        )),
+                      'Zaloguj się',
+                      style: TextStyle(fontSize: 24, color: Colors.black),
+                    ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      style: const TextStyle(color:Colors.black),
+                      style: const TextStyle(color: Colors.black),
                       controller: _usernameController,
                       decoration: const InputDecoration(labelText: 'Login'),
                       validator:
@@ -88,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      style: const TextStyle(color:Colors.black),
+                      style: const TextStyle(color: Colors.black),
                       controller: _passwordController,
                       obscureText: true,
                       decoration: const InputDecoration(labelText: 'Hasło'),
@@ -96,13 +93,13 @@ class _LoginPageState extends State<LoginPage> {
                           (v) =>
                               v == null || v.isEmpty ? 'Wprowadź hasło' : null,
                     ),
-                    
+
                     const SizedBox(height: 20),
                     Button(
                       'Zaloguj',
                       onPressed: _submitLogin,
-                      isLoading: _isLoading, 
-                    ), 
+                      isLoading: _isLoading,
+                    ),
                   ],
                 ),
               ),

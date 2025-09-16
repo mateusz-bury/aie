@@ -15,6 +15,7 @@ namespace AIO_API.Controllers
     public class CharacterController : ControllerBase
     {
         private ICharacterService _characterService;
+        private int UserId => int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)!.Value);
         public CharacterController(ICharacterService characterService)
         {
             _characterService = characterService;
@@ -23,7 +24,7 @@ namespace AIO_API.Controllers
         [HttpPut("{id}")]
         public ActionResult Update([FromRoute]int id, [FromBody] UpdatePlayableCharacterDto dto)
         {
-            _characterService.Update(id, dto);
+            _characterService.Update(id, UserId, dto);
             return Ok();
         }
 
@@ -39,20 +40,14 @@ namespace AIO_API.Controllers
         [HttpPost]
         public ActionResult CreatePlayableCharacter([FromBody] CreatePlayableCharacterDto dto)
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
             var id = _characterService.Create(dto);
-
             return Created($"/api/character/{id}", null);
         }
 
         [HttpGet]
-        [Authorize]
         public ActionResult<IEnumerable<PlayableCharacterDto>> GetAll()
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
-
-            var playableCharactersDto = _characterService.GetAll(userId);
+            var playableCharactersDto = _characterService.GetAll(UserId);
             return Ok(playableCharactersDto);
         }
 

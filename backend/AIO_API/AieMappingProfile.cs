@@ -6,7 +6,7 @@ using AIO_API.Models.CharacterDto;
 using AIO_API.Entities.Character;
 using AIO_API.Models.EquipementDto;
 using AIO_API.Entities.Campaigns;
-using AIO_API.Models;
+using AIO_API.Models.CampaignDto;
 
 namespace AIO_API
 {
@@ -14,7 +14,6 @@ namespace AIO_API
     {
         public AieMappingProfile()
         {
-
             CreateMap<PlayableCharacter, PlayableCharacterDto>();
             CreateMap<PlayableCharacter, UpdatePlayableCharacterDto>();
             CreateMap<CreatePlayableCharacterDto, PlayableCharacter>();
@@ -22,10 +21,10 @@ namespace AIO_API
 
 
             // User maping
-            CreateMap<User, UserDTO>()
-                .ForMember(u => u.Id, c => c.MapFrom(u => u.Id))
-                .ForMember(u => u.Username, c => c.MapFrom(u => u.Username))
-                .ForMember(u => u.RoleId, c => c.MapFrom(u => u.Role));
+            CreateMap<User, UserDto>();
+                //.ForMember(u => u.Id, c => c.MapFrom(u => u.Id))
+                //.ForMember(u => u.UserName, c => c.MapFrom(u => u.Username))
+                //.ForMember(u => u.RoleId, c => c.MapFrom(u => u.Role));
 
             CreateMap<CreateCharacterItemDto, CharacterItem>();
 
@@ -41,6 +40,9 @@ namespace AIO_API
 
 
             CreateMap<Campaign, CampaignDto>();
+            CreateMap<Campaign, CampaignByIdDto>();
+            CreateMap<CreateCampaignDto, Campaign>();
+
         }
     }
 }
