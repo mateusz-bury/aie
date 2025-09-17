@@ -38,10 +38,10 @@ namespace AIO_API.Controllers
         }
 
         [HttpPost]
-        public ActionResult CreatePlayableCharacter([FromBody] CreatePlayableCharacterDto dto)
+        public ActionResult<PlayableCharacter> CreatePlayableCharacter([FromBody] CreatePlayableCharacterDto dto)
         {
-            var id = _characterService.Create(dto);
-            return Created($"/api/character/{id}", null);
+            var playableCharacter = _characterService.Create(UserId,dto);
+            return Ok(playableCharacter);
         }
 
         [HttpGet]

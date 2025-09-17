@@ -17,8 +17,8 @@ namespace AIO_API.Data
             {
                 if (!_dbContext.Campaigns.Any())
                 {
-                    var campains = GetCampaigns();
-                    _dbContext.Campaigns.AddRange(campains);
+                    var campaigns = GetCampaigns();
+                    _dbContext.Campaigns.AddRange(campaigns);
                     _dbContext.SaveChanges();
                 }
             }

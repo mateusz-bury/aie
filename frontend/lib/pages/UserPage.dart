@@ -9,6 +9,7 @@ import '../service/CampaignService.dart';
 import 'CampaignPage.dart';
 import 'PlayableCharacterPage.dart';
 import 'CreateCampaignPage.dart';
+import 'CreatePlayableCharacterPage.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -94,7 +95,6 @@ class _UserPageState extends State<UserPage> {
 
   Widget _buildProfileCard() {
     return Card(
-      color: Colors.transparent,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       elevation: 4,
       child: Padding(
@@ -148,17 +148,22 @@ class _UserPageState extends State<UserPage> {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(16),
                   ),
+                  clipBehavior: Clip.antiAlias,
                   child: ListTile(
                     leading: const Icon(Icons.flag),
                     title: Text(c.name),
                     subtitle: Text(c.description),
-                    onTap: () {
-                      Navigator.push(
+                    onTap: () async {
+                      final created = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) => CampaignPage(campaignId: c.id),
                         ),
                       );
+
+                      if (created == true) {
+                        await _loadUserData();
+                      }
                     },
                   ),
                 ),
@@ -166,7 +171,6 @@ class _UserPageState extends State<UserPage> {
             )
             .toList();
 
-    // Dodajemy przycisk "Utwórz nową kampanię"
     campaignWidgets.add(
       Padding(
         padding: const EdgeInsets.only(bottom: 8),
@@ -175,17 +179,22 @@ class _UserPageState extends State<UserPage> {
             borderRadius: BorderRadius.circular(16),
             side: const BorderSide(color: Colors.blue),
           ),
+          clipBehavior: Clip.antiAlias,
           child: ListTile(
             leading: const Icon(Icons.add),
             title: const Text(
               "Utwórz nową kampanię",
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            onTap: () {
-              Navigator.push(
+            onTap: () async {
+              final created = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => CreateCampaignPage()),
               );
+
+              if (created == true) {
+                await _loadUserData();
+              }
             },
           ),
         ),
@@ -198,36 +207,69 @@ class _UserPageState extends State<UserPage> {
   }
 
   Widget _buildCharactersList() {
-    if (characters.isEmpty) return const Text("Brak postaci");
-    return Column(
-      children:
-          characters
-              .map(
-                (ch) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: ListTile(
-                      leading: const Icon(Icons.person),
-                      title: Text(ch.name),
-                      subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder:
-                                (context) =>
-                                    PlayableCharacterPage(characterId: ch.id),
-                          ),
-                        );
-                      },
-                    ),
+    List<Widget> characterWidgets =
+        characters
+            .map(
+              (ch) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: ListTile(
+                    leading: const Icon(Icons.person),
+                    title: Text(ch.name),
+                    subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (context) =>
+                                  PlayableCharacterPage(characterId: ch.id),
+                        ),
+                      );
+                    },
                   ),
                 ),
-              )
-              .toList(),
+              ),
+            )
+            .toList();
+
+    characterWidgets.add(
+      Padding(
+        padding: const EdgeInsets.only(bottom: 8),
+        child: Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+            side: const BorderSide(color: Colors.blue),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: ListTile(
+            leading: const Icon(Icons.add),
+            title: const Text(
+              "Stwórz nową postać",
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            onTap: () async {
+              final created = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CreatePlayableCharacterPage(),
+                ),
+              );
+
+              if (created == true) {
+                await _loadUserData();
+              }
+            },
+          ),
+        ),
+      ),
     );
+
+    if (characters.isEmpty) return const Text("Brak postaci");
+    return Column(children: characterWidgets);
   }
 }

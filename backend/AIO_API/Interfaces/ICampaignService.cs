@@ -10,5 +10,6 @@ namespace AIO_API.Interfaces
         public IEnumerable<CampaignDto> GetAll(int userId);
         public void UpdateCampaign(int campaignId, int userId, UpdateCampaignDto dto);
         public Campaign CreateCampaign(int userId, CreateCampaignDto dto);
+        public void DeleteCampaign(int userId, int campaignId);
     }
 }

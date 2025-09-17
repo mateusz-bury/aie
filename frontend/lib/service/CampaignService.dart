@@ -118,4 +118,31 @@ class CampaignService {
       );
     }
   }
+
+  static Future<bool> deleteCampaign(int campaignId) async {
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception("Brak tokena - użytkownik nie jest zalogowany");
+    }
+
+    final response = await http.delete(
+      Uri.parse('${baseUrl}/${campaignId}'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 204) {
+      return true;
+    } else if (response.statusCode == 400) {
+      throw Exception("Nieprawidłowe dane wysłane do serwera (400)");
+    } else if (response.statusCode == 401) {
+      throw Exception("Brak autoryzacji – zaloguj się ponownie (401)");
+    } else {
+      throw Exception(
+        "Błąd podczas usuwania kampanii (status ${response.statusCode})",
+      );
+    }
+  }
 }

@@ -39,22 +39,6 @@ class _EditCampaignPageState extends State<EditCampaignPage> {
       );
 
       if (!mounted) return;
-      await showDialog(
-        context: context,
-        builder:
-            (context) => AlertDialog(
-              title: const Text("Sukces"),
-              content: const Text("Kampania została pomyślnie zaktualizowana."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("OK"),
-                ),
-              ],
-            ),
-      );
-
-      if (!mounted) return;
       Navigator.pop(context, true);
       Navigator.pushReplacement(
         context,
