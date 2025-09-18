@@ -56,5 +56,14 @@ namespace AIO_API.Controllers
             return Ok(campaign);
         }
 
+        [HttpDelete("{id}")]
+        [Authorize]
+        public ActionResult DeleteCampaign([FromRoute] int id)
+        {
+
+            _campaignService.DeleteCampaign(UserId, id);
+            return NoContent();
+        }
+
     }
 }

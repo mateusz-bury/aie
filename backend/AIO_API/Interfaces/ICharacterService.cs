@@ -1,4 +1,5 @@
-﻿using AIO_API.Models.CharacterDto;
+﻿using AIO_API.Entities.Character;
+using AIO_API.Models.CharacterDto;
 
 namespace AIO_API.Interfaces
 {
@@ -6,7 +7,7 @@ namespace AIO_API.Interfaces
     {
 
         public PlayableCharacterDto GetById(int id);
-        public int Create(CreatePlayableCharacterDto dto);
+        public PlayableCharacter Create(int userId,CreatePlayableCharacterDto dto);
         public IEnumerable<PlayableCharacterDto> GetAll(int userId);
         public void Delete(int id);
         public void Update(int id,int userId, UpdatePlayableCharacterDto dto);

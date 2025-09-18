@@ -87,4 +87,56 @@ class CharacterService {
       );
     }
   }
+
+  static Future<PlayableCharacter> createCharacter(
+    PlayableCharacter character,
+  ) async {
+    final token = await AuthService.getToken();
+    if (token == null) {
+      throw Exception('Brak tokena autoryzacyjnego');
+    }
+
+    final response = await http.post(
+      Uri.parse(baseUrl),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'name': character.name,
+        'race': character.race,
+        'career': character.career,
+        'age': character.age,
+        'campaignId': character.campaignId,
+        'ballisticSkill': character.ballisticSkill,
+        'strength': character.strength,
+        'toughness': character.toughness,
+        'agility': character.agility,
+        'intelligence': character.intelligence,
+        'willPower': character.willPower,
+        'fellowship': character.fellowship,
+        'attacks': character.attacks,
+        'wounds': character.wounds,
+        'movement': character.movement,
+        'magic': character.magic,
+        'insanityPoints': character.insanityPoints,
+        'fatePoints': character.fatePoints,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> data = jsonDecode(response.body);
+      return PlayableCharacter.fromJson(data);
+    } else if (response.statusCode == 400) {
+      throw Exception(
+        'Nieprawidłowe dane wysłane do serwera (400): ${response.body}',
+      );
+    } else if (response.statusCode == 401) {
+      throw Exception('Brak autoryzacji – zaloguj się ponownie (401)');
+    } else {
+      throw Exception(
+        'Błąd tworzenia postaci: ${response.statusCode} ${response.body}',
+      );
+    }
+  }
 }

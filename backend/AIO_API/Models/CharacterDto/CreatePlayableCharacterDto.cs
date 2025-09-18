@@ -16,7 +16,7 @@ namespace AIO_API.Models.CharacterDto
         [Required]
         public short Age { get; set; }
         [Required]
-        public int CamapinId { get; set; }
+        public int CampaignId { get; set; }
 
         public int BallisticSkill { get; set; }
         public int Strength { get; set; }

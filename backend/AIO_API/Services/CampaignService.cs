@@ -77,6 +77,19 @@ namespace AIO_API.Services
             return campaign;
         }
 
+        public void DeleteCampaign(int userId, int campaignId)
+        {
+            var deletedCampaign = _dbContext.
+                                   Campaigns.
+                                   Where(pc => pc.UserId == userId).
+                                   FirstOrDefault(c => c.Id == campaignId);
+
+            if (deletedCampaign == null)
+                throw new NotFoundException("Campaign not found");
+
+            _dbContext.Remove(deletedCampaign);
+            _dbContext.SaveChanges();
+        }
 
     }
 }

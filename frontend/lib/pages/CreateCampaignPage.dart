@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../service/CampaignService.dart';
 import '../layouts/UserPageLeyout.dart';
-import 'CampaignPage.dart';
 
 class CreateCampaignPage extends StatefulWidget {
   const CreateCampaignPage({super.key});
@@ -19,36 +18,13 @@ class _CreateCampaignPageState extends State<CreateCampaignPage> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      // Wywołanie metody serwisu do stworzenia kampanii
-      final createdCampaignId = await CampaignService.createCampaign(
+      await CampaignService.createCampaign(
         nameController.text,
         descriptionController.text,
       );
 
       if (!mounted) return;
-      await showDialog(
-        context: context,
-        builder:
-            (context) => AlertDialog(
-              title: const Text("Sukces"),
-              content: const Text("Kampania została pomyślnie utworzona."),
-              actions: [
-                TextButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text("OK"),
-                ),
-              ],
-            ),
-      );
-
-      if (!mounted) return;
-      // Przekierowanie do strony nowo utworzonej kampanii
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (_) => CampaignPage(campaignId: createdCampaignId),
-        ),
-      );
+      Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

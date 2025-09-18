@@ -39,6 +39,23 @@ class _CampaignPageState extends State<CampaignPage> {
     }
   }
 
+  Future<void> _deleteCampaign(CampaignById campaign) async {
+    try {
+      final deleted = await CampaignService.deleteCampaign(campaign.id);
+
+      if (deleted == true) {
+        if (!mounted) return;
+        // Po usunięciu wracamy na stronę startową i przekazujemy true, żeby odświeżyć listę
+        Navigator.pop(context, true);
+      }
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Błąd przy usuwaniu kampanii: $e')),
+      );
+    }
+  }
+
   Future<void> _goToEditCharacter(int characterId) async {
     final updated = await Navigator.push(
       context,
@@ -90,9 +107,57 @@ class _CampaignPageState extends State<CampaignPage> {
                     const SizedBox(height: 8),
                     Text(campaign.description),
                     const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () => _goToEditPage(campaign),
-                      child: const Text("Edytuj kampanię"),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () => _goToEditPage(campaign),
+                            child: const Text("Edytuj kampanię"),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () async {
+                              // Wyświetlenie okna potwierdzenia
+                              final confirm = await showDialog<bool>(
+                                context: context,
+                                builder:
+                                    (context) => AlertDialog(
+                                      title: const Text('Potwierdzenie'),
+                                      content: const Text(
+                                        'Czy na pewno chcesz usunąć tę kampanię?',
+                                      ),
+                                      actions: [
+                                        TextButton(
+                                          onPressed:
+                                              () => Navigator.of(
+                                                context,
+                                              ).pop(false),
+                                          child: const Text('Anuluj'),
+                                        ),
+                                        TextButton(
+                                          onPressed:
+                                              () => Navigator.of(
+                                                context,
+                                              ).pop(true),
+                                          child: const Text(
+                                            'Usuń',
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                              );
+
+                              if (confirm == true) {
+                                await _deleteCampaign(campaign);
+                              }
+                            },
+                            child: const Text("Usuń kampanię"),
+                          ),
+                        ),
+                      ],
                     ),
                     const SizedBox(height: 24),
                     const Text(

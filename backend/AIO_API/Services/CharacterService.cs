@@ -78,13 +78,14 @@ namespace AIO_API.Services
             return playableCharactersDto;
         }
 
-        public int Create(CreatePlayableCharacterDto dto)
+        public PlayableCharacter Create(int userId, CreatePlayableCharacterDto dto)
         {
             var playableCharacter = _mapper.Map<PlayableCharacter>(dto);
+            playableCharacter.UserId = userId;
             _dbContext.PlayableCharacter.Add(playableCharacter);
             _dbContext.SaveChanges();
 
-            return playableCharacter.id;
+            return playableCharacter;
         }
     }
 }
