@@ -36,9 +36,16 @@ Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposó
 ### Backend (.NET Web API)
 
 1. Należy pobrać repozytorium 
+
+Frontend:
 ```bash
    git clone https://github.com/mateusz-bury/aie.git
 ```
+Backend:
+```bash
+   git https://github.com/JakubCepielik/AIE_backend
+```
+
 2. W folderze ./backend w należy uruchomić rozwiązanie AIO_API.sln
 3. W PowerShellu należy stworzyć plik mi gracyjny i założyć bazę danych
 ```pwsh
