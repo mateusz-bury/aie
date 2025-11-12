@@ -5,6 +5,23 @@
 .pub/
 pubspec.lock
 
+# Pliki build�w
+bin/
+obj/
+out/
+
+# Pliki i foldery generowane przez Visual Studio
+.vs/
+*.user
+*.suo
+.vscode/
+.history/
+
+# Pliki zale�no�ci NuGet
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
 
 # Flutter build outputs
 /frontend/build/*
@@ -35,13 +52,10 @@ ios/Runner/GeneratedPluginRegistrant.*
 .gradle/
 local.properties
 
-# VS Code
-.vscode/
-.history/
-
 # Other
 *.log
 *.tmp
+*.temp
 *.swp
 *.lock
 *.DS_Store
@@ -59,10 +73,27 @@ coverage/
 # Symbolic links (dla Windows)
 symlink/
 =======
-# Pliki tymczasowe Visual Studio
-backend/.vs/
-backend/AIO_API/obj/
-backend/AIO_API/bin/
-backend/AIO_API/.vs/
+
+# Pliki ustawie� IDE
+*.userprefs
+
+# Pliki publikacji
+publish/
+*.Publish.xml
+
+# Pliki bazy danych lokalnej
+*.mdf
+*.ldf
+
+# Pliki systemowe
+Thumbs.db
+Desktop.ini
+
+# Pliki �rodowiskowe
+.env
+.env.*
+
+# Pliki test�w
+TestResults/
 
 
