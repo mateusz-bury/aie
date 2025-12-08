@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../service/CampaignService.dart';
 import '../models/CampaignById.dart';
 import 'CampaignPage.dart';
-import '../layouts/UserPageLeyout.dart';
 
 class EditCampaignPage extends StatefulWidget {
   final CampaignById campaign;
@@ -56,7 +55,7 @@ class _EditCampaignPageState extends State<EditCampaignPage> {
 
   @override
   Widget build(BuildContext context) {
-    return UserPageLeyout(
+    return Container(
       child: Scaffold(
         appBar: AppBar(title: const Text("Edytuj kampanię")),
         body: SingleChildScrollView(

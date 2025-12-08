@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../service/CampaignService.dart';
-import '../layouts/UserPageLeyout.dart';
 
 class CreateCampaignPage extends StatefulWidget {
   const CreateCampaignPage({super.key});
@@ -35,7 +34,7 @@ class _CreateCampaignPageState extends State<CreateCampaignPage> {
 
   @override
   Widget build(BuildContext context) {
-    return UserPageLeyout(
+    return Container(
       child: Scaffold(
         appBar: AppBar(title: const Text("Utwórz nową kampanię")),
         body: SingleChildScrollView(

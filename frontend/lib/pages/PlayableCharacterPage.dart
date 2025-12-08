@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../layouts/UserPageLeyout.dart';
 import 'EditPlayableCharacterPage.dart';
 import '../service/CharacterService.dart';
 import '../models/PlayableCharacter.dart';
@@ -42,7 +41,7 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return UserPageLeyout(
+    return Container(
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,

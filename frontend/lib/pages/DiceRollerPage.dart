@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
-import 'package:aie/buttons/Button.dart';
 
 class DiceRollerPage extends StatefulWidget {
   const DiceRollerPage({super.key});
@@ -50,7 +48,7 @@ class _DiceRollerState extends State<DiceRollerPage> with SingleTickerProviderSt
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: LayoutContainer(
+      body: Container(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -62,10 +60,10 @@ class _DiceRollerState extends State<DiceRollerPage> with SingleTickerProviderSt
               ),
             ),
             const SizedBox(height: 100),
-            Button(
-              'Losuj!',
-              onPressed: rollDice,
-            ),
+ElevatedButton(
+  onPressed: () { rollDice();},
+  child: Text("Kliknij mnie"),
+)
           ],
         ),
       ),

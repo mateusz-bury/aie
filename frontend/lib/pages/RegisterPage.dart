@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
 import 'package:aie/service/AuthService.dart';
 import 'LoginPage.dart';
 
@@ -18,10 +17,10 @@ class _RegisterPageState extends State<RegisterPage> {
   final _repeatPasswordController = TextEditingController();
 
   void _submitRegister() async {
-    final name = _nameController.text;
-    final email = _emailController.text;
-    final password = _passwordController.text;
-    final repeatPassword = _repeatPasswordController.text;
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+    final repeatPassword = _repeatPasswordController.text.trim();
 
     final registered = await AuthService.register(
       firstName: name,
@@ -55,7 +54,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutContainer(
+    return Container(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -156,7 +155,11 @@ class _RegisterPageState extends State<RegisterPage> {
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: _submitRegister,
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                           _submitRegister();
+                                       }
+                                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.blue[800],
                         foregroundColor: Color.fromARGB(255, 230, 220, 220),

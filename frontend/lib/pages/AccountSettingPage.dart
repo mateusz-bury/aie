@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
 import 'ChangePasswordPage.dart';
 
 class AccountSettingsPage extends StatelessWidget {
@@ -10,7 +9,7 @@ class AccountSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutContainer(
+    return Container(
       child: Scaffold(
         appBar: AppBar(title: const Text('Ustawienia konta')),
         body: ListView(

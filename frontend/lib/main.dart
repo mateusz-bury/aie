@@ -1,5 +1,9 @@
 import 'package:aie/pages/StartPage.dart';
 import 'package:flutter/material.dart';
+import 'package:aie/pages/LoginPage.dart';
+import 'package:aie/pages/RegisterPage.dart';
+
+
 
 void main() {
   runApp(const MyApp());
@@ -13,7 +17,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'AIE Application',
       debugShowCheckedModeBanner: false,
-      home: const StartPage(),
+      routes: {
+    '/login': (_) => const LoginPage(),
+    '/register': (_) => const RegisterPage(), // jeśli istnieje
+  },
+      home: const WelcomePage(),
     );
   }
 }

@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aie/service/AuthService.dart';
 import 'UserPage.dart';
-import 'package:aie/layouts/LayoutContainer.dart';
-import 'package:aie/buttons/Button.dart';
+import 'package:aie/layouts/AppLayout.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -58,7 +57,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return LayoutContainer(
+    return AppLayout(
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: Center(
@@ -72,33 +71,32 @@ class _LoginPageState extends State<LoginPage> {
                   children: [
                     const Text(
                       'Zaloguj się',
-                      style: TextStyle(fontSize: 24, color: Colors.black),
+                      style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                       controller: _usernameController,
-                      decoration: const InputDecoration(labelText: 'Login'),
+                      decoration: const InputDecoration(labelText: 'Login', labelStyle: TextStyle(color: Colors.white)),
                       validator:
                           (v) =>
                               v == null || v.isEmpty ? 'Wprowadź login' : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
-                      style: const TextStyle(color: Colors.black),
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Hasło'),
+                      decoration: const InputDecoration(labelText: 'Hasło', labelStyle: TextStyle(color: Colors.white)),
                       validator:
                           (v) =>
                               v == null || v.isEmpty ? 'Wprowadź hasło' : null,
                     ),
 
                     const SizedBox(height: 20),
-                    Button(
-                      'Zaloguj',
-                      onPressed: _submitLogin,
-                      isLoading: _isLoading,
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _submitLogin,
+                      child: const Text("Zaloguj"),
                     ),
                   ],
                 ),

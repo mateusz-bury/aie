@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import '../layouts/UserPageLeyout.dart';
 import 'EditCampaignPage.dart';
 import 'EditPlayableCharacterPage.dart';
 import '../service/CampaignService.dart';
@@ -72,7 +71,7 @@ class _CampaignPageState extends State<CampaignPage> {
 
   @override
   Widget build(BuildContext context) {
-    return UserPageLeyout(
+    return Container(
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: true,

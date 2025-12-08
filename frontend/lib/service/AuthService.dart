@@ -94,40 +94,42 @@ class AuthService {
     }
   }
 
-  static Future<bool> register({
-    required String firstName,
-    required String lastName,
-    required String email,
-    required String username,
-    required String password,
-    required String repeatPassword,
-  }) async {
-    final url = Uri.parse('$baseUrl/register');
-    final headers = {'Content-Type': 'application/json'};
+static Future<bool> register({
+  required String firstName,
+  required String lastName,
+  required String email,
+  required String username,
+  required String password,
+  required String repeatPassword,
+}) async {
+  final url = Uri.parse('$baseUrl/register');
+  final headers = {'Content-Type': 'application/json'};
 
-    final body = jsonEncode({
-      'firstName': firstName,
-      'lastName': lastName,
-      'email': email,
-      'username': username,
-      'password': password,
-      'confirmPassword': repeatPassword,
-    });
+  final body = jsonEncode({
+    'Email': email,
+    'Password': password,
+    'ConfirmPassword': repeatPassword,
+    'FirstName': firstName,
+    'LastName': lastName,
+    'UserName': username,
+    'RoleId': 1, // domyślna rola użytkownika
+  });
 
-    try {
-      final response = await http.post(url, headers: headers, body: body);
+  try {
+    final response = await http.post(url, headers: headers, body: body);
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      } else {
-        print('Błąd rejestracji: ${response.statusCode}');
-        return false;
-      }
-    } catch (e) {
-      print('Wyjątek podczas rejestracji: $e');
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      return true;
+    } else {
+      print('Błąd rejestracji: ${response.statusCode}');
+      print('Treść: ${response.body}');
       return false;
     }
+  } catch (e) {
+    print('Wyjątek podczas rejestracji: $e');
+    return false;
   }
+}
 
   static Future<bool> changePassword({
     required String currentPassword,

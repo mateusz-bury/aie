@@ -3,7 +3,6 @@ import 'package:aie/models/Character.dart';
 import 'package:flutter/material.dart';
 import '../service/AuthService.dart';
 import 'AccountSettingPage.dart';
-import 'package:aie/layouts/UserPageLeyout.dart';
 import '../service/CharacterService.dart';
 import '../service/CampaignService.dart';
 import 'CampaignPage.dart';
@@ -42,7 +41,7 @@ class _UserPageState extends State<UserPage> {
 
   @override
   Widget build(BuildContext context) {
-    return UserPageLeyout(
+    return Container(
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -206,70 +205,70 @@ class _UserPageState extends State<UserPage> {
     return Column(children: campaignWidgets);
   }
 
-  Widget _buildCharactersList() {
-    List<Widget> characterWidgets =
-        characters
-            .map(
-              (ch) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.person),
-                    title: Text(ch.name),
-                    subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (context) =>
-                                  PlayableCharacterPage(characterId: ch.id),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            )
-            .toList();
-
-    characterWidgets.add(
-      Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.blue),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: ListTile(
-            leading: const Icon(Icons.add),
-            title: const Text(
-              "Stwórz nową postać",
-              style: TextStyle(fontWeight: FontWeight.bold),
+ Widget _buildCharactersList() {
+  List<Widget> characterWidgets = characters
+      .map(
+        (ch) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            onTap: () async {
-              final created = await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CreatePlayableCharacterPage(),
-                ),
-              );
-
-              if (created == true) {
-                await _loadUserData();
-              }
-            },
+            clipBehavior: Clip.antiAlias,
+            child: ListTile(
+              leading: const Icon(Icons.person),
+              title: Text(ch.name),
+              subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) =>
+                        PlayableCharacterPage(characterId: ch.id),
+                  ),
+                );
+              },
+            ),
           ),
         ),
-      ),
-    );
+      )
+      .toList();
 
-    if (characters.isEmpty) return const Text("Brak postaci");
-    return Column(children: characterWidgets);
-  }
+    characterWidgets.add(
+    Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+          side: const BorderSide(color: Colors.blue),
+        ),
+        clipBehavior: Clip.antiAlias,
+        child: ListTile(
+          leading: const Icon(Icons.add),
+          title: const Text(
+            "Stwórz nową postać",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+          onTap: () async {
+            final created = await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CreatePlayableCharacterPage(),
+              ),
+            );
+
+            if (created == true) {
+              await _loadUserData();
+            }
+          },
+        ),
+      ),
+    ),
+  );
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: characterWidgets,
+  );
+}
 }
