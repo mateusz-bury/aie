@@ -1,14 +1,15 @@
-import 'package:aie/models/Campaign.dart';
-import 'package:aie/models/Character.dart';
 import 'package:flutter/material.dart';
-import '../service/AuthService.dart';
-import 'AccountSettingPage.dart';
-import '../service/CharacterService.dart';
-import '../service/CampaignService.dart';
-import 'CampaignPage.dart';
-import 'PlayableCharacterPage.dart';
-import 'CreateCampaignPage.dart';
-import 'CreatePlayableCharacterPage.dart';
+import 'package:aie/features/auth/data/auth_service.dart';
+import 'package:aie/features/auth/domain/user.dart';
+import 'package:aie/features/auth/presentation/pages/account_settings_page.dart';
+import 'package:aie/features/campaigns/data/campaign_service.dart';
+import 'package:aie/features/campaigns/domain/campaign.dart';
+import 'package:aie/features/campaigns/presentation/pages/campaign_page.dart';
+import 'package:aie/features/campaigns/presentation/pages/create_campaign_page.dart';
+import 'package:aie/features/characters/data/character_service.dart';
+import 'package:aie/features/characters/domain/character.dart';
+import 'package:aie/features/characters/presentation/pages/create_playable_character_page.dart';
+import 'package:aie/features/characters/presentation/pages/playable_character_page.dart';
 
 class UserPage extends StatefulWidget {
   final User user;

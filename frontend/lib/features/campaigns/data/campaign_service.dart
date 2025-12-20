@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:aie/service/AuthService.dart';
-import '../models/Campaign.dart';
-import '../models/CampaignById.dart';
+import 'package:aie/core/utils/app_logger.dart';
+import 'package:aie/features/auth/data/auth_service.dart';
+import 'package:aie/features/campaigns/domain/campaign.dart';
+import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
 
 class CampaignService {
   static const String baseUrl = 'https://localhost:7221/api/campaign';
@@ -20,7 +21,7 @@ class CampaignService {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((json) => Campaign.fromJson(json)).toList();
     } else {
-      print('Błąd pobierania kampanii: ${response.statusCode}');
+      AppLogger.w('Błąd pobierania kampanii: ${response.statusCode}');
       return [];
     }
   }

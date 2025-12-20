@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../service/AuthService.dart';
-import 'ChangePasswordPage.dart';
+import 'package:aie/features/auth/presentation/pages/change_password_page.dart';
+import 'package:aie/features/auth/domain/user.dart';
 
 class AccountSettingsPage extends StatelessWidget {
   final User user;

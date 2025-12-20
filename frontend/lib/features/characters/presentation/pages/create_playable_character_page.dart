@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../service/CharacterService.dart';
-import '../service/CampaignService.dart';
-import '../models/PlayableCharacter.dart';
-import '../models/Campaign.dart';
+import 'package:aie/features/campaigns/data/campaign_service.dart';
+import 'package:aie/features/campaigns/domain/campaign.dart';
+import 'package:aie/features/characters/data/character_service.dart';
+import 'package:aie/features/characters/domain/playable_character.dart';
 
 class CreatePlayableCharacterPage extends StatefulWidget {
   const CreatePlayableCharacterPage({super.key});
@@ -58,32 +58,32 @@ class _CreatePlayableCharacterPageState
       ).showSnackBar(const SnackBar(content: Text("Wybierz kampanię")));
       return;
     }
-
     _formKey.currentState!.save();
 
-    try {
-      final newCharacter = PlayableCharacter(
-        id: 0, // API powinno nadać ID
-        campaignId: _selectedCampaignId!,
-        name: _name!,
-        race: _race!,
-        career: _career!,
-        age: _age!,
-        ballisticSkill: _ballisticSkill!,
-        strength: _strength!,
-        toughness: _toughness!,
-        agility: _agility!,
-        intelligence: _intelligence!,
-        willPower: _willPower!,
-        fellowship: _fellowship!,
-        attacks: _attacks!,
-        wounds: _wounds!,
-        movement: _movement!,
-        magic: _magic!,
-        insanityPoints: _insanityPoints!,
-        fatePoints: _fatePoints!,
-      );
+    // Use safe defaults to avoid runtime exceptions when some fields are missing
+    final newCharacter = PlayableCharacter(
+      id: 0, // API powinno nadać ID
+      campaignId: _selectedCampaignId!,
+      name: _name ?? '',
+      race: _race ?? '',
+      career: _career ?? '',
+      age: _age ?? 0,
+      ballisticSkill: _ballisticSkill ?? 0,
+      strength: _strength ?? 0,
+      toughness: _toughness ?? 0,
+      agility: _agility ?? 0,
+      intelligence: _intelligence ?? 0,
+      willPower: _willPower ?? 0,
+      fellowship: _fellowship ?? 0,
+      attacks: _attacks ?? 0,
+      wounds: _wounds ?? 0,
+      movement: _movement ?? 0,
+      magic: _magic ?? 0,
+      insanityPoints: _insanityPoints ?? 0,
+      fatePoints: _fatePoints ?? 0,
+    );
 
+    try {
       await CharacterService.createCharacter(newCharacter);
 
       if (!mounted) return;
@@ -108,7 +108,7 @@ class _CreatePlayableCharacterPageState
         if (int.tryParse(value) == null) return 'Wpisz poprawną liczbę';
         return null;
       },
-      onSaved: (value) => onSaved(int.tryParse(value!)),
+      onSaved: (value) => onSaved(int.tryParse(value ?? '') ?? 0),
     );
   }
 
@@ -126,7 +126,7 @@ class _CreatePlayableCharacterPageState
                   child: Column(
                     children: [
                       DropdownButtonFormField<int>(
-                        value: _selectedCampaignId,
+                        initialValue: _selectedCampaignId,
                         items:
                             _campaigns
                                 .map(

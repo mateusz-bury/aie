@@ -5,31 +5,38 @@
 .pub/
 pubspec.lock
 
-# Pliki build�w
+# Build artifacts
 bin/
 obj/
 out/
 
-# Pliki i foldery generowane przez Visual Studio
+# Visual Studio / IDE
 .vs/
 *.user
 *.suo
+*.userprefs
 .vscode/
 .history/
 
-# Pliki zale�no�ci NuGet
+# NuGet
 packages/
 *.nupkg
 project.lock.json
 project.fragment.lock.json
 
 # Flutter build outputs
-/frontend/build/*
+/frontend/build/
 /frontend/linux
 /frontend/macos
-/frontend/Windows
 /frontend/windows
+.flutter-plugins
+.flutter-plugins-dependencies
 flutter_*.png
+
+# Flutter generated registrants
+**/generated_plugin_registrant.*
+frontend/linux/flutter/generated_plugins.cmake
+frontend/windows/flutter/generated_plugins.cmake
 
 # iOS
 ios/Flutter/Flutter.framework
@@ -66,18 +73,14 @@ lib/generated_plugin_registrant.dart
 # Coverage
 coverage/
 
-# Firebase config files (opcjonalnie, jeśli nie chcesz ich trzymać w repo)
+# Firebase config files (opcjonalnie, jeżeli nie chcesz ich trzymać w repo)
 # google-services.json
 # GoogleService-Info.plist
 
 # Symbolic links (dla Windows)
 symlink/
-=======
 
-# Pliki ustawie� IDE
-*.userprefs
-
-# Pliki publikacji
+# Publikacja
 publish/
 *.Publish.xml
 
@@ -89,11 +92,9 @@ publish/
 Thumbs.db
 Desktop.ini
 
-# Pliki �rodowiskowe
+# Pliki środowiskowe
 .env
 .env.*
 
-# Pliki test�w
+# Pliki testów
 TestResults/
-
-

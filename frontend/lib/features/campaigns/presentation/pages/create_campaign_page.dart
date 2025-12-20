@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../service/CampaignService.dart';
+import 'package:aie/features/campaigns/data/campaign_service.dart';
 
 class CreateCampaignPage extends StatefulWidget {
   const CreateCampaignPage({super.key});

@@ -1,4 +1,4 @@
-import 'PlayableCharacter.dart';
+import 'package:aie/features/characters/domain/playable_character.dart';
 
 class CampaignById {
   final int id;

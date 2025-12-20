@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:aie/service/AuthService.dart';
-import '../models/Character.dart';
-import '../models/PlayableCharacter.dart';
+import 'package:aie/core/utils/app_logger.dart';
+import 'package:aie/features/auth/data/auth_service.dart';
+import 'package:aie/features/characters/domain/character.dart';
+import 'package:aie/features/characters/domain/playable_character.dart';
 
 class CharacterService {
   static const String baseUrl = 'https://localhost:7221/api/character';
@@ -20,7 +21,7 @@ class CharacterService {
       final List<dynamic> data = jsonDecode(response.body);
       return data.map((json) => Character.fromJson(json)).toList();
     } else {
-      print('Błąd pobierania postaci: ${response.statusCode}');
+      AppLogger.w('Błąd pobierania postaci: ${response.statusCode}');
       return [];
     }
   }

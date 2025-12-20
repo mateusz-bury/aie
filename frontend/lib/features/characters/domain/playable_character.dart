@@ -42,26 +42,38 @@ class PlayableCharacter {
   });
 
   factory PlayableCharacter.fromJson(Map<String, dynamic> json) {
+    int parseInt(dynamic v, [int fallback = 0]) {
+      if (v == null) return fallback;
+      if (v is int) return v;
+      if (v is String) return int.tryParse(v) ?? fallback;
+      return fallback;
+    }
+
+    String parseString(dynamic v, [String fallback = '']) {
+      if (v == null) return fallback;
+      return v.toString();
+    }
+
     return PlayableCharacter(
-      id: json['id'],
-      name: json['name'],
-      race: json['race'],
-      career: json['career'],
-      age: json['age'],
-      campaignId: json['campaignId'],
-      ballisticSkill: json['ballisticSkill'],
-      strength: json['strength'],
-      toughness: json['toughness'],
-      agility: json['agility'],
-      intelligence: json['intelligence'],
-      willPower: json['willPower'],
-      fellowship: json['fellowship'],
-      attacks: json['attacks'],
-      wounds: json['wounds'],
-      movement: json['movement'],
-      magic: json['magic'],
-      insanityPoints: json['insanityPoints'],
-      fatePoints: json['fatePoints'],
+      id: parseInt(json['id']),
+      name: parseString(json['name']),
+      race: parseString(json['race']),
+      career: parseString(json['career']),
+      age: parseInt(json['age']),
+      campaignId: parseInt(json['campaignId']),
+      ballisticSkill: parseInt(json['ballisticSkill']),
+      strength: parseInt(json['strength']),
+      toughness: parseInt(json['toughness']),
+      agility: parseInt(json['agility']),
+      intelligence: parseInt(json['intelligence']),
+      willPower: parseInt(json['willPower']),
+      fellowship: parseInt(json['fellowship']),
+      attacks: parseInt(json['attacks']),
+      wounds: parseInt(json['wounds']),
+      movement: parseInt(json['movement']),
+      magic: parseInt(json['magic']),
+      insanityPoints: parseInt(json['insanityPoints']),
+      fatePoints: parseInt(json['fatePoints']),
     );
   }
 }

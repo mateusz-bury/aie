@@ -1,64 +1,42 @@
 # AIE - Alea Iacta EST
 
-![AIE Logo](frontend/assets/images/aie.png)  
+AIE to zestaw aplikacji do prowadzenia i organizowania sesji RPG: backend w .NET Web API oraz frontend mobilno-desktopowy w Flutterze. Repozytorium zawiera oba komponenty oraz podstawowe materiały projektowe.
 
-## Opis
+## Struktura repozytorium
+- `backend/AIE_backend/AIO_API` – .NET 9 Web API (JWT, EF Core, NLog, Swagger).
+- `frontend` – Flutter (Dart) z zasobami UI i konfiguracją wieloplatformową.
+- `docs` – miejsce na instrukcje i notatki projektowe.
 
-**AIE - Alea Iacta EST** to nowoczesna aplikacja do zarządzania sesjami RPG, która pomaga prowadzić kampanie, logować postępy i organizować postacie graczy.  
-Projekt powstał, by ułatwić Mistrzom Gry i graczom prowadzenie sesji w sposób prosty i intuicyjny, zarówno online, jak i offline.
+### Struktura frontendu (feature-first)
+- `lib/app` – konfiguracja `MaterialApp`, trasy startowe.
+- `lib/core` – layout, utils (np. logger).
+- `lib/features/auth|campaigns|characters|dice|home|onboarding` – każda funkcja z warstwami `data` (serwisy/API), `domain` (modele), `presentation/pages` (widoki).
 
----
+> Uwaga: backend jest obecnie w ścieżce `backend/AIE_backend/AIO_API` (odziedziczone z osobnego repo). Możemy go spłaszczyć do `backend/AIO_API` przy kolejnej iteracji, jeśli chcesz uprościć ścieżki.
 
-## Funkcjonalności
+## Wymagania
+- .NET 9 SDK + `dotnet-ef` global tool
+- SQL Server (lub zgodna baza)
+- Flutter SDK (zainstalowane zależności dla docelowych platform)
 
-- Rejestracja i logowanie użytkowników  
-- Różne role użytkowników: administrator, gracz, mistrz gry
-- Tworzenie i zarządzanie sesjami RPG  
-- Panel użytkownika z danymi i historią sesji  
-- Intuicyjny interfejs z gradientowym layoutem i responsywnym designem  
-- Rzucanie wirtualnymi kostkami z animacjami  
-- Backend w C# Web API (w oddzielnym folderze `backend`)  
-- Frontend Flutter (w folderze `frontend`)
+## Szybki start
 
----
-
-## Technologia
-
-- **Frontend:** Flutter (Dart)  
-- **Backend:** C# (.NET Web API)  
-- **Baza danych:** [SQL Server]  
-- **Kontrola wersji:** Git + GitHub
-
----
-
-## Instalacja i uruchomienie
-
-### Backend (.NET Web API)
-
-1. Należy pobrać repozytorium 
-
-Frontend:
+### Backend
 ```bash
-   git clone https://github.com/mateusz-bury/aie.git
+cd backend/AIE_backend/AIO_API
+dotnet restore
+# ustaw połączenie w appsettings.(Development.)json -> ConnectionStrings:DefaultConnection
+dotnet ef database update   # utworzenie/aktualizacja bazy
+dotnet run                  # lub uruchom z IDE
 ```
-Backend:
+Tworząc nową migrację: `dotnet ef migrations add <nazwa>` a następnie `dotnet ef database update`.
+
+### Frontend
 ```bash
-   git https://github.com/JakubCepielik/AIE_backend
+cd frontend
+flutter pub get
+flutter run    # lub .\\flutter-run.bat na Windows
 ```
 
-2. W folderze ./backend w należy uruchomić rozwiązanie AIO_API.sln
-3. W PowerShellu należy stworzyć plik mi gracyjny i założyć bazę danych
-```pwsh
-   add-migration
-```
-```pwsh
-   update-database
-```
-4. Uruchamiamy Program.cs
-   
-### Frontend (Flutter Dart)
-
-1. W folderze ./frontend uruchamiamy komende
-```bash
-   .\flutter-run
-```
+## Dokumentacja
+Szczegóły konfiguracji i checklisty dev: `docs/setup.md` (do uzupełniania razem z zespołem).

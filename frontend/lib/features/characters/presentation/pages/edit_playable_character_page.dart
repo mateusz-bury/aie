@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import '../service/CharacterService.dart';
-import '../models/PlayableCharacter.dart';
+import 'package:aie/features/characters/data/character_service.dart';
+import 'package:aie/features/characters/domain/playable_character.dart';
 
 class EditPlayableCharacterPage extends StatefulWidget {
   final int characterId;

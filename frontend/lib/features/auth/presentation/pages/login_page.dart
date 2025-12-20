@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:aie/service/AuthService.dart';
-import 'UserPage.dart';
-import 'package:aie/layouts/AppLayout.dart';
+import 'package:aie/core/layout/app_layout.dart';
+import 'package:aie/features/auth/data/auth_service.dart';
+import 'package:aie/features/home/presentation/pages/user_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -33,19 +33,19 @@ class _LoginPageState extends State<LoginPage> {
           MaterialPageRoute(builder: (_) => UserPage(user: user)),
         );
       } else {
-        _showError('Nieprawidłowy login lub hasło');
+        _showError('Nieprawidlowy login lub haslo');
       }
     } catch (e) {
-      _showError('Błąd logowania: ${e.toString()}');
+      _showError('Blad logowania: ${e.toString()}');
     } finally {
       setState(() => _isLoading = false);
     }
   }
 
   void _showError(String message) {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 
   @override
@@ -70,33 +70,46 @@ class _LoginPageState extends State<LoginPage> {
                 child: Column(
                   children: [
                     const Text(
-                      'Zaloguj się',
+                      'Zaloguj sie',
                       style: TextStyle(fontSize: 18, color: Colors.white),
                     ),
                     const SizedBox(height: 20),
                     TextFormField(
                       style: const TextStyle(fontSize: 18, color: Colors.white),
                       controller: _usernameController,
-                      decoration: const InputDecoration(labelText: 'Login', labelStyle: TextStyle(color: Colors.white)),
-                      validator:
-                          (v) =>
-                              v == null || v.isEmpty ? 'Wprowadź login' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Login',
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Wprowadz login' : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       style: const TextStyle(fontSize: 18, color: Colors.white),
                       controller: _passwordController,
                       obscureText: true,
-                      decoration: const InputDecoration(labelText: 'Hasło', labelStyle: TextStyle(color: Colors.white)),
-                      validator:
-                          (v) =>
-                              v == null || v.isEmpty ? 'Wprowadź hasło' : null,
+                      decoration: const InputDecoration(
+                        labelText: 'Haslo',
+                        labelStyle: TextStyle(color: Colors.white),
+                      ),
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Wprowadz haslo' : null,
                     ),
-
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _isLoading ? null : _submitLogin,
-                      child: const Text("Zaloguj"),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              ),
+                            )
+                          : const Text('Zaloguj'),
                     ),
                   ],
                 ),

@@ -1,8 +1,8 @@
+import 'package:aie/features/campaigns/data/campaign_service.dart';
+import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
+import 'package:aie/features/campaigns/presentation/pages/edit_campaign_page.dart';
+import 'package:aie/features/characters/presentation/pages/edit_playable_character_page.dart';
 import 'package:flutter/material.dart';
-import 'EditCampaignPage.dart';
-import 'EditPlayableCharacterPage.dart';
-import '../service/CampaignService.dart';
-import '../models/CampaignById.dart';
 
 class CampaignPage extends StatefulWidget {
   final int campaignId;
