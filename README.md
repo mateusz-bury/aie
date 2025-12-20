@@ -1,5 +1,8 @@
 # AIE - Alea Iacta EST
 
+<img width="800" height="1200" alt="image" src="https://github.com/user-attachments/assets/c20973de-5e33-4180-880c-efcabb6b5e82" />
+
+
 AIE to zestaw aplikacji do prowadzenia i organizowania sesji RPG: backend w .NET Web API oraz frontend mobilno-desktopowy w Flutterze. Repozytorium zawiera oba komponenty oraz podstawowe materiały projektowe.
 
 ## Struktura repozytorium
