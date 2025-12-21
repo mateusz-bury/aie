@@ -3,7 +3,9 @@
 <img width="800" height="1200" alt="image" src="https://github.com/user-attachments/assets/c20973de-5e33-4180-880c-efcabb6b5e82" />
 
 
-AIE to zestaw aplikacji do prowadzenia i organizowania sesji RPG: backend w .NET Web API oraz frontend mobilno-desktopowy w Flutterze. Repozytorium zawiera oba komponenty oraz podstawowe materiały projektowe.
+AIE to zestaw aplikacji do prowadzenia i organizowania sesji RPG:
+backend w .NET Web API oraz frontend mobilno-desktopowy w Flutterze. 
+Repozytorium zawiera oba komponenty oraz podstawowe materiały projektowe.
 
 ## Struktura repozytorium
 - `backend/AIE_backend/AIO_API` – .NET 9 Web API (JWT, EF Core, NLog, Swagger).
@@ -15,7 +17,7 @@ AIE to zestaw aplikacji do prowadzenia i organizowania sesji RPG: backend w .NET
 - `lib/core` – layout, utils (np. logger).
 - `lib/features/auth|campaigns|characters|dice|home|onboarding` – każda funkcja z warstwami `data` (serwisy/API), `domain` (modele), `presentation/pages` (widoki).
 
-> Uwaga: backend jest obecnie w ścieżce `backend/AIE_backend/AIO_API` (odziedziczone z osobnego repo). Możemy go spłaszczyć do `backend/AIO_API` przy kolejnej iteracji, jeśli chcesz uprościć ścieżki.
+> Uwaga: backend jest obecnie w ścieżce `backend/AIE_backend/AIO_API` (odziedziczone z osobnego repo)
 
 ## Wymagania
 - .NET 9 SDK + `dotnet-ef` global tool
@@ -42,4 +44,4 @@ flutter run    # lub .\\flutter-run.bat na Windows
 ```
 
 ## Dokumentacja
-Szczegóły konfiguracji i checklisty dev: `docs/setup.md` (do uzupełniania razem z zespołem).
+Szczegóły konfiguracji i checklisty dev: `docs/setup.md`
