@@ -21,6 +21,8 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
   String? _race;
   String? _career;
   int? _age;
+
+  int? _characterType;
   int? _ballisticSkill;
   int? _strength;
   int? _toughness;
@@ -55,6 +57,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
       final updatedCharacter = PlayableCharacter(
         id: originalCharacter.id,
+        characterType: originalCharacter.characterType,
         name: _name!,
         race: _race!,
         career: _career!,
@@ -75,7 +78,9 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
         fatePoints: _fatePoints!,
       );
 
-      await CharacterService.updateCharacter(updatedCharacter);
+      // Backend rozdziela update danych podstawowych i statystyk.
+      await CharacterService.updateCharacterBasic(updatedCharacter);
+      await CharacterService.updateCharacterStats(updatedCharacter, statisticType: 1);
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Postać została zaktualizowana")),
@@ -128,6 +133,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
           _race ??= character.race;
           _career ??= character.career;
           _age ??= character.age;
+          _characterType ??= character.characterType;
           _ballisticSkill ??= character.ballisticSkill;
           _strength ??= character.strength;
           _toughness ??= character.toughness;
@@ -148,6 +154,17 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
               key: _formKey,
               child: Column(
                 children: [
+                  DropdownButtonFormField<int>(
+                    value: _characterType,
+                    decoration: const InputDecoration(labelText: 'Typ postaci'),
+                    items: const [
+                      DropdownMenuItem(value: 0, child: Text('Gracz (Playable)')),
+                      DropdownMenuItem(value: 1, child: Text('NPC (Npc)')),
+                      DropdownMenuItem(value: 2, child: Text('Szablon (Template)')),
+                    ],
+                    // Backend nie ma UpdateCharacterDto z CharacterType, więc na razie tylko podgląd.
+                    onChanged: null,
+                  ),
                   TextFormField(
                     initialValue: _name,
                     decoration: const InputDecoration(labelText: 'Imię'),

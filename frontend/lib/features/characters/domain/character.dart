@@ -13,10 +13,11 @@ class Character {
 
   factory Character.fromJson(Map<String, dynamic> json) {
     return Character(
-      id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      career: json['career'] ?? '',
-      race: json['race'] ?? 0,
+      id: (json['id'] ?? json['Id'] ?? 0) as int,
+      name: (json['name'] ?? json['Name'] ?? '') as String,
+      career: (json['career'] ?? json['Career'] ?? '') as String,
+      race: (json['race'] ?? json['Race'] ?? '') as String,
+      
     );
   }
 }

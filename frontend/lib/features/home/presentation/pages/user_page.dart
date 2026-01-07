@@ -1,15 +1,14 @@
-import 'package:flutter/material.dart';
 import 'package:aie/features/auth/data/auth_service.dart';
 import 'package:aie/features/auth/domain/user.dart';
 import 'package:aie/features/auth/presentation/pages/account_settings_page.dart';
 import 'package:aie/features/campaigns/data/campaign_service.dart';
-import 'package:aie/features/campaigns/domain/campaign.dart';
-import 'package:aie/features/campaigns/presentation/pages/campaign_page.dart';
-import 'package:aie/features/campaigns/presentation/pages/create_campaign_page.dart';
 import 'package:aie/features/characters/data/character_service.dart';
-import 'package:aie/features/characters/domain/character.dart';
-import 'package:aie/features/characters/presentation/pages/create_playable_character_page.dart';
-import 'package:aie/features/characters/presentation/pages/playable_character_page.dart';
+import 'package:aie/features/campaigns/presentation/pages/campaigns_page.dart';
+import 'package:aie/features/characters/presentation/pages/characters_page.dart';
+import 'package:aie/features/items/presentation/pages/items_page.dart';
+import 'package:flutter/material.dart';
+import 'package:aie/core/widgets/aie_background.dart';
+import 'package:aie/core/theme/app_colors.dart';
 
 class UserPage extends StatefulWidget {
   final User user;
@@ -21,255 +20,174 @@ class UserPage extends StatefulWidget {
 }
 
 class _UserPageState extends State<UserPage> {
-  List<Campaign> campaigns = [];
-  List<Character> characters = [];
+  int _campaignsCount = 0;
+  int _charactersCount = 0;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    _loadCounts();
   }
 
-  Future<void> _loadUserData() async {
-    final fetchedCampaigns = await CampaignService.fetchCampaigns();
-    final fetchedCharacters = await CharacterService.fetchCharacters();
-
+  Future<void> _loadCounts() async {
+    setState(() => _loading = true);
+    final campaigns = await CampaignService.fetchCampaigns();
+    final characters = await CharacterService.fetchCharacters();
+    if (!mounted) return;
     setState(() {
-      campaigns = fetchedCampaigns;
-      characters = fetchedCharacters;
+      _campaignsCount = campaigns.length;
+      _charactersCount = characters.length;
+      _loading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: false,
-          title: Text('Witaj, ${widget.user.username}!'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.settings),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder:
-                        (context) => AccountSettingsPage(user: widget.user),
-                  ),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.logout),
-              onPressed: () {
-                AuthService.logOut();
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        ),
-        body: SingleChildScrollView(
-          child: Container(
-            color: Colors.transparent,
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildProfileCard(),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Moje kampanie'),
-                const SizedBox(height: 8),
-                _buildCampaignsList(),
-                const SizedBox(height: 20),
-                _buildSectionTitle('Moje postacie'),
-                const SizedBox(height: 8),
-                _buildCharactersList(),
-              ],
-            ),
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Text('AIE – ${widget.user.username}'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadCounts,
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildProfileCard() {
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      elevation: 4,
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Row(
-          children: [
-            const CircleAvatar(radius: 30),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '${widget.user.username}',
-                    style: const TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    widget.user.username,
-                    style: const TextStyle(color: Colors.transparent),
-                  ),
-                  Text(
-                    '@${widget.user.username}',
-                    style: const TextStyle(color: Colors.transparent),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-    );
-  }
-
-  Widget _buildCampaignsList() {
-    List<Widget> campaignWidgets =
-        campaigns
-            .map(
-              (c) => Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: ListTile(
-                    leading: const Icon(Icons.flag),
-                    title: Text(c.name),
-                    subtitle: Text(c.description),
-                    onTap: () async {
-                      final created = await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CampaignPage(campaignId: c.id),
-                        ),
-                      );
-
-                      if (created == true) {
-                        await _loadUserData();
-                      }
-                    },
-                  ),
-                ),
-              ),
-            )
-            .toList();
-
-    campaignWidgets.add(
-      Padding(
-        padding: const EdgeInsets.only(bottom: 8),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-            side: const BorderSide(color: Colors.blue),
-          ),
-          clipBehavior: Clip.antiAlias,
-          child: ListTile(
-            leading: const Icon(Icons.add),
-            title: const Text(
-              "Utwórz nową kampanię",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () async {
-              final created = await Navigator.push(
+          IconButton(
+            icon: const Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => CreateCampaignPage()),
+                MaterialPageRoute(builder: (_) => AccountSettingsPage(user: widget.user)),
               );
-
-              if (created == true) {
-                await _loadUserData();
-              }
             },
           ),
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () {
+              AuthService.logOut();
+              Navigator.pop(context);
+            },
+          ),
+        ],
+      ),
+      backgroundColor: Colors.transparent,
+      extendBodyBehindAppBar: true,
+      body: AieBackground(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 8),
+            const SizedBox(height: 56),
+            const Text('Menu', style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            if (_loading)
+              const Expanded(child: Center(child: CircularProgressIndicator()))
+            else
+              Expanded(
+                child: GridView.count(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 12,
+                  mainAxisSpacing: 12,
+                  children: [
+                    _Tile(
+                      icon: Icons.map,
+                      title: 'Moje kampanie',
+                      subtitle: '$_campaignsCount kampanii',
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CampaignsPage()),
+                        );
+                        await _loadCounts();
+                      },
+                    ),
+                    _Tile(
+                      icon: Icons.group,
+                      title: 'Moje postacie',
+                      subtitle: '$_charactersCount postaci',
+                      onTap: () async {
+                        await Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const CharactersPage()),
+                        );
+                        await _loadCounts();
+                      },
+                    ),
+                    _Tile(
+                      icon: Icons.inventory_2,
+                      title: 'Przedmioty',
+                      subtitle: 'Katalog itemów',
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const ItemsPage()),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ),
       ),
     );
-
-    if (campaignWidgets.isEmpty) return const Text("Brak kampanii");
-
-    return Column(children: campaignWidgets);
   }
+}
 
- Widget _buildCharactersList() {
-  List<Widget> characterWidgets = characters
-      .map(
-        (ch) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            clipBehavior: Clip.antiAlias,
-            child: ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(ch.name),
-              subtitle: Text("Klasa: ${ch.career}, Rasa: ${ch.race}"),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        PlayableCharacterPage(characterId: ch.id),
-                  ),
-                );
-              },
-            ),
-          ),
-        ),
-      )
-      .toList();
+class _Tile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
 
-    characterWidgets.add(
-    Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: const BorderSide(color: Colors.blue),
-        ),
-        clipBehavior: Clip.antiAlias,
-        child: ListTile(
-          leading: const Icon(Icons.add),
-          title: const Text(
-            "Stwórz nową postać",
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          onTap: () async {
-            final created = await Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CreatePlayableCharacterPage(),
+  const _Tile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: AppColors.primary.withOpacity(0.12),
+                  borderRadius: BorderRadius.circular(14),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primary.withOpacity(0.25),
+                      blurRadius: 16,
+                      spreadRadius: 1,
+                    ),
+                  ],
+                ),
+                child: Icon(icon, size: 34, color: AppColors.accent),
               ),
-            );
-
-            if (created == true) {
-              await _loadUserData();
-            }
-          },
+              const SizedBox(height: 12),
+              Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 6),
+              Text(subtitle, style: const TextStyle(fontSize: 12)),
+              const Spacer(),
+              const Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(Icons.arrow_forward, color: AppColors.textMuted),
+              ),
+            ],
+          ),
         ),
       ),
-    ),
-  );
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: characterWidgets,
-  );
-}
+    );
+  }
 }

@@ -1,7 +1,10 @@
 import 'package:aie/features/campaigns/data/campaign_service.dart';
 import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
 import 'package:aie/features/campaigns/presentation/pages/edit_campaign_page.dart';
+import 'package:aie/features/characters/presentation/pages/create_playable_character_page.dart';
 import 'package:aie/features/characters/presentation/pages/edit_playable_character_page.dart';
+import 'package:aie/features/characters/domain/character.dart';
+import 'package:aie/features/characters/data/character_service.dart';
 import 'package:flutter/material.dart';
 
 class CampaignPage extends StatefulWidget {
@@ -69,6 +72,104 @@ class _CampaignPageState extends State<CampaignPage> {
     }
   }
 
+  Future<void> _goToCreateCharacter(int campaignId) async {
+    final created = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => CreatePlayableCharacterPage(initialCampaignId: campaignId),
+      ),
+    );
+    if (created == true) {
+      setState(() {
+        _loadCampaign();
+      });
+    }
+  }
+
+  Future<void> _showAddCharacterSheet() async {
+    await showModalBottomSheet(
+      context: context,
+      showDragHandle: true,
+      builder: (_) {
+        return SafeArea(
+          child: Wrap(
+            children: [
+              ListTile(
+                leading: const Icon(Icons.person_add),
+                title: const Text('Utwórz nową postać w tej kampanii'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _goToCreateCharacter(widget.campaignId);
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.playlist_add),
+                title: const Text('Dodaj istniejącą postać do kampanii'),
+                subtitle: const Text('Przypina postać do tej kampanii'),
+                onTap: () {
+                  Navigator.pop(context);
+                  _pickExistingCharacter();
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _pickExistingCharacter() async {
+    try {
+      final all = await CharacterService.fetchCharacters();
+      if (!mounted) return;
+
+      final selected = await showDialog<Character>(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Wybierz postać'),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: all.isEmpty
+                  ? const Text('Brak postaci do przypisania')
+                  : ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: all.length,
+                      itemBuilder: (context, i) {
+                        final ch = all[i];
+                        return ListTile(
+                          leading: const Icon(Icons.person),
+                          title: Text(ch.name),
+                          subtitle: Text('${ch.race} – ${ch.career}'),
+                          onTap: () => Navigator.pop(context, ch),
+                        );
+                      },
+                    ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Anuluj'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (selected == null) return;
+      await CharacterService.assignCharacterToCampaign(
+        characterId: selected.id,
+        campaignId: widget.campaignId,
+      );
+      setState(() => _loadCampaign());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Nie udało się dodać postaci: $e')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -76,6 +177,10 @@ class _CampaignPageState extends State<CampaignPage> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: const Text("Kampania"),
+        ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _showAddCharacterSheet,
+          child: const Icon(Icons.add),
         ),
         body: FutureBuilder<CampaignById>(
           future: _campaignFuture,
@@ -167,7 +272,7 @@ class _CampaignPageState extends State<CampaignPage> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    _buildPlayableCharacters(campaign.playableCharacters),
+                    _buildCharacters(campaign.characters),
                   ],
                 ),
               ),
@@ -178,12 +283,11 @@ class _CampaignPageState extends State<CampaignPage> {
     );
   }
 
-  Widget _buildPlayableCharacters(List<dynamic> characters) {
+  Widget _buildCharacters(List<Character> characters) {
     if (characters.isEmpty) return const Text("Brak postaci");
     return Column(
       children:
-          characters
-              .map(
+          characters.map(
                 (ch) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Card(

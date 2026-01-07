@@ -5,7 +5,10 @@ import 'package:aie/features/characters/data/character_service.dart';
 import 'package:aie/features/characters/domain/playable_character.dart';
 
 class CreatePlayableCharacterPage extends StatefulWidget {
-  const CreatePlayableCharacterPage({super.key});
+  /// Jeśli przekazane, formularz będzie tworzył postać bezpośrednio w tej kampanii.
+  final int? initialCampaignId;
+
+  const CreatePlayableCharacterPage({super.key, this.initialCampaignId});
 
   @override
   State<CreatePlayableCharacterPage> createState() =>
@@ -18,6 +21,9 @@ class _CreatePlayableCharacterPageState
 
   List<Campaign> _campaigns = [];
   int? _selectedCampaignId;
+
+  /// 0=Playable, 1=Npc
+  int _characterType = 0;
 
   String? _name;
   String? _race;
@@ -40,6 +46,7 @@ class _CreatePlayableCharacterPageState
   @override
   void initState() {
     super.initState();
+    _selectedCampaignId = widget.initialCampaignId;
     _loadCampaigns();
   }
 
@@ -60,9 +67,9 @@ class _CreatePlayableCharacterPageState
     }
     _formKey.currentState!.save();
 
-    // Use safe defaults to avoid runtime exceptions when some fields are missing
     final newCharacter = PlayableCharacter(
       id: 0, // API powinno nadać ID
+      characterType: _characterType,
       campaignId: _selectedCampaignId!,
       name: _name ?? '',
       race: _race ?? '',
@@ -125,26 +132,39 @@ class _CreatePlayableCharacterPageState
                   key: _formKey,
                   child: Column(
                     children: [
-                      DropdownButtonFormField<int>(
-                        initialValue: _selectedCampaignId,
-                        items:
-                            _campaigns
-                                .map(
-                                  (c) => DropdownMenuItem(
-                                    value: c.id,
-                                    child: Text(c.name),
-                                  ),
-                                )
-                                .toList(),
-                        decoration: const InputDecoration(
-                          labelText: 'Kampania',
+                      // Jeśli kampania jest narzucona (np. z widoku kampanii), ukrywamy selector.
+                      if (widget.initialCampaignId == null)
+                        DropdownButtonFormField<int>(
+                          initialValue: _selectedCampaignId,
+                          items:
+                              _campaigns
+                                  .map(
+                                    (c) => DropdownMenuItem(
+                                      value: c.id,
+                                      child: Text(c.name),
+                                    ),
+                                  )
+                                  .toList(),
+                          decoration: const InputDecoration(
+                            labelText: 'Kampania',
+                          ),
+                          onChanged:
+                              (value) =>
+                                  setState(() => _selectedCampaignId = value),
+                          validator:
+                              (value) =>
+                                  value == null ? "Wybierz kampanię" : null,
                         ),
-                        onChanged:
-                            (value) =>
-                                setState(() => _selectedCampaignId = value),
-                        validator:
-                            (value) =>
-                                value == null ? "Wybierz kampanię" : null,
+                      DropdownButtonFormField<int>(
+                        value: _characterType,
+                        decoration: const InputDecoration(
+                          labelText: 'Typ postaci',
+                        ),
+                        items: const [
+                          DropdownMenuItem(value: 0, child: Text('Gracz (Playable)')),
+                          DropdownMenuItem(value: 1, child: Text('NPC (Npc)')),
+                        ],
+                        onChanged: (v) => setState(() => _characterType = v ?? 0),
                       ),
                       TextFormField(
                         decoration: const InputDecoration(labelText: 'Imię'),

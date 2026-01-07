@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:aie/core/widgets/aie_background.dart';
 
 /// Globalny layout dla całej aplikacji
 
@@ -13,24 +14,11 @@ class AppLayout extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(title ?? "AIE"),
-        backgroundColor: Colors.blueAccent,
+        backgroundColor: Colors.transparent,
       ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF2E3A59), Color(0xFF1B2433)],
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-          ),
-        ),
-        child: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: child,
-          ),
-        ),
-      ),
+      extendBodyBehindAppBar: true,
+      backgroundColor: Colors.transparent,
+      body: AieBackground(child: child),
     );
   }
 }

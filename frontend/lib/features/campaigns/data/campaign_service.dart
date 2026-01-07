@@ -4,16 +4,17 @@ import 'package:aie/core/utils/app_logger.dart';
 import 'package:aie/features/auth/data/auth_service.dart';
 import 'package:aie/features/campaigns/domain/campaign.dart';
 import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
+import 'package:aie/core/api/api_config.dart';
 
 class CampaignService {
-  static const String baseUrl = 'https://localhost:7221/api/campaign';
+  static Uri _endpoint([String path = '']) => ApiConfig.uri('/api/campaign$path');
 
   static Future<List<Campaign>> fetchCampaigns() async {
     final token = await AuthService.getToken();
     if (token == null) return [];
 
     final response = await http.get(
-      Uri.parse(baseUrl),
+      _endpoint(),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -33,7 +34,7 @@ class CampaignService {
     }
 
     final response = await http.get(
-      Uri.parse('$baseUrl/$campaignId'),
+      _endpoint('/$campaignId'),
       headers: {'Authorization': 'Bearer $token'},
     );
 
@@ -65,7 +66,7 @@ class CampaignService {
     final body = jsonEncode({'name': name, 'description': description});
 
     final response = await http.put(
-      Uri.parse('$baseUrl/$campaignId'),
+      _endpoint('/$campaignId'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -97,7 +98,7 @@ class CampaignService {
     final body = jsonEncode({'name': name, 'description': description});
 
     final response = await http.post(
-      Uri.parse(baseUrl),
+      _endpoint(),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
@@ -106,7 +107,6 @@ class CampaignService {
     );
 
     if (response.statusCode == 200) {
-      // Zakładamy, że serwer zwraca nową kampanię w body
       final Map<String, dynamic> data = jsonDecode(response.body);
       return data['id'] as int;
     } else if (response.statusCode == 400) {
@@ -127,7 +127,7 @@ class CampaignService {
     }
 
     final response = await http.delete(
-      Uri.parse('${baseUrl}/${campaignId}'),
+      _endpoint('/$campaignId'),
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',

@@ -3,9 +3,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:aie/core/utils/app_logger.dart';
 import 'package:aie/features/auth/domain/user.dart';
+import 'package:aie/core/api/api_config.dart';
 
 class AuthService {
-  static const String baseUrl = 'https://localhost:7221/api/account';
+  static Uri _endpoint(String path) => ApiConfig.uri('/api/account$path');
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   static Future<void> _saveToken(String token) async {
@@ -24,7 +25,7 @@ class AuthService {
     final token = await getToken();
     if (token == null) return null;
 
-    final url = Uri.parse('$baseUrl/user');
+    final url = _endpoint('/user');
 
     final headers = {
       'Content-Type': 'application/json',
@@ -43,7 +44,7 @@ class AuthService {
   }
 
   static Future<User?> login(String email, String password) async {
-    final url = Uri.parse('$baseUrl/login');
+    final url = _endpoint('/login');
     final headers = {'Content-Type': 'application/json'};
 
     final body = jsonEncode({'email': email, 'password': password});
@@ -81,7 +82,7 @@ class AuthService {
     required String password,
     required String repeatPassword,
   }) async {
-    final url = Uri.parse('$baseUrl/register');
+    final url = _endpoint('/register');
     final headers = {'Content-Type': 'application/json'};
 
     final body = jsonEncode({
@@ -118,7 +119,7 @@ class AuthService {
     final token = await getToken();
     if (token == null) return false;
 
-    final url = Uri.parse('$baseUrl/changePassword');
+    final url = _endpoint('/changePassword');
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',

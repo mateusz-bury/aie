@@ -1,6 +1,7 @@
 import 'package:aie/features/characters/data/character_service.dart';
 import 'package:aie/features/characters/domain/playable_character.dart';
 import 'package:aie/features/characters/presentation/pages/edit_playable_character_page.dart';
+import 'package:aie/features/items/presentation/pages/character_inventory_page.dart';
 import 'package:flutter/material.dart';
 
 class PlayableCharacterPage extends StatefulWidget {
@@ -39,6 +40,32 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
     }
   }
 
+  Future<void> _deleteCharacter(int characterId) async {
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Usunąć postać?'),
+        content: const Text('Tej operacji nie da się cofnąć.'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Anuluj')),
+          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Usuń')),
+        ],
+      ),
+    );
+
+    if (ok != true) return;
+
+    try {
+      await CharacterService.deleteCharacter(characterId);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Postać usunięta')));
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Błąd usuwania: $e')));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -46,6 +73,12 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
         appBar: AppBar(
           automaticallyImplyLeading: true,
           title: const Text("Postać"),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.delete),
+              onPressed: () => _deleteCharacter(widget.characterId),
+            ),
+          ],
         ),
         body: FutureBuilder<PlayableCharacter>(
           future: _characterFuture,
@@ -123,9 +156,29 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
                               ],
                             ),
                             const SizedBox(height: 16),
-                            ElevatedButton(
-                              onPressed: () => _goToEditCharacter(c.id),
-                              child: const Text("Edytuj postać"),
+                            Wrap(
+                              spacing: 12,
+                              runSpacing: 12,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () => _goToEditCharacter(c.id),
+                                  child: const Text('Edytuj postać'),
+                                ),
+                                OutlinedButton(
+                                  onPressed: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => CharacterInventoryPage(
+                                          characterId: c.id,
+                                          characterName: c.name,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Ekwipunek'),
+                                ),
+                              ],
                             ),
                           ],
                         ),
