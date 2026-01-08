@@ -1,0 +1,47 @@
+# Pliki i foldery generowane przez Visual Studio
+.vs/
+*.user
+*.suo
+
+# Pliki buildów
+bin/
+obj/
+out/
+
+# Pliki zale¿noœci NuGet
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+
+# Pliki ustawieñ IDE
+*.userprefs
+
+# Pliki logów
+*.log
+
+# Pliki tymczasowe
+*.tmp
+*.temp
+
+# Pliki publikacji
+publish/
+*.Publish.xml
+
+# Pliki bazy danych lokalnej
+*.mdf
+*.ldf
+
+# Pliki systemowe
+Thumbs.db
+Desktop.ini
+
+# Pliki œrodowiskowe
+.env
+.env.*
+
+# Pliki testów
+TestResults/
+
+#Migracje
+Migrations/

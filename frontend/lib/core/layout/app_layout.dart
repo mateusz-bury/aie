@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:aie/core/widgets/aie_background.dart';
 
-/// Globalny layout dla całej aplikacji
+// globalny layout dla całej aplikacji
 
 class AppLayout extends StatelessWidget {
   final Widget child;
