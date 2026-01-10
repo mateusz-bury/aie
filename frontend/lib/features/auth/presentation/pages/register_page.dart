@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:aie/core/layout/app_layout.dart';
+import 'package:aie/core/theme/app_colors.dart';
 import 'package:aie/features/auth/data/auth_service.dart';
 import 'package:aie/features/auth/presentation/pages/login_page.dart';
 
@@ -16,31 +18,56 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   final _repeatPasswordController = TextEditingController();
 
-  void _submitRegister() async {
+  bool _loading = false;
+
+  Future<void> _submitRegister() async {
+    if (_loading) return;
+    setState(() => _loading = true);
+
     final name = _nameController.text.trim();
     final email = _emailController.text.trim();
     final password = _passwordController.text.trim();
     final repeatPassword = _repeatPasswordController.text.trim();
 
-    final registered = await AuthService.register(
+    final result = await AuthService.register(
       firstName: name,
       lastName: '–',
       email: email,
-      username: email.split('@')[0],
+      username: email.contains('@') ? email.split('@')[0] : email,
       password: password,
       repeatPassword: repeatPassword,
     );
 
-    if (registered == true) {
-      Navigator.push(
+    setState(() => _loading = false);
+
+    if (!mounted) return;
+
+    if (result.success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Konto utworzone. Możesz się zalogować.')),
+      );
+      Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const LoginPage()),
       );
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Użytkownik już istnieje')));
+      return;
     }
+
+    final msg = result.message ?? 'Nie udało się zarejestrować.';
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  InputDecoration _decoration(String label, IconData icon) {
+    return InputDecoration(
+      labelText: label,
+      prefixIcon: Icon(icon, color: AppColors.accent),
+      filled: true,
+      fillColor: AppColors.surface2,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(14),
+        borderSide: BorderSide.none,
+      ),
+    );
   }
 
   @override
@@ -54,126 +81,108 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Center(
+    return AppLayout(
+      title: 'Rejestracja',
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 520),
           child: SingleChildScrollView(
-            padding: const EdgeInsets.all(24),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Rejestracja',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _nameController,
-                    decoration: InputDecoration(
-                      labelText: 'Imię',
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const SizedBox(height: 6),
+                      Text(
+                        'Utwórz konto',
+                        style: Theme.of(context).textTheme.headlineSmall,
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Wprowadź imię';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      labelText: 'Email',
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 16),
+
+                      TextFormField(
+                        controller: _nameController,
+                        decoration: _decoration('Imię', Icons.person),
+                        validator: (value) =>
+                            (value == null || value.trim().isEmpty) ? 'Podaj imię' : null,
                       ),
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Wprowadź email';
-                      }
-                      if (!value.contains('@')) {
-                        return 'Nieprawidłowy email';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      labelText: 'Hasło',
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: _decoration('Email', Icons.email),
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          final v = (value ?? '').trim();
+                          if (v.isEmpty) return 'Podaj email';
+                          if (!v.contains('@')) return 'Podaj poprawny email';
+                          return null;
+                        },
                       ),
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value == null || value.length < 6) {
-                        return 'Hasło musi mieć min. 6 znaków';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 20),
-                  TextFormField(
-                    controller: _repeatPasswordController,
-                    decoration: InputDecoration(
-                      labelText: 'Powtórz hasło',
-                      filled: true,
-                      fillColor: Colors.transparent,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: _decoration('Hasło', Icons.lock),
+                        obscureText: true,
+                        validator: (value) {
+                          final v = (value ?? '');
+                          if (v.length < 6) return 'Hasło musi mieć min. 6 znaków';
+                          return null;
+                        },
                       ),
-                    ),
-                    obscureText: true,
-                    validator: (value) {
-                      if (value != _passwordController.text) {
-                        return 'Hasła się nie zgadzają';
-                      }
-                      return null;
-                    },
-                  ),
-                  const SizedBox(height: 24),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                           _submitRegister();
-                                       }
-                                            },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.blue[800],
-                        foregroundColor: Color.fromARGB(255, 230, 220, 220),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(50),
+                      const SizedBox(height: 12),
+
+                      TextFormField(
+                        controller: _repeatPasswordController,
+                        decoration: _decoration('Powtórz hasło', Icons.lock_outline),
+                        obscureText: true,
+                        validator: (value) {
+                          final v = (value ?? '');
+                          if (v != _passwordController.text) return 'Hasła muszą być takie same';
+                          return null;
+                        },
+                      ),
+
+                      const SizedBox(height: 18),
+
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: _loading
+                              ? null
+                              : () {
+                                  if (_formKey.currentState!.validate()) {
+                                    _submitRegister();
+                                  }
+                                },
+                          icon: _loading
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : const Icon(Icons.person_add),
+                          label: Text(_loading ? 'Rejestruję...' : 'Zarejestruj się'),
                         ),
                       ),
-                      child: const Text(
-                        'Zarejestruj się',
-                        style: TextStyle(fontSize: 20, color: Colors.black),
+
+                      const SizedBox(height: 10),
+
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (_) => const LoginPage()),
+                          );
+                        },
+                        child: const Text('Mam już konto — Zaloguj się'),
                       ),
-                    ),
+                    ],
                   ),
-                ],
+                ),
               ),
             ),
           ),

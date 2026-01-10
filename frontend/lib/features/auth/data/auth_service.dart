@@ -5,6 +5,12 @@ import 'package:aie/core/utils/app_logger.dart';
 import 'package:aie/features/auth/domain/user.dart';
 import 'package:aie/core/api/api_config.dart';
 
+class RegisterResult {
+  final bool success;
+  final String? message;
+  const RegisterResult(this.success, {this.message});
+}
+
 class AuthService {
   static Uri _endpoint(String path) => ApiConfig.uri('/api/account$path');
   static final FlutterSecureStorage _storage = const FlutterSecureStorage();
@@ -74,7 +80,7 @@ class AuthService {
     }
   }
 
-  static Future<bool> register({
+  static Future<RegisterResult> register({
     required String firstName,
     required String lastName,
     required String email,
@@ -92,22 +98,51 @@ class AuthService {
       'FirstName': firstName,
       'LastName': lastName,
       'UserName': username,
-      'RoleId': 1, // domyślna rola użytkownika
+      'RoleId': 4,
     });
 
     try {
       final response = await http.post(url, headers: headers, body: body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        return true;
-      } else {
-        AppLogger.w('Błąd rejestracji: ${response.statusCode}');
-        AppLogger.d('Treść: ${response.body}');
-        return false;
+        return const RegisterResult(true);
       }
+
+
+      String message = response.body.trim();
+      if (message.isEmpty) {
+        message = 'Błąd rejestracji (${response.statusCode}).';
+      } else {
+        // Jeśli backend zwróci ProblemDetails / ValidationProblemDetails
+        try {
+          final decoded = jsonDecode(message);
+          if (decoded is Map<String, dynamic>) {
+            if (decoded['errors'] is Map) {
+              final errors = decoded['errors'] as Map;
+              final firstKey =
+                  errors.keys.isNotEmpty ? errors.keys.first : null;
+              if (firstKey != null &&
+                  errors[firstKey] is List &&
+                  (errors[firstKey] as List).isNotEmpty) {
+                message = (errors[firstKey] as List).first.toString();
+              } else {
+                message = 'Nieprawidłowe dane rejestracji.';
+              }
+            } else if (decoded['title'] != null) {
+              message = decoded['title'].toString();
+            }
+          }
+        } catch (_) {
+          // body nie jest JSONem — zostaw tekst jak jest
+        }
+      }
+
+      AppLogger.w('Błąd rejestracji: ${response.statusCode}');
+      AppLogger.d('Treść: ${response.body}');
+      return RegisterResult(false, message: message);
     } catch (e) {
       AppLogger.e('Wyjątek podczas rejestracji: $e', e);
-      return false;
+      return RegisterResult(false, message: 'Wyjątek podczas rejestracji: $e');
     }
   }
 

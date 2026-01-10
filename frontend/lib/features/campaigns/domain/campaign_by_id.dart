@@ -16,27 +16,13 @@ class CampaignById {
   });
 
   factory CampaignById.fromJson(Map<String, dynamic> json) {
-    // Backend potrafi zwrócić listę postaci w różnych kształtach:
-    // - "characters" / "playableCharacters" jako zwykła lista
-    // - albo jako obiekt z "$values" (gdy włączone ReferenceHandler.Preserve)
-    List<dynamic> _extractList(dynamic raw) {
-      if (raw == null) return const [];
-      if (raw is List) return raw;
-      if (raw is Map) {
-        // System.Text.Json z ReferenceHandler.Preserve używa klucza "$values" (bez backslasha).
-        final v = raw[r'$values'] ?? raw['values'];
-        if (v is List) return v;
-      }
-      return const [];
-    }
 
-    final rawCharacters =
-        json['characters'] ??
-        json['Characters'] ??
-        json['playableCharacters'] ??
-        json['PlayableCharacters'];
-
-    final list = _extractList(rawCharacters);
+    final list =
+        (json['characters'] as List?) ??
+        (json['Characters'] as List?) ??
+        (json['playableCharacters'] as List?) ??
+        (json['PlayableCharacters'] as List?) ??
+        const [];
     final createDateRaw = json['createDate'] ?? json['CreateDate'] ?? json['createdDate'] ?? json['createdAt'];
 
     return CampaignById(
