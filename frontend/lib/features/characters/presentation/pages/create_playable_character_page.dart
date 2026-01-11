@@ -5,7 +5,7 @@ import 'package:aie/features/characters/data/character_service.dart';
 import 'package:aie/features/characters/domain/playable_character.dart';
 
 class CreatePlayableCharacterPage extends StatefulWidget {
-  /// Jeśli przekazane, formularz będzie tworzył postać bezpośrednio w tej kampanii.
+  //formularz będzie tworzył postać bezpośrednio w tej kampanii.
   final int? initialCampaignId;
 
   const CreatePlayableCharacterPage({super.key, this.initialCampaignId});
@@ -22,7 +22,7 @@ class _CreatePlayableCharacterPageState
   List<Campaign> _campaigns = [];
   int? _selectedCampaignId;
 
-  /// 0=Playable, 1=Npc
+  // 0 = playable, 1 = npc
   int _characterType = 0;
 
   String? _name;
@@ -42,6 +42,10 @@ class _CreatePlayableCharacterPageState
   int? _magic;
   int? _insanityPoints;
   int? _fatePoints;
+
+  _spaced(Widget child) {
+    return Padding(padding: const EdgeInsets.only(bottom: 16), child: child);
+  }
 
   @override
   void initState() {
@@ -134,93 +138,132 @@ class _CreatePlayableCharacterPageState
                     children: [
                       // Jeśli kampania jest narzucona (np. z widoku kampanii), ukrywamy selector.
                       if (widget.initialCampaignId == null)
-                        DropdownButtonFormField<int>(
-                          initialValue: _selectedCampaignId,
-                          items:
-                              _campaigns
-                                  .map(
-                                    (c) => DropdownMenuItem(
-                                      value: c.id,
-                                      child: Text(c.name),
-                                    ),
-                                  )
-                                  .toList(),
-                          decoration: const InputDecoration(
-                            labelText: 'Kampania',
+                        _spaced(
+                          DropdownButtonFormField<int>(
+                            initialValue: _selectedCampaignId,
+                            items:
+                                _campaigns
+                                    .map(
+                                      (c) => DropdownMenuItem(
+                                        value: c.id,
+                                        child: Text(c.name),
+                                      ),
+                                    )
+                                    .toList(),
+                            decoration: const InputDecoration(
+                              labelText: 'Kampania',
+                            ),
+                            onChanged:
+                                (value) =>
+                                    setState(() => _selectedCampaignId = value),
+                            validator:
+                                (value) =>
+                                    value == null ? "Wybierz kampanię" : null,
                           ),
+                        ),
+                      _spaced(
+                        DropdownButtonFormField<int>(
+                          value: _characterType,
+                          decoration: const InputDecoration(
+                            labelText: 'Typ postaci',
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: 0,
+                              child: Text('Gracz (Playable)'),
+                            ),
+                            DropdownMenuItem(
+                              value: 1,
+                              child: Text('NPC (Npc)'),
+                            ),
+                          ],
                           onChanged:
-                              (value) =>
-                                  setState(() => _selectedCampaignId = value),
+                              (v) => setState(() => _characterType = v ?? 0),
+                        ),
+                      ),
+                      _spaced(
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: 'Imię'),
                           validator:
                               (value) =>
-                                  value == null ? "Wybierz kampanię" : null,
+                                  value == null || value.isEmpty
+                                      ? 'Wpisz imię'
+                                      : null,
+                          onSaved: (value) => _name = value,
                         ),
-                      DropdownButtonFormField<int>(
-                        value: _characterType,
-                        decoration: const InputDecoration(
-                          labelText: 'Typ postaci',
+                      ),
+                      _spaced(
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: 'Rasa'),
+                          validator:
+                              (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Wpisz rasę'
+                                      : null,
+                          onSaved: (value) => _race = value,
                         ),
-                        items: const [
-                          DropdownMenuItem(value: 0, child: Text('Gracz (Playable)')),
-                          DropdownMenuItem(value: 1, child: Text('NPC (Npc)')),
-                        ],
-                        onChanged: (v) => setState(() => _characterType = v ?? 0),
                       ),
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Imię'),
-                        validator:
-                            (value) =>
-                                value == null || value.isEmpty
-                                    ? 'Wpisz imię'
-                                    : null,
-                        onSaved: (value) => _name = value,
+                      _spaced(
+                        TextFormField(
+                          decoration: const InputDecoration(labelText: 'Klasa'),
+                          validator:
+                              (value) =>
+                                  value == null || value.isEmpty
+                                      ? 'Wpisz klasę'
+                                      : null,
+                          onSaved: (value) => _career = value,
+                        ),
                       ),
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Rasa'),
-                        validator:
-                            (value) =>
-                                value == null || value.isEmpty
-                                    ? 'Wpisz rasę'
-                                    : null,
-                        onSaved: (value) => _race = value,
-                      ),
-                      TextFormField(
-                        decoration: const InputDecoration(labelText: 'Klasa'),
-                        validator:
-                            (value) =>
-                                value == null || value.isEmpty
-                                    ? 'Wpisz klasę'
-                                    : null,
-                        onSaved: (value) => _career = value,
-                      ),
-                      _buildNumberField('Wiek', (v) => _age = v),
+                      _spaced(_buildNumberField('Wiek', (v) => _age = v)),
                       const SizedBox(height: 16),
                       const Text(
                         "Atrybuty postaci",
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      _buildNumberField(
-                        'Umiejętność strzelecka',
-                        (v) => _ballisticSkill = v,
+                      _spaced(
+                        _buildNumberField(
+                          'Umiejętność strzelecka',
+                          (v) => _ballisticSkill = v,
+                        ),
                       ),
-                      _buildNumberField('Siła', (v) => _strength = v),
-                      _buildNumberField('Wytrzymałość', (v) => _toughness = v),
-                      _buildNumberField('Zręczność', (v) => _agility = v),
-                      _buildNumberField(
-                        'Inteligencja',
-                        (v) => _intelligence = v,
+                      _spaced(_buildNumberField('Siła', (v) => _strength = v)),
+                      _spaced(
+                        _buildNumberField(
+                          'Wytrzymałość',
+                          (v) => _toughness = v,
+                        ),
                       ),
-                      _buildNumberField('Siła woli', (v) => _willPower = v),
-                      _buildNumberField('Charyzma', (v) => _fellowship = v),
-                      _buildNumberField('Ataki', (v) => _attacks = v),
-                      _buildNumberField('Rany', (v) => _wounds = v),
-                      _buildNumberField('Ruch', (v) => _movement = v),
-                      _buildNumberField('Magia', (v) => _magic = v),
-                      _buildNumberField(
-                        'Punkty szaleństwa',
-                        (v) => _insanityPoints = v,
+                      _spaced(
+                        _buildNumberField('Zręczność', (v) => _agility = v),
                       ),
-                      _buildNumberField('Punkty losu', (v) => _fatePoints = v),
+                      _spaced(
+                        _buildNumberField(
+                          'Inteligencja',
+                          (v) => _intelligence = v,
+                        ),
+                      ),
+                      _spaced(
+                        _buildNumberField('Siła woli', (v) => _willPower = v),
+                      ),
+                      _spaced(
+                        _buildNumberField('Charyzma', (v) => _fellowship = v),
+                      ),
+                      _spaced(_buildNumberField('Ataki', (v) => _attacks = v)),
+                      _spaced(_buildNumberField('Rany', (v) => _wounds = v)),
+                      _spaced(_buildNumberField('Ruch', (v) => _movement = v)),
+                      _spaced(_buildNumberField('Magia', (v) => _magic = v)),
+                      _spaced(
+                        _buildNumberField(
+                          'Punkty szaleństwa',
+                          (v) => _insanityPoints = v,
+                        ),
+                      ),
+                      _spaced(
+                        _buildNumberField(
+                          'Punkty losu',
+                          (v) => _fatePoints = v,
+                        ),
+                      ),
                       const SizedBox(height: 24),
                       ElevatedButton(
                         onPressed: _saveCharacter,

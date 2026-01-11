@@ -43,14 +43,21 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
   Future<void> _deleteCharacter(int characterId) async {
     final ok = await showDialog<bool>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Usunąć postać?'),
-        content: const Text('Tej operacji nie da się cofnąć.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx, false), child: const Text('Anuluj')),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, true), child: const Text('Usuń')),
-        ],
-      ),
+      builder:
+          (ctx) => AlertDialog(
+            title: const Text('Usunąć postać?'),
+            content: const Text('Tej operacji nie da się cofnąć.'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: const Text('Anuluj'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                child: const Text('Usuń'),
+              ),
+            ],
+          ),
     );
 
     if (ok != true) return;
@@ -58,11 +65,15 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
     try {
       await CharacterService.deleteCharacter(characterId);
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Postać usunięta')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Postać usunięta')));
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Błąd usuwania: $e')));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Błąd usuwania: $e')));
     }
   }
 
@@ -164,15 +175,16 @@ class _PlayableCharacterPageState extends State<PlayableCharacterPage> {
                                   onPressed: () => _goToEditCharacter(c.id),
                                   child: const Text('Edytuj postać'),
                                 ),
-                                OutlinedButton(
+                                ElevatedButton(
                                   onPressed: () {
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => CharacterInventoryPage(
-                                          characterId: c.id,
-                                          characterName: c.name,
-                                        ),
+                                        builder:
+                                            (_) => CharacterInventoryPage(
+                                              characterId: c.id,
+                                              characterName: c.name,
+                                            ),
                                       ),
                                     );
                                   },

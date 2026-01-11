@@ -37,6 +37,10 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
   int? _insanityPoints;
   int? _fatePoints;
 
+  _spaced(Widget child) {
+    return Padding(padding: const EdgeInsets.only(bottom: 16), child: child);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -80,7 +84,10 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
       // Backend rozdziela update danych podstawowych i statystyk.
       await CharacterService.updateCharacterBasic(updatedCharacter);
-      await CharacterService.updateCharacterStats(updatedCharacter, statisticType: 1);
+      await CharacterService.updateCharacterStats(
+        updatedCharacter,
+        statisticType: 1,
+      );
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Postać została zaktualizowana")),
@@ -154,94 +161,140 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  DropdownButtonFormField<int>(
-                    value: _characterType,
-                    decoration: const InputDecoration(labelText: 'Typ postaci'),
-                    items: const [
-                      DropdownMenuItem(value: 0, child: Text('Gracz (Playable)')),
-                      DropdownMenuItem(value: 1, child: Text('NPC (Npc)')),
-                      DropdownMenuItem(value: 2, child: Text('Szablon (Template)')),
-                    ],
-                    // Backend nie ma UpdateCharacterDto z CharacterType, więc na razie tylko podgląd.
-                    onChanged: null,
+                  _spaced(
+                    DropdownButtonFormField<int>(
+                      value: _characterType,
+                      decoration: const InputDecoration(
+                        labelText: 'Typ postaci',
+                      ),
+                      items: const [
+                        DropdownMenuItem(
+                          value: 0,
+                          child: Text('Gracz (Playable)'),
+                        ),
+                        DropdownMenuItem(value: 1, child: Text('NPC (Npc)')),
+                        DropdownMenuItem(
+                          value: 2,
+                          child: Text('Szablon (Template)'),
+                        ),
+                      ],
+                      // Backend nie ma UpdateCharacterDto z CharacterType, więc na razie tylko podgląd.
+                      onChanged: null,
+                    ),
                   ),
-                  TextFormField(
-                    initialValue: _name,
-                    decoration: const InputDecoration(labelText: 'Imię'),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? 'Wpisz imię'
-                                : null,
-                    onSaved: (value) => _name = value,
+                  _spaced(
+                    TextFormField(
+                      initialValue: _name,
+                      decoration: const InputDecoration(labelText: 'Imię'),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Wpisz imię'
+                                  : null,
+                      onSaved: (value) => _name = value,
+                    ),
                   ),
-                  TextFormField(
-                    initialValue: _race,
-                    decoration: const InputDecoration(labelText: 'Rasa'),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? 'Wpisz rasę'
-                                : null,
-                    onSaved: (value) => _race = value,
+                  _spaced(
+                    TextFormField(
+                      initialValue: _race,
+                      decoration: const InputDecoration(labelText: 'Rasa'),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Wpisz rasę'
+                                  : null,
+                      onSaved: (value) => _race = value,
+                    ),
                   ),
-                  TextFormField(
-                    initialValue: _career,
-                    decoration: const InputDecoration(labelText: 'Klasa'),
-                    validator:
-                        (value) =>
-                            value == null || value.isEmpty
-                                ? 'Wpisz klasę'
-                                : null,
-                    onSaved: (value) => _career = value,
+                  _spaced(
+                    TextFormField(
+                      initialValue: _career,
+                      decoration: const InputDecoration(labelText: 'Klasa'),
+                      validator:
+                          (value) =>
+                              value == null || value.isEmpty
+                                  ? 'Wpisz klasę'
+                                  : null,
+                      onSaved: (value) => _career = value,
+                    ),
                   ),
-                  _buildNumberField('Wiek', _age, (v) => _age = v),
+                  _spaced(_buildNumberField('Wiek', _age, (v) => _age = v)),
                   const SizedBox(height: 16),
                   const Text(
                     "Atrybuty postaci",
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
-                  _buildNumberField(
-                    'Umiejętność strzelecka',
-                    _ballisticSkill,
-                    (v) => _ballisticSkill = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Umiejętność strzelecka',
+                      _ballisticSkill,
+                      (v) => _ballisticSkill = v,
+                    ),
                   ),
-                  _buildNumberField('Siła', _strength, (v) => _strength = v),
-                  _buildNumberField(
-                    'Wytrzymałość',
-                    _toughness,
-                    (v) => _toughness = v,
+                  _spaced(
+                    _buildNumberField('Siła', _strength, (v) => _strength = v),
                   ),
-                  _buildNumberField('Zręczność', _agility, (v) => _agility = v),
-                  _buildNumberField(
-                    'Inteligencja',
-                    _intelligence,
-                    (v) => _intelligence = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Wytrzymałość',
+                      _toughness,
+                      (v) => _toughness = v,
+                    ),
                   ),
-                  _buildNumberField(
-                    'Siła woli',
-                    _willPower,
-                    (v) => _willPower = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Zręczność',
+                      _agility,
+                      (v) => _agility = v,
+                    ),
                   ),
-                  _buildNumberField(
-                    'Charyzma',
-                    _fellowship,
-                    (v) => _fellowship = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Inteligencja',
+                      _intelligence,
+                      (v) => _intelligence = v,
+                    ),
                   ),
-                  _buildNumberField('Ataki', _attacks, (v) => _attacks = v),
-                  _buildNumberField('Rany', _wounds, (v) => _wounds = v),
-                  _buildNumberField('Ruch', _movement, (v) => _movement = v),
-                  _buildNumberField('Magia', _magic, (v) => _magic = v),
-                  _buildNumberField(
-                    'Punkty szaleństwa',
-                    _insanityPoints,
-                    (v) => _insanityPoints = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Siła woli',
+                      _willPower,
+                      (v) => _willPower = v,
+                    ),
                   ),
-                  _buildNumberField(
-                    'Punkty losu',
-                    _fatePoints,
-                    (v) => _fatePoints = v,
+                  _spaced(
+                    _buildNumberField(
+                      'Charyzma',
+                      _fellowship,
+                      (v) => _fellowship = v,
+                    ),
+                  ),
+                  _spaced(
+                    _buildNumberField('Ataki', _attacks, (v) => _attacks = v),
+                  ),
+                  _spaced(
+                    _buildNumberField('Rany', _wounds, (v) => _wounds = v),
+                  ),
+                  _spaced(
+                    _buildNumberField('Ruch', _movement, (v) => _movement = v),
+                  ),
+                  _spaced(
+                    _buildNumberField('Magia', _magic, (v) => _magic = v),
+                  ),
+                  _spaced(
+                    _buildNumberField(
+                      'Punkty szaleństwa',
+                      _insanityPoints,
+                      (v) => _insanityPoints = v,
+                    ),
+                  ),
+                  _spaced(
+                    _buildNumberField(
+                      'Punkty losu',
+                      _fatePoints,
+                      (v) => _fatePoints = v,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   ElevatedButton(
