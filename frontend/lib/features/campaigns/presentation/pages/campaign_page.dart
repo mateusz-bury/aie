@@ -19,6 +19,8 @@ class CampaignPage extends StatefulWidget {
 class _CampaignPageState extends State<CampaignPage> {
   late Future<CampaignById> _campaignFuture;
 
+  int _selectedCharactersTab = 0; // 0 = Playable, 1 = NPC
+
   @override
   void initState() {
     super.initState();
@@ -35,9 +37,7 @@ class _CampaignPageState extends State<CampaignPage> {
       MaterialPageRoute(builder: (_) => EditCampaignPage(campaign: campaign)),
     );
     if (updated == true) {
-      setState(() {
-        _loadCampaign();
-      });
+      setState(() => _loadCampaign());
     }
   }
 
@@ -66,9 +66,7 @@ class _CampaignPageState extends State<CampaignPage> {
       ),
     );
     if (updated == true) {
-      setState(() {
-        _loadCampaign();
-      });
+      setState(() => _loadCampaign());
     }
   }
 
@@ -76,13 +74,12 @@ class _CampaignPageState extends State<CampaignPage> {
     final created = await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => CreatePlayableCharacterPage(initialCampaignId: campaignId),
+        builder:
+            (_) => CreatePlayableCharacterPage(initialCampaignId: campaignId),
       ),
     );
     if (created == true) {
-      setState(() {
-        _loadCampaign();
-      });
+      setState(() => _loadCampaign());
     }
   }
 
@@ -130,21 +127,22 @@ class _CampaignPageState extends State<CampaignPage> {
             title: const Text('Wybierz postać'),
             content: SizedBox(
               width: double.maxFinite,
-              child: all.isEmpty
-                  ? const Text('Brak postaci do przypisania')
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: all.length,
-                      itemBuilder: (context, i) {
-                        final ch = all[i];
-                        return ListTile(
-                          leading: const Icon(Icons.person),
-                          title: Text(ch.name),
-                          subtitle: Text('${ch.race} – ${ch.career}'),
-                          onTap: () => Navigator.pop(context, ch),
-                        );
-                      },
-                    ),
+              child:
+                  all.isEmpty
+                      ? const Text('Brak postaci do przypisania')
+                      : ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: all.length,
+                        itemBuilder: (context, i) {
+                          final ch = all[i];
+                          return ListTile(
+                            leading: const Icon(Icons.person),
+                            title: Text(ch.name),
+                            subtitle: Text('${ch.race} – ${ch.career}'),
+                            onTap: () => Navigator.pop(context, ch),
+                          );
+                        },
+                      ),
             ),
             actions: [
               TextButton(
@@ -170,124 +168,193 @@ class _CampaignPageState extends State<CampaignPage> {
     }
   }
 
+  // 0=Playable, 1=NPC (backend enum). Jeśli nie ma pola -> default 0.
+  int _getCharacterType(Character ch) {
+    try {
+      final dyn = ch as dynamic;
+      final v = dyn.characterType;
+      if (v is int) return v;
+      if (v == null) return 0;
+      final s = v.toString().toLowerCase();
+      if (s.contains('npc')) return 1;
+      if (s.contains('template')) return 2;
+      return int.tryParse(s) ?? 0;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Scaffold(
-        appBar: AppBar(
-          automaticallyImplyLeading: true,
-          title: const Text("Kampania"),
-        ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: _showAddCharacterSheet,
-          child: const Icon(Icons.add),
-        ),
-        body: FutureBuilder<CampaignById>(
-          future: _campaignFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text("Błąd: ${snapshot.error}"));
-            } else if (!snapshot.hasData) {
-              return const Center(child: Text("Brak danych kampanii"));
-            }
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        title: const Text("Kampania"),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _showAddCharacterSheet,
+        child: const Icon(Icons.add),
+      ),
+      body: FutureBuilder<CampaignById>(
+        future: _campaignFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text("Błąd: ${snapshot.error}"));
+          } else if (!snapshot.hasData) {
+            return const Center(child: Text("Brak danych kampanii"));
+          }
 
-            final campaign = snapshot.data!;
-            return SingleChildScrollView(
-              child: Container(
-                color: Colors.transparent,
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      campaign.name,
-                      style: const TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+          final campaign = snapshot.data!;
+
+          final playable =
+              campaign.characters
+                  .where((c) => _getCharacterType(c) == 0)
+                  .toList();
+          final npcs =
+              campaign.characters
+                  .where((c) => _getCharacterType(c) == 1)
+                  .toList();
+
+          final shown = _selectedCharactersTab == 0 ? playable : npcs;
+
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    campaign.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
                     ),
-                    const SizedBox(height: 8),
-                    Text(campaign.description),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () => _goToEditPage(campaign),
-                            child: const Text("Edytuj kampanię"),
-                          ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(campaign.description),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => _goToEditPage(campaign),
+                          child: const Text("Edytuj kampanię"),
                         ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: () async {
-                              // Wyświetlenie okna potwierdzenia
-                              final confirm = await showDialog<bool>(
-                                context: context,
-                                builder:
-                                    (context) => AlertDialog(
-                                      title: const Text('Potwierdzenie'),
-                                      content: const Text(
-                                        'Czy na pewno chcesz usunąć tę kampanię?',
-                                      ),
-                                      actions: [
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(
-                                                context,
-                                              ).pop(false),
-                                          child: const Text('Anuluj'),
-                                        ),
-                                        TextButton(
-                                          onPressed:
-                                              () => Navigator.of(
-                                                context,
-                                              ).pop(true),
-                                          child: const Text(
-                                            'Usuń',
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                        ),
-                                      ],
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            // Wyświetlenie okna potwierdzenia
+                            final confirm = await showDialog<bool>(
+                              context: context,
+                              builder:
+                                  (context) => AlertDialog(
+                                    title: const Text('Potwierdzenie'),
+                                    content: const Text(
+                                      'Czy na pewno chcesz usunąć tę kampanię?',
                                     ),
-                              );
+                                    actions: [
+                                      TextButton(
+                                        onPressed:
+                                            () => Navigator.of(
+                                              context,
+                                            ).pop(false),
+                                        child: const Text('Anuluj'),
+                                      ),
+                                      TextButton(
+                                        onPressed:
+                                            () =>
+                                                Navigator.of(context).pop(true),
+                                        child: const Text(
+                                          'Usuń',
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                            );
 
-                              if (confirm == true) {
-                                await _deleteCampaign(campaign);
-                              }
-                            },
-                            child: const Text("Usuń kampanię"),
-                          ),
+                            if (confirm == true) {
+                              await _deleteCampaign(campaign);
+                            }
+                          },
+                          child: const Text("Usuń kampanię"),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 24),
-                    const Text(
-                      "Postacie w kampanii:",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const Text(
+                    "Postacie",
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 12),
+
+                  // Dwa kafle jak w menu głównym
+                  GridView.count(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 12,
+                    mainAxisSpacing: 12,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    children: [
+                      _CampaignTile(
+                        icon: Icons.person,
+                        title: 'Postacie graczy',
+                        subtitle: '${playable.length} szt.',
+                        isSelected: _selectedCharactersTab == 0,
+                        onTap: () => setState(() => _selectedCharactersTab = 0),
+                      ),
+                      _CampaignTile(
+                        icon: Icons.groups,
+                        title: 'NPC',
+                        subtitle: '${npcs.length} szt.',
+                        isSelected: _selectedCharactersTab == 1,
+                        onTap: () => setState(() => _selectedCharactersTab = 1),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  Text(
+                    _selectedCharactersTab == 0
+                        ? 'Postacie graczy w kampanii:'
+                        : 'NPC w kampanii:',
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
-                    const SizedBox(height: 8),
-                    _buildCharacters(campaign.characters),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  _buildCharacters(
+                    shown,
+                    emptyText:
+                        _selectedCharactersTab == 0
+                            ? 'Brak postaci graczy w tej kampanii'
+                            : 'Brak NPC w tej kampanii',
+                  ),
+                ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
 
-  Widget _buildCharacters(List<Character> characters) {
-    if (characters.isEmpty) return const Text("Brak postaci");
+  Widget _buildCharacters(
+    List<Character> characters, {
+    String emptyText = "Brak postaci",
+  }) {
+    if (characters.isEmpty) return Text(emptyText);
     return Column(
       children:
-          characters.map(
+          characters
+              .map(
                 (ch) => Padding(
                   padding: const EdgeInsets.only(bottom: 8),
                   child: Card(
@@ -306,6 +373,66 @@ class _CampaignPageState extends State<CampaignPage> {
                 ),
               )
               .toList(),
+    );
+  }
+}
+
+class _CampaignTile extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _CampaignTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Icon(icon, size: 36),
+                  const Spacer(),
+                  if (isSelected)
+                    Icon(Icons.check_circle, color: theme.colorScheme.primary),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(subtitle, style: const TextStyle(fontSize: 12)),
+              const Spacer(),
+              const Align(
+                alignment: Alignment.bottomRight,
+                child: Icon(Icons.arrow_forward),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
