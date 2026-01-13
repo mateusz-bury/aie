@@ -1,3 +1,6 @@
+import 'package:aie/features/abilities/domain/ability.dart';
+import 'package:aie/features/skills/domain/skill.dart';
+
 class PlayableCharacter {
   final int id;
 
@@ -25,6 +28,25 @@ class PlayableCharacter {
   final int insanityPoints;
   final int fatePoints;
 
+  // Base stats (StatisticType=Base)
+  final int baseBallisticSkill;
+  final int baseStrength;
+  final int baseToughness;
+  final int baseAgility;
+  final int baseIntelligence;
+  final int baseWillPower;
+  final int baseFellowship;
+  final int baseAttacks;
+  final int baseWounds;
+  final int baseMovement;
+  final int baseMagic;
+  final int baseInsanityPoints;
+  final int baseFatePoints;
+
+  /// Przypięte do postaci (backend: CharacterDto.Skills/Abilities)
+  final List<Skill> skills;
+  final List<Ability> abilities;
+
   PlayableCharacter({
     required this.id,
     this.characterType = 0,
@@ -46,7 +68,35 @@ class PlayableCharacter {
     required this.magic,
     required this.insanityPoints,
     required this.fatePoints,
-  });
+    int? baseBallisticSkill,
+    int? baseStrength,
+    int? baseToughness,
+    int? baseAgility,
+    int? baseIntelligence,
+    int? baseWillPower,
+    int? baseFellowship,
+    int? baseAttacks,
+    int? baseWounds,
+    int? baseMovement,
+    int? baseMagic,
+    int? baseInsanityPoints,
+    int? baseFatePoints,
+    this.skills = const [],
+    this.abilities = const [],
+  })  : baseBallisticSkill = baseBallisticSkill ?? ballisticSkill,
+        baseStrength = baseStrength ?? strength,
+        baseToughness = baseToughness ?? toughness,
+        baseAgility = baseAgility ?? agility,
+        baseIntelligence = baseIntelligence ?? intelligence,
+        baseWillPower = baseWillPower ?? willPower,
+        baseFellowship = baseFellowship ?? fellowship,
+        baseAttacks = baseAttacks ?? attacks,
+        baseWounds = baseWounds ?? wounds,
+        baseMovement = baseMovement ?? movement,
+        baseMagic = baseMagic ?? magic,
+        baseInsanityPoints = baseInsanityPoints ?? insanityPoints,
+        baseFatePoints = baseFatePoints ?? fatePoints;
+
 
   static String _characterTypeToApiValue(int type) {
     switch (type) {
@@ -77,21 +127,6 @@ class PlayableCharacter {
   /// Payload zgodny z backendowym CreateCharacterDto.
   /// Backend wymaga listy Statistics min. 2 elementy.
   Map<String, dynamic> toCreateDtoJson() {
-    final stats = {
-      'ballisticSkill': ballisticSkill,
-      'strength': strength,
-      'toughness': toughness,
-      'agility': agility,
-      'intelligence': intelligence,
-      'willPower': willPower,
-      'fellowship': fellowship,
-      'attacks': attacks,
-      'wounds': wounds,
-      'movement': movement,
-      'magic': magic,
-      'insanityPoints': insanityPoints,
-      'fatePoints': fatePoints,
-    };
 
     return {
       // Backend ma JsonStringEnumConverter, więc najlepiej wysyłać enum jako string.
@@ -103,8 +138,38 @@ class PlayableCharacter {
       'campaignId': campaignId,
       // StatisticType enum (string): Base / Current / Temporary / Template
       'statistics': [
-        {'statisticType': _statisticTypeToApiValue(0), ...stats},
-        {'statisticType': _statisticTypeToApiValue(1), ...stats},
+        {
+          'statisticType': _statisticTypeToApiValue(0),
+          'ballisticSkill': baseBallisticSkill,
+          'strength': baseStrength,
+          'toughness': baseToughness,
+          'agility': baseAgility,
+          'intelligence': baseIntelligence,
+          'willPower': baseWillPower,
+          'fellowship': baseFellowship,
+          'attacks': baseAttacks,
+          'wounds': baseWounds,
+          'movement': baseMovement,
+          'magic': baseMagic,
+          'insanityPoints': baseInsanityPoints,
+          'fatePoints': baseFatePoints,
+        },
+        {
+          'statisticType': _statisticTypeToApiValue(1),
+          'ballisticSkill': ballisticSkill,
+          'strength': strength,
+          'toughness': toughness,
+          'agility': agility,
+          'intelligence': intelligence,
+          'willPower': willPower,
+          'fellowship': fellowship,
+          'attacks': attacks,
+          'wounds': wounds,
+          'movement': movement,
+          'magic': magic,
+          'insanityPoints': insanityPoints,
+          'fatePoints': fatePoints,
+        },
       ],
     };
   }
@@ -112,6 +177,7 @@ class PlayableCharacter {
   /// Payload zgodny z backendowym UpdateCharacterDto.
   Map<String, dynamic> toUpdateDtoJson() {
     return {
+      'campaignId': campaignId,
       'name': name,
       'race': race,
       'career': career,
@@ -164,7 +230,7 @@ class PlayableCharacter {
     }
 
     // Backend zwraca Statistics jako List<StatisticDto>
-    Map<String, dynamic> pickStats(Map<String, dynamic> root) {
+    Map<String, dynamic> pickStatsByType(Map<String, dynamic> root, int wantedType) {
       final raw = root['statistics'] ?? root['Statistics'];
       if (raw is List) {
         const mapping = {
@@ -178,27 +244,41 @@ class PlayableCharacter {
           'Template': 3,
         };
 
-        // Preferuj Current (statisticType=Current/1), w przeciwnym razie pierwszy
-        final current = raw
+        final list = raw
             .cast<dynamic>()
             .whereType<Map>()
             .cast<Map<String, dynamic>>()
-            .firstWhere(
-              (m) => parseEnum(m['statisticType'] ?? m['StatisticType'], mapping) == 1,
-              orElse: () {
-                final first = raw.cast<dynamic>().whereType<Map>().cast<Map<String, dynamic>>().toList();
-                return first.isNotEmpty ? first.first : <String, dynamic>{};
-              },
-            );
-        return Map<String, dynamic>.from(current);
+            .toList();
+
+        final match = list.firstWhere(
+          (m) => parseEnum(m['statisticType'] ?? m['StatisticType'], mapping) == wantedType,
+          orElse: () => <String, dynamic>{},
+        );
+
+        if (match.isNotEmpty) return Map<String, dynamic>.from(match);
+        return list.isNotEmpty ? Map<String, dynamic>.from(list.first) : <String, dynamic>{};
       }
-      // fallback - czasem ktoś zwraca jako mapę
       if (raw is Map<String, dynamic>) return raw;
       return <String, dynamic>{};
     }
 
-    final stats = pickStats(json);
-    int stat(String key) => parseInt(stats[key]);
+    final baseStats = pickStatsByType(json, 0);
+    final currentStats = pickStatsByType(json, 1);
+
+    int statCurrent(String key) => parseInt(currentStats[key]);
+    int statBase(String key) => parseInt(baseStats[key], statCurrent(key));
+
+    List<Map<String, dynamic>> parseList(dynamic v) {
+      if (v is List) {
+        return v.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+      }
+      return const <Map<String, dynamic>>[];
+    }
+
+    final rawSkills = json['skills'] ?? json['Skills'];
+    final rawAbilities = json['abilities'] ?? json['Abilities'];
+    final parsedSkills = parseList(rawSkills).map(Skill.fromJson).toList();
+    final parsedAbilities = parseList(rawAbilities).map(Ability.fromJson).toList();
 
     return PlayableCharacter(
       id: parseInt(json['id'] ?? json['Id']),
@@ -220,19 +300,34 @@ class PlayableCharacter {
       career: parseString(json['career'] ?? json['Career']),
       age: parseInt(json['age'] ?? json['Age']),
       campaignId: parseInt(json['campaignId'] ?? json['CampaignId']),
-      ballisticSkill: stat('ballisticSkill'),
-      strength: stat('strength'),
-      toughness: stat('toughness'),
-      agility: stat('agility'),
-      intelligence: stat('intelligence'),
-      willPower: stat('willPower'),
-      fellowship: stat('fellowship'),
-      attacks: stat('attacks'),
-      wounds: stat('wounds'),
-      movement: stat('movement'),
-      magic: stat('magic'),
-      insanityPoints: stat('insanityPoints'),
-      fatePoints: stat('fatePoints'),
+      ballisticSkill: statCurrent('ballisticSkill'),
+      strength: statCurrent('strength'),
+      toughness: statCurrent('toughness'),
+      agility: statCurrent('agility'),
+      intelligence: statCurrent('intelligence'),
+      willPower: statCurrent('willPower'),
+      fellowship: statCurrent('fellowship'),
+      attacks: statCurrent('attacks'),
+      wounds: statCurrent('wounds'),
+      movement: statCurrent('movement'),
+      magic: statCurrent('magic'),
+      insanityPoints: statCurrent('insanityPoints'),
+      fatePoints: statCurrent('fatePoints'),
+      baseBallisticSkill: statBase('ballisticSkill'),
+      baseStrength: statBase('strength'),
+      baseToughness: statBase('toughness'),
+      baseAgility: statBase('agility'),
+      baseIntelligence: statBase('intelligence'),
+      baseWillPower: statBase('willPower'),
+      baseFellowship: statBase('fellowship'),
+      baseAttacks: statBase('attacks'),
+      baseWounds: statBase('wounds'),
+      baseMovement: statBase('movement'),
+      baseMagic: statBase('magic'),
+      baseInsanityPoints: statBase('insanityPoints'),
+      baseFatePoints: statBase('fatePoints'),
+      skills: parsedSkills,
+      abilities: parsedAbilities,
     );
   }
 }

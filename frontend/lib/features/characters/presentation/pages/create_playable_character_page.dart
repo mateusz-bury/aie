@@ -40,6 +40,8 @@ class _CreatePlayableCharacterPageState
   // 0 = playable, 1 = npc
   int _characterType = 0;
 
+  final TextEditingController _careerCtrl = TextEditingController();
+
   String? _name;
   String? _race;
   String? _career; // zostaje jako tekst, ale wybór profesji może ją wypełniać
@@ -98,7 +100,7 @@ class _CreatePlayableCharacterPageState
     ),
   ];
 
-  _spaced(Widget child) {
+  Widget _spaced(Widget child) {
     return Padding(padding: const EdgeInsets.only(bottom: 16), child: child);
   }
 
@@ -148,17 +150,19 @@ class _CreatePlayableCharacterPageState
     }
     _formKey.currentState!.save();
 
-    // Mapowanie "aktualnych" wartości z tabel do pól DTO (żeby Kuba dostał to co zna)
+    // UI liczy: Aktualna = Początkowa (Base) + Schemat.
+    _recalcCurrent();
+
     final newCharacter = PlayableCharacter(
       id: 0, // API powinno nadać ID
       characterType: _characterType,
       campaignId: _selectedCampaignId!,
       name: _name ?? '',
       race: _race ?? '',
-      career: _career ?? (_selectedProfession?.name ?? ''),
-
+      career: _careerCtrl.text.isNotEmpty ? _careerCtrl.text : (_selectedProfession?.name ?? ''),
       age: _age ?? 0,
 
+      // Current
       ballisticSkill: _primaryCurrent['US'] ?? 0,
       strength: _primaryCurrent['S'] ?? 0,
       toughness: _primaryCurrent['Wt'] ?? 0,
@@ -166,13 +170,27 @@ class _CreatePlayableCharacterPageState
       intelligence: _primaryCurrent['Int'] ?? 0,
       willPower: _primaryCurrent['SW'] ?? 0,
       fellowship: _primaryCurrent['Ogd'] ?? 0,
-
       attacks: _secondaryCurrent['A'] ?? 0,
       wounds: _secondaryCurrent['Żyw'] ?? 0,
       movement: _secondaryCurrent['Ruch'] ?? 0,
       magic: _secondaryCurrent['Mag'] ?? 0,
       insanityPoints: _secondaryCurrent['PO'] ?? 0,
       fatePoints: _secondaryCurrent['PP'] ?? 0,
+
+      // Base
+      baseBallisticSkill: _primaryInitial['US'] ?? 0,
+      baseStrength: _primaryInitial['S'] ?? 0,
+      baseToughness: _primaryInitial['Wt'] ?? 0,
+      baseAgility: _primaryInitial['Zr'] ?? 0,
+      baseIntelligence: _primaryInitial['Int'] ?? 0,
+      baseWillPower: _primaryInitial['SW'] ?? 0,
+      baseFellowship: _primaryInitial['Ogd'] ?? 0,
+      baseAttacks: _secondaryInitial['A'] ?? 0,
+      baseWounds: _secondaryInitial['Żyw'] ?? 0,
+      baseMovement: _secondaryInitial['Ruch'] ?? 0,
+      baseMagic: _secondaryInitial['Mag'] ?? 0,
+      baseInsanityPoints: _secondaryInitial['PO'] ?? 0,
+      baseFatePoints: _secondaryInitial['PP'] ?? 0,
     );
 
     try {
@@ -192,6 +210,21 @@ class _CreatePlayableCharacterPageState
   }
 
   int _parseInt(String s, int fallback) => int.tryParse(s.trim()) ?? fallback;
+
+  void _recalcCurrent() {
+    for (final k in _primaryKeys) {
+      _primaryCurrent[k] = (_primaryInitial[k] ?? 0) + (_primaryScheme[k] ?? 0);
+    }
+    for (final k in _secondaryKeys) {
+      _secondaryCurrent[k] = (_secondaryInitial[k] ?? 0) + (_secondaryScheme[k] ?? 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _careerCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -273,9 +306,9 @@ class _CreatePlayableCharacterPageState
 
                     _spaced(
                       TextFormField(
-                        decoration: const InputDecoration(labelText: 'Klasa / Profesja (tekst)'),
-                        initialValue: _career,
-                        onSaved: (value) => _career = value,
+                        controller: _careerCtrl,
+                        decoration: const InputDecoration(labelText: 'Profesja / klasa (tekst)'),
+                        onSaved: (_) => _career = _careerCtrl.text,
                       ),
                     ),
 
@@ -308,8 +341,8 @@ class _CreatePlayableCharacterPageState
                       initial: _primaryInitial,
                       scheme: _primaryScheme,
                       current: _primaryCurrent,
-                      onInitialChanged: (k, v) => setState(() => _primaryInitial[k] = v),
-                      onCurrentChanged: (k, v) => setState(() => _primaryCurrent[k] = v),
+                      onInitialChanged: (k, v) => setState(() { _primaryInitial[k] = v; _recalcCurrent(); }),
+                      onSchemeChanged: (k, v) => setState(() { _primaryScheme[k] = v; _recalcCurrent(); }),
                       parseInt: _parseInt,
                     ),
 
@@ -321,8 +354,8 @@ class _CreatePlayableCharacterPageState
                       initial: _secondaryInitial,
                       scheme: _secondaryScheme,
                       current: _secondaryCurrent,
-                      onInitialChanged: (k, v) => setState(() => _secondaryInitial[k] = v),
-                      onCurrentChanged: (k, v) => setState(() => _secondaryCurrent[k] = v),
+                      onInitialChanged: (k, v) => setState(() { _secondaryInitial[k] = v; _recalcCurrent(); }),
+                      onSchemeChanged: (k, v) => setState(() { _secondaryScheme[k] = v; _recalcCurrent(); }),
                       parseInt: _parseInt,
                     ),
 
@@ -351,7 +384,7 @@ class StatsTable extends StatelessWidget {
   final Map<String, int> current;
 
   final void Function(String key, int value) onInitialChanged;
-  final void Function(String key, int value) onCurrentChanged;
+  final void Function(String key, int value) onSchemeChanged;
 
   final int Function(String s, int fallback) parseInt;
 
@@ -363,7 +396,7 @@ class StatsTable extends StatelessWidget {
     required this.scheme,
     required this.current,
     required this.onInitialChanged,
-    required this.onCurrentChanged,
+    required this.onSchemeChanged,
     required this.parseInt,
   });
 
@@ -397,7 +430,7 @@ class StatsTable extends StatelessWidget {
                 schemeValue: scheme[k] ?? 0,
                 currentValue: current[k] ?? 0,
                 onInitialChanged: (v) => onInitialChanged(k, v),
-                onCurrentChanged: (v) => onCurrentChanged(k, v),
+                onSchemeChanged: (v) => onSchemeChanged(k, v),
                 parseInt: parseInt,
               ),
             ),
@@ -428,7 +461,7 @@ class _StatRow extends StatefulWidget {
   final int schemeValue;
   final int currentValue;
   final ValueChanged<int> onInitialChanged;
-  final ValueChanged<int> onCurrentChanged;
+  final ValueChanged<int> onSchemeChanged;
   final int Function(String s, int fallback) parseInt;
 
   const _StatRow({
@@ -437,7 +470,7 @@ class _StatRow extends StatefulWidget {
     required this.schemeValue,
     required this.currentValue,
     required this.onInitialChanged,
-    required this.onCurrentChanged,
+    required this.onSchemeChanged,
     required this.parseInt,
   });
 
@@ -447,13 +480,13 @@ class _StatRow extends StatefulWidget {
 
 class _StatRowState extends State<_StatRow> {
   late final TextEditingController _initialCtrl;
-  late final TextEditingController _currentCtrl;
+  late final TextEditingController _schemeCtrl;
 
   @override
   void initState() {
     super.initState();
     _initialCtrl = TextEditingController(text: widget.initialValue.toString());
-    _currentCtrl = TextEditingController(text: widget.currentValue.toString());
+    _schemeCtrl = TextEditingController(text: widget.schemeValue.toString());
   }
 
   @override
@@ -465,16 +498,16 @@ class _StatRowState extends State<_StatRow> {
         _initialCtrl.text != widget.initialValue.toString()) {
       _initialCtrl.text = widget.initialValue.toString();
     }
-    if (oldWidget.currentValue != widget.currentValue &&
-        _currentCtrl.text != widget.currentValue.toString()) {
-      _currentCtrl.text = widget.currentValue.toString();
+    if (oldWidget.schemeValue != widget.schemeValue &&
+        _schemeCtrl.text != widget.schemeValue.toString()) {
+      _schemeCtrl.text = widget.schemeValue.toString();
     }
   }
 
   @override
   void dispose() {
     _initialCtrl.dispose();
-    _currentCtrl.dispose();
+    _schemeCtrl.dispose();
     super.dispose();
   }
 
@@ -505,23 +538,8 @@ class _StatRowState extends State<_StatRow> {
           ),
           const SizedBox(width: 8),
           Expanded(
-            child: Container(
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                widget.schemeValue.toString(),
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
             child: TextFormField(
-              controller: _currentCtrl,
+              controller: _schemeCtrl,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: const InputDecoration(
@@ -530,7 +548,22 @@ class _StatRowState extends State<_StatRow> {
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
               ),
               onChanged: (s) =>
-                  widget.onCurrentChanged(widget.parseInt(s, widget.currentValue)),
+                  widget.onSchemeChanged(widget.parseInt(s, widget.schemeValue)),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Container(
+              height: 44,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                border: Border.all(color: Theme.of(context).dividerColor),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: Text(
+                widget.currentValue.toString(),
+                style: const TextStyle(fontWeight: FontWeight.w600),
+              ),
             ),
           ),
         ],

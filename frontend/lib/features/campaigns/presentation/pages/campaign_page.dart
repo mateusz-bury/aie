@@ -17,7 +17,7 @@ class CampaignPage extends StatefulWidget {
 }
 
 class _CampaignPageState extends State<CampaignPage> {
-  late Future<CampaignById> _campaignFuture;
+  late Future<_CampaignViewData> _viewFuture;
 
   int _selectedCharactersTab = 0; // 0 = Playable, 1 = NPC
 
@@ -28,7 +28,32 @@ class _CampaignPageState extends State<CampaignPage> {
   }
 
   void _loadCampaign() {
-    _campaignFuture = CampaignService.fetchCampaignById(widget.campaignId);
+    _viewFuture = _loadView();
+  }
+
+  Future<_CampaignViewData> _loadView() async {
+    final campaign = await CampaignService.fetchCampaignById(widget.campaignId);
+
+    // Preferujemy dedykowane endpointy (backend: /playable-characters i /npc-characters).
+    // Jeśli backend zwraca pustki / błąd, fallbackujemy do starego pola campaign.characters.
+    final playable = await CampaignService.fetchPlayableCharacters(widget.campaignId);
+    final npcs = await CampaignService.fetchNpcCharacters(widget.campaignId);
+
+    final hasNewData = playable.isNotEmpty || npcs.isNotEmpty;
+    if (hasNewData) {
+      return _CampaignViewData(campaign: campaign, playable: playable, npcs: npcs);
+    }
+
+    // Fallback na stare dane (często null w backendzie, ale niech działa na starszych buildach).
+    final oldPlayable =
+        campaign.characters.where((c) => _getCharacterType(c) == 0).toList();
+    final oldNpcs =
+        campaign.characters.where((c) => _getCharacterType(c) == 1).toList();
+    return _CampaignViewData(
+      campaign: campaign,
+      playable: oldPlayable,
+      npcs: oldNpcs,
+    );
   }
 
   Future<void> _goToEditPage(CampaignById campaign) async {
@@ -195,8 +220,8 @@ class _CampaignPageState extends State<CampaignPage> {
         onPressed: _showAddCharacterSheet,
         child: const Icon(Icons.add),
       ),
-      body: FutureBuilder<CampaignById>(
-        future: _campaignFuture,
+      body: FutureBuilder<_CampaignViewData>(
+        future: _viewFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -206,16 +231,10 @@ class _CampaignPageState extends State<CampaignPage> {
             return const Center(child: Text("Brak danych kampanii"));
           }
 
-          final campaign = snapshot.data!;
-
-          final playable =
-              campaign.characters
-                  .where((c) => _getCharacterType(c) == 0)
-                  .toList();
-          final npcs =
-              campaign.characters
-                  .where((c) => _getCharacterType(c) == 1)
-                  .toList();
+          final data = snapshot.data!;
+          final campaign = data.campaign;
+          final playable = data.playable;
+          final npcs = data.npcs;
 
           final shown = _selectedCharactersTab == 0 ? playable : npcs;
 
@@ -375,6 +394,18 @@ class _CampaignPageState extends State<CampaignPage> {
               .toList(),
     );
   }
+}
+
+class _CampaignViewData {
+  final CampaignById campaign;
+  final List<Character> playable;
+  final List<Character> npcs;
+
+  const _CampaignViewData({
+    required this.campaign,
+    required this.playable,
+    required this.npcs,
+  });
 }
 
 class _CampaignTile extends StatelessWidget {

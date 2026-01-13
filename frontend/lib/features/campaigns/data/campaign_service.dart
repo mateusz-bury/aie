@@ -4,10 +4,43 @@ import 'package:aie/core/utils/app_logger.dart';
 import 'package:aie/features/auth/data/auth_service.dart';
 import 'package:aie/features/campaigns/domain/campaign.dart';
 import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
+import 'package:aie/features/characters/domain/character.dart';
 import 'package:aie/core/api/api_config.dart';
 
 class CampaignService {
   static Uri _endpoint([String path = '']) => ApiConfig.uri('/api/campaign$path');
+
+  static Future<List<Character>> _fetchCharactersList(String path) async {
+    final token = await AuthService.getToken();
+    if (token == null) return [];
+
+    final response = await http.get(
+      _endpoint(path),
+      headers: {'Authorization': 'Bearer $token'},
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = jsonDecode(response.body);
+      return data
+          .whereType<Map<String, dynamic>>()
+          .map((json) => Character.fromJson(json))
+          .toList();
+    }
+
+    // Nie wysadzamy UI – to ma być "dodatkowy" endpoint.
+    AppLogger.w('Błąd pobierania listy postaci ($path): ${response.statusCode}');
+    return [];
+  }
+
+  /// Backend: GET /api/campaign/{id}/playable-characters
+  static Future<List<Character>> fetchPlayableCharacters(int campaignId) {
+    return _fetchCharactersList('/$campaignId/playable-characters');
+  }
+
+  /// Backend: GET /api/campaign/{id}/npc-characters
+  static Future<List<Character>> fetchNpcCharacters(int campaignId) {
+    return _fetchCharactersList('/$campaignId/npc-characters');
+  }
 
   static Future<List<Campaign>> fetchCampaigns() async {
     final token = await AuthService.getToken();

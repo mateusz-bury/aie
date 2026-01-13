@@ -30,12 +30,16 @@ class EditPlayableCharacterPage extends StatefulWidget {
 class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
   late Future<PlayableCharacter> _characterFuture;
 
+  // Chroni przed nadpisywaniem danych formularza przy kolejnych rebuildach.
+  bool _primed = false;
+
   final _formKey = GlobalKey<FormState>();
 
   // Basic
   String? _name;
   String? _race;
   String? _career;
+  late final TextEditingController _careerCtrl;
   int? _age;
   int? _characterType;
 
@@ -81,6 +85,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
   @override
   void initState() {
     super.initState();
+    _careerCtrl = TextEditingController();
     _loadCharacter();
 
     _primaryInitial = {for (final k in _primaryKeys) k: 0};
@@ -98,52 +103,124 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
   int _parseInt(String s, int fallback) => int.tryParse(s.trim()) ?? fallback;
 
+
+  void _recalcCurrent() {
+    for (final k in _primaryKeys) {
+      _primaryCurrent[k] = (_primaryInitial[k] ?? 0) + (_primaryScheme[k] ?? 0);
+    }
+    for (final k in _secondaryKeys) {
+      _secondaryCurrent[k] = (_secondaryInitial[k] ?? 0) + (_secondaryScheme[k] ?? 0);
+    }
+  }
+
+  Map<String, int> _statsMapFromCurrent() {
+    return {
+      'ballisticSkill': _primaryCurrent['US'] ?? 0,
+      'strength': _primaryCurrent['S'] ?? 0,
+      'toughness': _primaryCurrent['Wt'] ?? 0,
+      'agility': _primaryCurrent['Zr'] ?? 0,
+      'intelligence': _primaryCurrent['Int'] ?? 0,
+      'willPower': _primaryCurrent['SW'] ?? 0,
+      'fellowship': _primaryCurrent['Ogd'] ?? 0,
+      'attacks': _secondaryCurrent['A'] ?? 0,
+      'wounds': _secondaryCurrent['Żyw'] ?? 0,
+      'movement': _secondaryCurrent['Ruch'] ?? 0,
+      'magic': _secondaryCurrent['Mag'] ?? 0,
+      'insanityPoints': _secondaryCurrent['PO'] ?? 0,
+      'fatePoints': _secondaryCurrent['PP'] ?? 0,
+    };
+  }
+
+  Map<String, int> _statsMapFromBase() {
+    return {
+      'ballisticSkill': _primaryInitial['US'] ?? 0,
+      'strength': _primaryInitial['S'] ?? 0,
+      'toughness': _primaryInitial['Wt'] ?? 0,
+      'agility': _primaryInitial['Zr'] ?? 0,
+      'intelligence': _primaryInitial['Int'] ?? 0,
+      'willPower': _primaryInitial['SW'] ?? 0,
+      'fellowship': _primaryInitial['Ogd'] ?? 0,
+      'attacks': _secondaryInitial['A'] ?? 0,
+      'wounds': _secondaryInitial['Żyw'] ?? 0,
+      'movement': _secondaryInitial['Ruch'] ?? 0,
+      'magic': _secondaryInitial['Mag'] ?? 0,
+      'insanityPoints': _secondaryInitial['PO'] ?? 0,
+      'fatePoints': _secondaryInitial['PP'] ?? 0,
+    };
+  }
+
   void _onProfessionSelected(Profession? p) {
     setState(() {
       _selectedProfession = p;
+
       if (p == null) {
         _primaryScheme = {for (final k in _primaryKeys) k: 0};
         _secondaryScheme = {for (final k in _secondaryKeys) k: 0};
+        _recalcCurrent();
         return;
       }
+
+      // Wypełnij schemat rozwoju z profesji, ale nadal pozwól ręcznie edytować w tabeli.
       _primaryScheme = {for (final k in _primaryKeys) k: p.primaryScheme[k] ?? 0};
       _secondaryScheme = {for (final k in _secondaryKeys) k: p.secondaryScheme[k] ?? 0};
 
-      // opcjonalnie: jeżeli career puste, ustaw z profesji (nie wymuszam)
-      _career ??= p.name;
+      // UX: wybór profesji ustawia też tekstową "career" (żeby nie trzeba było przepisywać).
+      _career = p.name;
+      _careerCtrl.text = p.name;
+
+      _recalcCurrent();
     });
   }
 
   void _primeFromCharacter(PlayableCharacter c) {
-    _name ??= c.name;
-    _race ??= c.race;
-    _career ??= c.career;
-    _age ??= c.age;
-    _characterType ??= c.characterType;
+    // Wcześniej było "??=" + mapy startowały od 0, więc staty nigdy się nie podstawiały.
+    // Robimy inicjalizację JEDNORAZOWO, aby:
+    // - na wejściu do edycji widać było realne statystyki
+    // - nie nadpisywać zmian użytkownika podczas rebuildów
+    if (_primed) return;
+    _primed = true;
 
-    // current = to co mamy w backendzie
-    _primaryCurrent['US'] ??= c.ballisticSkill;
-    _primaryCurrent['S'] ??= c.strength;
-    _primaryCurrent['Wt'] ??= c.toughness;
-    _primaryCurrent['Zr'] ??= c.agility;
-    _primaryCurrent['Int'] ??= c.intelligence;
-    _primaryCurrent['SW'] ??= c.willPower;
-    _primaryCurrent['Ogd'] ??= c.fellowship;
+    _name = c.name;
+    _race = c.race;
+    _career = c.career;
+    _careerCtrl.text = c.career;
+    _age = c.age;
+    _characterType = c.characterType;
 
-    _secondaryCurrent['A'] ??= c.attacks;
-    _secondaryCurrent['Żyw'] ??= c.wounds;
-    _secondaryCurrent['Ruch'] ??= c.movement;
-    _secondaryCurrent['Mag'] ??= c.magic;
-    _secondaryCurrent['PO'] ??= c.insanityPoints;
-    _secondaryCurrent['PP'] ??= c.fatePoints;
+    // Base i Current przychodzą z backendu w liście statistics.
+    // UI: Początkowa = Base, Schemat = (Current - Base), Aktualna = Base + Schemat.
+    _primaryInitial['US'] = c.baseBallisticSkill;
+    _primaryInitial['S'] = c.baseStrength;
+    _primaryInitial['Wt'] = c.baseToughness;
+    _primaryInitial['Zr'] = c.baseAgility;
+    _primaryInitial['Int'] = c.baseIntelligence;
+    _primaryInitial['SW'] = c.baseWillPower;
+    _primaryInitial['Ogd'] = c.baseFellowship;
 
-    // initial – na razie ustawiamy jako "aktualne" (żeby było sensownie na pokaz)
-    for (final k in _primaryKeys) {
-      _primaryInitial[k] ??= _primaryCurrent[k] ?? 0;
-    }
-    for (final k in _secondaryKeys) {
-      _secondaryInitial[k] ??= _secondaryCurrent[k] ?? 0;
-    }
+    _secondaryInitial['A'] = c.baseAttacks;
+    _secondaryInitial['Żyw'] = c.baseWounds;
+    _secondaryInitial['Ruch'] = c.baseMovement;
+    _secondaryInitial['Mag'] = c.baseMagic;
+    _secondaryInitial['PO'] = c.baseInsanityPoints;
+    _secondaryInitial['PP'] = c.baseFatePoints;
+
+    // Schemat wyliczamy z różnicy aktualnych i bazowych, żeby istniejące postacie miały sensowną edycję.
+    _primaryScheme['US'] = c.ballisticSkill - c.baseBallisticSkill;
+    _primaryScheme['S'] = c.strength - c.baseStrength;
+    _primaryScheme['Wt'] = c.toughness - c.baseToughness;
+    _primaryScheme['Zr'] = c.agility - c.baseAgility;
+    _primaryScheme['Int'] = c.intelligence - c.baseIntelligence;
+    _primaryScheme['SW'] = c.willPower - c.baseWillPower;
+    _primaryScheme['Ogd'] = c.fellowship - c.baseFellowship;
+
+    _secondaryScheme['A'] = c.attacks - c.baseAttacks;
+    _secondaryScheme['Żyw'] = c.wounds - c.baseWounds;
+    _secondaryScheme['Ruch'] = c.movement - c.baseMovement;
+    _secondaryScheme['Mag'] = c.magic - c.baseMagic;
+    _secondaryScheme['PO'] = c.insanityPoints - c.baseInsanityPoints;
+    _secondaryScheme['PP'] = c.fatePoints - c.baseFatePoints;
+
+    _recalcCurrent();
   }
 
   Future<void> _saveCharacter() async {
@@ -181,7 +258,17 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
       // Backend rozdziela update danych podstawowych i statystyk.
       await CharacterService.updateCharacterBasic(updatedCharacter);
-      await CharacterService.updateCharacterStats(updatedCharacter, statisticType: 1);
+      // Aktualizujemy osobno Base i Current (UI liczy Current = Base + Schemat)
+      await CharacterService.updateCharacterStatsRaw(
+        characterId: updatedCharacter.id,
+        statisticType: 0,
+        stats: _statsMapFromBase(),
+      );
+      await CharacterService.updateCharacterStatsRaw(
+        characterId: updatedCharacter.id,
+        statisticType: 1,
+        stats: _statsMapFromCurrent(),
+      );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
@@ -194,6 +281,12 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
         SnackBar(content: Text("Błąd podczas zapisu: $e")),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _careerCtrl.dispose();
+    super.dispose();
   }
 
   @override
@@ -270,11 +363,11 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
                   _spaced(
                     TextFormField(
-                      initialValue: _career,
-                      decoration: const InputDecoration(labelText: 'Klasa / Profesja (tekst)'),
+                      controller: _careerCtrl,
+                      decoration: const InputDecoration(labelText: 'Profesja / klasa (tekst)'),
                       validator: (value) =>
-                          value == null || value.isEmpty ? 'Wpisz klasę' : null,
-                      onSaved: (value) => _career = value,
+                          value == null || value.isEmpty ? 'Wpisz profesję/klasę' : null,
+                      onSaved: (_) => _career = _careerCtrl.text,
                     ),
                   ),
 
@@ -308,8 +401,8 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
                     initial: _primaryInitial,
                     scheme: _primaryScheme,
                     current: _primaryCurrent,
-                    onInitialChanged: (k, v) => setState(() => _primaryInitial[k] = v),
-                    onCurrentChanged: (k, v) => setState(() => _primaryCurrent[k] = v),
+                    onInitialChanged: (k, v) => setState(() { _primaryInitial[k] = v; _recalcCurrent(); }),
+                    onSchemeChanged: (k, v) => setState(() { _primaryScheme[k] = v; _recalcCurrent(); }),
                     parseInt: _parseInt,
                   ),
 
@@ -321,8 +414,8 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
                     initial: _secondaryInitial,
                     scheme: _secondaryScheme,
                     current: _secondaryCurrent,
-                    onInitialChanged: (k, v) => setState(() => _secondaryInitial[k] = v),
-                    onCurrentChanged: (k, v) => setState(() => _secondaryCurrent[k] = v),
+                    onInitialChanged: (k, v) => setState(() { _secondaryInitial[k] = v; _recalcCurrent(); }),
+                    onSchemeChanged: (k, v) => setState(() { _secondaryScheme[k] = v; _recalcCurrent(); }),
                     parseInt: _parseInt,
                   ),
 
@@ -353,7 +446,7 @@ class StatsTable extends StatelessWidget {
   final Map<String, int> current;
 
   final void Function(String key, int value) onInitialChanged;
-  final void Function(String key, int value) onCurrentChanged;
+  final void Function(String key, int value) onSchemeChanged;
 
   final int Function(String s, int fallback) parseInt;
 
@@ -365,7 +458,7 @@ class StatsTable extends StatelessWidget {
     required this.scheme,
     required this.current,
     required this.onInitialChanged,
-    required this.onCurrentChanged,
+    required this.onSchemeChanged,
     required this.parseInt,
   });
 
@@ -399,7 +492,7 @@ class StatsTable extends StatelessWidget {
                 schemeValue: scheme[k] ?? 0,
                 currentValue: current[k] ?? 0,
                 onInitialChanged: (v) => onInitialChanged(k, v),
-                onCurrentChanged: (v) => onCurrentChanged(k, v),
+                onSchemeChanged: (v) => onSchemeChanged(k, v),
                 parseInt: parseInt,
               ),
             ),
@@ -430,7 +523,7 @@ class _StatRow extends StatefulWidget {
   final int schemeValue;
   final int currentValue;
   final ValueChanged<int> onInitialChanged;
-  final ValueChanged<int> onCurrentChanged;
+  final ValueChanged<int> onSchemeChanged;
   final int Function(String s, int fallback) parseInt;
 
   const _StatRow({
@@ -439,7 +532,7 @@ class _StatRow extends StatefulWidget {
     required this.schemeValue,
     required this.currentValue,
     required this.onInitialChanged,
-    required this.onCurrentChanged,
+    required this.onSchemeChanged,
     required this.parseInt,
   });
 
@@ -449,13 +542,13 @@ class _StatRow extends StatefulWidget {
 
 class _StatRowState extends State<_StatRow> {
   late final TextEditingController _initialCtrl;
-  late final TextEditingController _currentCtrl;
+  late final TextEditingController _schemeCtrl;
 
   @override
   void initState() {
     super.initState();
     _initialCtrl = TextEditingController(text: widget.initialValue.toString());
-    _currentCtrl = TextEditingController(text: widget.currentValue.toString());
+    _schemeCtrl = TextEditingController(text: widget.schemeValue.toString());
   }
 
   @override
@@ -466,16 +559,16 @@ class _StatRowState extends State<_StatRow> {
         _initialCtrl.text != widget.initialValue.toString()) {
       _initialCtrl.text = widget.initialValue.toString();
     }
-    if (oldWidget.currentValue != widget.currentValue &&
-        _currentCtrl.text != widget.currentValue.toString()) {
-      _currentCtrl.text = widget.currentValue.toString();
+    if (oldWidget.schemeValue != widget.schemeValue &&
+        _schemeCtrl.text != widget.schemeValue.toString()) {
+      _schemeCtrl.text = widget.schemeValue.toString();
     }
   }
 
   @override
   void dispose() {
     _initialCtrl.dispose();
-    _currentCtrl.dispose();
+    _schemeCtrl.dispose();
     super.dispose();
   }
 
@@ -506,6 +599,20 @@ class _StatRowState extends State<_StatRow> {
           ),
           const SizedBox(width: 8),
           Expanded(
+            child: TextFormField(
+              controller: _schemeCtrl,
+              keyboardType: TextInputType.number,
+              textAlign: TextAlign.center,
+              decoration: const InputDecoration(
+                isDense: true,
+                border: OutlineInputBorder(),
+                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              ),
+              onChanged: (s) => widget.onSchemeChanged(widget.parseInt(s, widget.schemeValue)),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
             child: Container(
               height: 44,
               alignment: Alignment.center,
@@ -514,24 +621,9 @@ class _StatRowState extends State<_StatRow> {
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Text(
-                widget.schemeValue.toString(),
+                widget.currentValue.toString(),
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextFormField(
-              controller: _currentCtrl,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                isDense: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              ),
-              onChanged: (s) =>
-                  widget.onCurrentChanged(widget.parseInt(s, widget.currentValue)),
             ),
           ),
         ],

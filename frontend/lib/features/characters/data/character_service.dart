@@ -52,7 +52,7 @@ class CharacterService {
     throw Exception('Błąd pobierania postaci o id $id: ${response.statusCode} ${response.body}');
   }
 
-  /// Backend: PUT /api/character/{id} przyjmuje UpdateCharacterDto (bez campaignId i bez stats).
+  /// Backend: PUT /api/character/{id} przyjmuje UpdateCharacterDto (z CampaignId, bez statystyk).
   static Future<void> updateCharacterBasic(PlayableCharacter character) async {
     final headers = await _authHeaders(json: true);
     final response = await http.put(
@@ -63,6 +63,46 @@ class CharacterService {
 
     if (response.statusCode != 200) {
       throw Exception('Błąd aktualizacji postaci: ${response.statusCode} ${response.body}');
+    }
+  }
+
+
+  static String _statisticTypeToApiValue(int type) {
+    switch (type) {
+      case 1:
+        return 'Current';
+      case 2:
+        return 'Temporary';
+      case 3:
+        return 'Template';
+      case 0:
+      default:
+        return 'Base';
+    }
+  }
+
+  /// Wariant niskopoziomowy: pozwala wysłać statystyki z mapy wartości (np. Base i Current osobno).
+  /// statsKeys muszą być w camelCase zgodnym z backendowym UpdateStatisticDto (np. ballisticSkill, movement).
+  static Future<void> updateCharacterStatsRaw({
+    required int characterId,
+    required int statisticType,
+    required Map<String, int> stats,
+  }) async {
+    final headers = await _authHeaders(json: true);
+
+    final body = <String, dynamic>{
+      'statisticType': _statisticTypeToApiValue(statisticType),
+      ...stats,
+    };
+
+    final response = await http.post(
+      _endpoint('/$characterId/statistics'),
+      headers: headers,
+      body: jsonEncode(body),
+    );
+
+    if (response.statusCode != 200) {
+      throw Exception('Błąd aktualizacji statystyk: ${response.statusCode} ${response.body}');
     }
   }
 
@@ -117,13 +157,22 @@ class CharacterService {
     }
   }
 
-  /// Backend: PUT /api/character/{id}/campaign
+  /// Przypina istniejącą postać do kampanii.
+  ///
+  /// Backend: (opcja 1) zwykłe PUT /api/character/{id} z UpdateCharacterDto,
+  /// który zawiera CampaignId.
   static Future<void> assignCharacterToCampaign({required int characterId, required int campaignId}) async {
+    // UpdateCharacterDto wymaga też pól podstawowych, więc pobieramy aktualną postać
+    // i wysyłamy pełny payload z podmienionym campaignId.
+    final current = await fetchCharacterById(characterId);
+    final payload = current.toUpdateDtoJson();
+    payload['campaignId'] = campaignId;
+
     final headers = await _authHeaders(json: true);
     final response = await http.put(
-      _endpoint('/$characterId/campaign'),
+      _endpoint('/$characterId'),
       headers: headers,
-      body: jsonEncode({'campaignId': campaignId}),
+      body: jsonEncode(payload),
     );
 
     if (response.statusCode != 200) {
