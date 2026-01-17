@@ -15,7 +15,6 @@ class _AieAppState extends State<AieApp> {
   @override
   void initState() {
     super.initState();
-    // Load persisted theme (no need to block UI).
     ThemeController.instance.load();
   }
 
