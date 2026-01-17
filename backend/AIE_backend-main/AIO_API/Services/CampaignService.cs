@@ -1,6 +1,5 @@
 ﻿using AIO_API.Entities;
 using AIO_API.Entities.Campaigns;
-using AIO_API.Entities.Characters;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces;
 using AIO_API.Interfaces.Repo;
@@ -15,9 +14,9 @@ namespace AIO_API.Services
     public class CampaignService : ICampaignService
     {
         private readonly IMapper _mapper;
-        private readonly ILogger<CharacterService> _logger;
+        private readonly ILogger<CampaignService> _logger;
         private readonly ICampaignRepository _repo;
-        public CampaignService( IMapper mapper, ILogger<CharacterService> logger, ICampaignRepository repo)
+        public CampaignService( IMapper mapper, ILogger<CampaignService> logger, ICampaignRepository repo)
         {
             _mapper = mapper;
             _logger = logger;
@@ -48,20 +47,20 @@ namespace AIO_API.Services
 
             _repo.SaveChanges();
         }
-        public Campaign CreateCampaign(int userId, CreateCampaignDto dto)
+        public CampaignByIdDto CreateCampaign(int userId, CreateCampaignDto dto)
         {
             if (dto == null)
                 throw new BadRequestException("Campaign data is required");
 
-            var campaign = Campaign.Create(
-                dto.Name,
-                dto.Description,
-                userId
-            );
-            _repo.CreateCampaign(campaign);
+            var campaign = _mapper.Map<Campaign>(dto);
+
+            campaign.Create(userId);
+            _repo.AddCampaign(campaign);
             _repo.SaveChanges();
 
-            return campaign;
+            var campaignDto = _mapper.Map<CampaignByIdDto>(campaign);
+
+            return campaignDto;
         }
 
         public void DeleteCampaign(int id, int userId)

@@ -14,6 +14,8 @@ namespace AIO_API.Entities.Campaigns
         public User User { get; set; }
 
         public ICollection<Character> Characters { get; set; }
+        public ICollection<CampaignSession> CampaignSessions { get; set; }
+
 
 
         public void Update(Campaign campaign)
@@ -25,19 +27,11 @@ namespace AIO_API.Entities.Campaigns
             Description = campaign.Description;
         }
 
-        public static Campaign Create(string name, string description, int userId)
+        public void Create(int userId)
         {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new DomainException("Campaign name is required");
-
-            return new Campaign
-            {
-                Name = name.Trim(),
-                Description = description,
-                UserId = userId,
-                CreateDate = DateTime.UtcNow,
-                Characters = new List<Character>()
-            };
+            UserId = userId;
+            CreateDate = DateTime.UtcNow;
+            Characters = new List<Character>();
         }
     }
 }

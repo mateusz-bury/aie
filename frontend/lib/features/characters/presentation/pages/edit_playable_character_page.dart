@@ -104,12 +104,12 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
   int _parseInt(String s, int fallback) => int.tryParse(s.trim()) ?? fallback;
 
 
-  void _recalcCurrent() {
+  void _recalcSchemeFromCurrent() {
     for (final k in _primaryKeys) {
-      _primaryCurrent[k] = (_primaryInitial[k] ?? 0) + (_primaryScheme[k] ?? 0);
+      _primaryScheme[k] = (_primaryCurrent[k] ?? 0) - (_primaryInitial[k] ?? 0);
     }
     for (final k in _secondaryKeys) {
-      _secondaryCurrent[k] = (_secondaryInitial[k] ?? 0) + (_secondaryScheme[k] ?? 0);
+      _secondaryScheme[k] = (_secondaryCurrent[k] ?? 0) - (_secondaryInitial[k] ?? 0);
     }
   }
 
@@ -156,7 +156,14 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
       if (p == null) {
         _primaryScheme = {for (final k in _primaryKeys) k: 0};
         _secondaryScheme = {for (final k in _secondaryKeys) k: 0};
-        _recalcCurrent();
+        // Back to Base
+        for (final k in _primaryKeys) {
+          _primaryCurrent[k] = _primaryInitial[k] ?? 0;
+        }
+        for (final k in _secondaryKeys) {
+          _secondaryCurrent[k] = _secondaryInitial[k] ?? 0;
+        }
+        _recalcSchemeFromCurrent();
         return;
       }
 
@@ -168,7 +175,14 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
       _career = p.name;
       _careerCtrl.text = p.name;
 
-      _recalcCurrent();
+      // Apply Base + selected scheme
+      for (final k in _primaryKeys) {
+        _primaryCurrent[k] = (_primaryInitial[k] ?? 0) + (_primaryScheme[k] ?? 0);
+      }
+      for (final k in _secondaryKeys) {
+        _secondaryCurrent[k] = (_secondaryInitial[k] ?? 0) + (_secondaryScheme[k] ?? 0);
+      }
+      _recalcSchemeFromCurrent();
     });
   }
 
@@ -204,23 +218,23 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
     _secondaryInitial['PO'] = c.baseInsanityPoints;
     _secondaryInitial['PP'] = c.baseFatePoints;
 
-    // Schemat wyliczamy z różnicy aktualnych i bazowych, żeby istniejące postacie miały sensowną edycję.
-    _primaryScheme['US'] = c.ballisticSkill - c.baseBallisticSkill;
-    _primaryScheme['S'] = c.strength - c.baseStrength;
-    _primaryScheme['Wt'] = c.toughness - c.baseToughness;
-    _primaryScheme['Zr'] = c.agility - c.baseAgility;
-    _primaryScheme['Int'] = c.intelligence - c.baseIntelligence;
-    _primaryScheme['SW'] = c.willPower - c.baseWillPower;
-    _primaryScheme['Ogd'] = c.fellowship - c.baseFellowship;
+    // W edycji: Current jest edytowalne, a Schemat = (Current - Base) jest tylko podglądem.
+    _primaryCurrent['US'] = c.ballisticSkill;
+    _primaryCurrent['S'] = c.strength;
+    _primaryCurrent['Wt'] = c.toughness;
+    _primaryCurrent['Zr'] = c.agility;
+    _primaryCurrent['Int'] = c.intelligence;
+    _primaryCurrent['SW'] = c.willPower;
+    _primaryCurrent['Ogd'] = c.fellowship;
 
-    _secondaryScheme['A'] = c.attacks - c.baseAttacks;
-    _secondaryScheme['Żyw'] = c.wounds - c.baseWounds;
-    _secondaryScheme['Ruch'] = c.movement - c.baseMovement;
-    _secondaryScheme['Mag'] = c.magic - c.baseMagic;
-    _secondaryScheme['PO'] = c.insanityPoints - c.baseInsanityPoints;
-    _secondaryScheme['PP'] = c.fatePoints - c.baseFatePoints;
+    _secondaryCurrent['A'] = c.attacks;
+    _secondaryCurrent['Żyw'] = c.wounds;
+    _secondaryCurrent['Ruch'] = c.movement;
+    _secondaryCurrent['Mag'] = c.magic;
+    _secondaryCurrent['PO'] = c.insanityPoints;
+    _secondaryCurrent['PP'] = c.fatePoints;
 
-    _recalcCurrent();
+    _recalcSchemeFromCurrent();
   }
 
   Future<void> _saveCharacter() async {
@@ -258,12 +272,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
 
       // Backend rozdziela update danych podstawowych i statystyk.
       await CharacterService.updateCharacterBasic(updatedCharacter);
-      // Aktualizujemy osobno Base i Current (UI liczy Current = Base + Schemat)
-      await CharacterService.updateCharacterStatsRaw(
-        characterId: updatedCharacter.id,
-        statisticType: 0,
-        stats: _statsMapFromBase(),
-      );
+      // W edycji: Base jest read-only, więc aktualizujemy tylko Current.
       await CharacterService.updateCharacterStatsRaw(
         characterId: updatedCharacter.id,
         statisticType: 1,
@@ -357,7 +366,9 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
                       items: demoProfessions
                           .map((p) => DropdownMenuItem(value: p, child: Text(p.name)))
                           .toList(),
-                      onChanged: _onProfessionSelected,
+                      // W edycji: Base jest read-only, a użytkownik zmienia tylko Current.
+                      // Schemat pokazujemy jako różnicę (Current - Base), więc wybór profesji to tylko placeholder.
+                      onChanged: null,
                     ),
                   ),
 
@@ -401,8 +412,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
                     initial: _primaryInitial,
                     scheme: _primaryScheme,
                     current: _primaryCurrent,
-                    onInitialChanged: (k, v) => setState(() { _primaryInitial[k] = v; _recalcCurrent(); }),
-                    onSchemeChanged: (k, v) => setState(() { _primaryScheme[k] = v; _recalcCurrent(); }),
+                    onCurrentChanged: (k, v) => setState(() { _primaryCurrent[k] = v; _recalcSchemeFromCurrent(); }),
                     parseInt: _parseInt,
                   ),
 
@@ -414,8 +424,7 @@ class _EditPlayableCharacterPageState extends State<EditPlayableCharacterPage> {
                     initial: _secondaryInitial,
                     scheme: _secondaryScheme,
                     current: _secondaryCurrent,
-                    onInitialChanged: (k, v) => setState(() { _secondaryInitial[k] = v; _recalcCurrent(); }),
-                    onSchemeChanged: (k, v) => setState(() { _secondaryScheme[k] = v; _recalcCurrent(); }),
+                    onCurrentChanged: (k, v) => setState(() { _secondaryCurrent[k] = v; _recalcSchemeFromCurrent(); }),
                     parseInt: _parseInt,
                   ),
 
@@ -445,8 +454,7 @@ class StatsTable extends StatelessWidget {
   final Map<String, int> scheme;
   final Map<String, int> current;
 
-  final void Function(String key, int value) onInitialChanged;
-  final void Function(String key, int value) onSchemeChanged;
+  final void Function(String key, int value) onCurrentChanged;
 
   final int Function(String s, int fallback) parseInt;
 
@@ -457,8 +465,7 @@ class StatsTable extends StatelessWidget {
     required this.initial,
     required this.scheme,
     required this.current,
-    required this.onInitialChanged,
-    required this.onSchemeChanged,
+    required this.onCurrentChanged,
     required this.parseInt,
   });
 
@@ -491,8 +498,7 @@ class StatsTable extends StatelessWidget {
                 initialValue: initial[k] ?? 0,
                 schemeValue: scheme[k] ?? 0,
                 currentValue: current[k] ?? 0,
-                onInitialChanged: (v) => onInitialChanged(k, v),
-                onSchemeChanged: (v) => onSchemeChanged(k, v),
+                onCurrentChanged: (v) => onCurrentChanged(k, v),
                 parseInt: parseInt,
               ),
             ),
@@ -522,8 +528,7 @@ class _StatRow extends StatefulWidget {
   final int initialValue;
   final int schemeValue;
   final int currentValue;
-  final ValueChanged<int> onInitialChanged;
-  final ValueChanged<int> onSchemeChanged;
+  final ValueChanged<int> onCurrentChanged;
   final int Function(String s, int fallback) parseInt;
 
   const _StatRow({
@@ -531,8 +536,7 @@ class _StatRow extends StatefulWidget {
     required this.initialValue,
     required this.schemeValue,
     required this.currentValue,
-    required this.onInitialChanged,
-    required this.onSchemeChanged,
+    required this.onCurrentChanged,
     required this.parseInt,
   });
 
@@ -541,34 +545,26 @@ class _StatRow extends StatefulWidget {
 }
 
 class _StatRowState extends State<_StatRow> {
-  late final TextEditingController _initialCtrl;
-  late final TextEditingController _schemeCtrl;
+  late final TextEditingController _currentCtrl;
 
   @override
   void initState() {
     super.initState();
-    _initialCtrl = TextEditingController(text: widget.initialValue.toString());
-    _schemeCtrl = TextEditingController(text: widget.schemeValue.toString());
+    _currentCtrl = TextEditingController(text: widget.currentValue.toString());
   }
 
   @override
   void didUpdateWidget(covariant _StatRow oldWidget) {
     super.didUpdateWidget(oldWidget);
-
-    if (oldWidget.initialValue != widget.initialValue &&
-        _initialCtrl.text != widget.initialValue.toString()) {
-      _initialCtrl.text = widget.initialValue.toString();
-    }
-    if (oldWidget.schemeValue != widget.schemeValue &&
-        _schemeCtrl.text != widget.schemeValue.toString()) {
-      _schemeCtrl.text = widget.schemeValue.toString();
+    if (oldWidget.currentValue != widget.currentValue &&
+        _currentCtrl.text != widget.currentValue.toString()) {
+      _currentCtrl.text = widget.currentValue.toString();
     }
   }
 
   @override
   void dispose() {
-    _initialCtrl.dispose();
-    _schemeCtrl.dispose();
+    _currentCtrl.dispose();
     super.dispose();
   }
 
@@ -584,8 +580,16 @@ class _StatRowState extends State<_StatRow> {
                 style: const TextStyle(fontWeight: FontWeight.w600)),
           ),
           Expanded(
+            child: _ReadOnlyBox(value: widget.initialValue.toString()),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: _ReadOnlyBox(value: widget.schemeValue.toString()),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
             child: TextFormField(
-              controller: _initialCtrl,
+              controller: _currentCtrl,
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: const InputDecoration(
@@ -593,40 +597,33 @@ class _StatRowState extends State<_StatRow> {
                 border: OutlineInputBorder(),
                 contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
               ),
-              onChanged: (s) =>
-                  widget.onInitialChanged(widget.parseInt(s, widget.initialValue)),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: TextFormField(
-              controller: _schemeCtrl,
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              decoration: const InputDecoration(
-                isDense: true,
-                border: OutlineInputBorder(),
-                contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-              ),
-              onChanged: (s) => widget.onSchemeChanged(widget.parseInt(s, widget.schemeValue)),
-            ),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Container(
-              height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                border: Border.all(color: Theme.of(context).dividerColor),
-                borderRadius: BorderRadius.circular(4),
-              ),
-              child: Text(
-                widget.currentValue.toString(),
-                style: const TextStyle(fontWeight: FontWeight.w600),
+              onChanged: (s) => widget.onCurrentChanged(
+                widget.parseInt(s, widget.currentValue),
               ),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ReadOnlyBox extends StatelessWidget {
+  final String value;
+  const _ReadOnlyBox({required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 44,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(
+        border: Border.all(color: Theme.of(context).dividerColor),
+        borderRadius: BorderRadius.circular(4),
+      ),
+      child: Text(
+        value,
+        style: const TextStyle(fontWeight: FontWeight.w600),
       ),
     );
   }

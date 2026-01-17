@@ -1,4 +1,5 @@
-﻿using AIO_API.Entities.Campaigns;
+﻿using AIO_API.Entities;
+using AIO_API.Entities.Campaigns;
 using AIO_API.Entities.Characters;
 using AIO_API.Entities.Characters.Abilities;
 using AIO_API.Entities.Characters.Skills;
@@ -12,6 +13,7 @@ using AIO_API.Models.CharacterDto.Skill;
 using AIO_API.Models.CharacterDto.Statistic;
 using AIO_API.Models.EquipementDto;
 using AIO_API.Models.ItemDto;
+using AIO_API.Models.CampaignSessionDto;
 using AIO_API.Models.UserDTO;
 using AutoMapper;
 
@@ -36,18 +38,6 @@ public class AieMappingProfile : Profile
                 opt => opt.MapFrom(src => src.CharacterItems))
             .ForMember(dest => dest.Statistics,
                 opt => opt.MapFrom(src => src.Statistics));
-
-        // Postacie kampani 
-        CreateMap<Character, AllCharacterDto>()
-    .Include<PlayableCharacter, AllCharacterDto>()
-    .Include<NpcCharacter, AllCharacterDto>()   
-    .ForMember(dest => dest.CharacterType,
-        opt => opt.MapFrom(src =>
-            src is NpcCharacter ? CharacterType.Npc : CharacterType.Playable));
-
-        CreateMap<PlayableCharacter, AllCharacterDto>();
-        CreateMap<NpcCharacter, AllCharacterDto>();
-
 
         // Specyficzne mapowania dziedziczące
         CreateMap<PlayableCharacter, CharacterDto>();
@@ -118,5 +108,21 @@ public class AieMappingProfile : Profile
         CreateMap<Campaign, CampaignByIdDto>();
         CreateMap<CreateCampaignDto, Campaign>();
         CreateMap<UpdateCampaignDto, Campaign>();
+
+        // --- Campaign Sessions ---
+        CreateMap<CreateCampaignSessionDto, CampaignSession>();
+        CreateMap<UpdateCampaignSessionDto, CampaignSession>();
+        CreateMap<CampaignSession, CampaignSessionDto>();
+
+        // Postacie kampani 
+        CreateMap<Character, AllCharacterDto>()
+            .Include<PlayableCharacter, AllCharacterDto>()
+            .Include<NpcCharacter, AllCharacterDto>()
+            .ForMember(dest => dest.CharacterType,
+                        opt => opt.MapFrom(src =>
+                            src is NpcCharacter ? CharacterType.Npc : CharacterType.Playable));
+
+        CreateMap<PlayableCharacter, AllCharacterDto>();
+        CreateMap<NpcCharacter, AllCharacterDto>();
     }
 }

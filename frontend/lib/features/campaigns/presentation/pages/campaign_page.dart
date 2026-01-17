@@ -1,5 +1,7 @@
 import 'package:aie/features/campaigns/data/campaign_service.dart';
+import 'package:aie/features/campaigns/data/campaign_session_service.dart';
 import 'package:aie/features/campaigns/domain/campaign_by_id.dart';
+import 'package:aie/features/campaigns/domain/campaign_session.dart';
 import 'package:aie/features/campaigns/presentation/pages/edit_campaign_page.dart';
 import 'package:aie/features/characters/presentation/pages/create_playable_character_page.dart';
 import 'package:aie/features/characters/presentation/pages/edit_playable_character_page.dart';
@@ -34,6 +36,8 @@ class _CampaignPageState extends State<CampaignPage> {
   Future<_CampaignViewData> _loadView() async {
     final campaign = await CampaignService.fetchCampaignById(widget.campaignId);
 
+    final sessions = await CampaignSessionService.fetchSessions(widget.campaignId);
+
     // Preferujemy dedykowane endpointy (backend: /playable-characters i /npc-characters).
     // Jeśli backend zwraca pustki / błąd, fallbackujemy do starego pola campaign.characters.
     final playable = await CampaignService.fetchPlayableCharacters(widget.campaignId);
@@ -41,7 +45,12 @@ class _CampaignPageState extends State<CampaignPage> {
 
     final hasNewData = playable.isNotEmpty || npcs.isNotEmpty;
     if (hasNewData) {
-      return _CampaignViewData(campaign: campaign, playable: playable, npcs: npcs);
+      return _CampaignViewData(
+        campaign: campaign,
+        playable: playable,
+        npcs: npcs,
+        sessions: sessions,
+      );
     }
 
     // Fallback na stare dane (często null w backendzie, ale niech działa na starszych buildach).
@@ -53,7 +62,134 @@ class _CampaignPageState extends State<CampaignPage> {
       campaign: campaign,
       playable: oldPlayable,
       npcs: oldNpcs,
+      sessions: sessions,
     );
+  }
+
+  String _formatDate(DateTime d) {
+    final y = d.year.toString().padLeft(4, '0');
+    final m = d.month.toString().padLeft(2, '0');
+    final day = d.day.toString().padLeft(2, '0');
+    return '$y-$m-$day';
+  }
+
+  Future<void> _showCreateOrEditSessionDialog({CampaignSession? existing}) async {
+    final titleCtrl = TextEditingController(text: existing?.title ?? '');
+    final descCtrl = TextEditingController(text: existing?.description ?? '');
+
+    final isEdit = existing != null;
+
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text(isEdit ? 'Edytuj sesję' : 'Dodaj sesję'),
+          content: SizedBox(
+            width: double.maxFinite,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextField(
+                  controller: titleCtrl,
+                  decoration: const InputDecoration(labelText: 'Tytuł'),
+                  textInputAction: TextInputAction.next,
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: descCtrl,
+                  decoration: const InputDecoration(labelText: 'Opis (opcjonalnie)'),
+                  minLines: 2,
+                  maxLines: 4,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Anuluj'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: Text(isEdit ? 'Zapisz' : 'Dodaj'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (ok != true) return;
+
+    final title = titleCtrl.text.trim();
+    final desc = descCtrl.text.trim();
+
+    if (title.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Tytuł nie może być pusty.')),
+      );
+      return;
+    }
+
+    try {
+      if (isEdit) {
+        await CampaignSessionService.updateSession(
+          campaignId: widget.campaignId,
+          sessionId: existing!.id,
+          title: title,
+          description: desc.isEmpty ? null : desc,
+        );
+      } else {
+        await CampaignSessionService.createSession(
+          campaignId: widget.campaignId,
+          title: title,
+          description: desc.isEmpty ? null : desc,
+        );
+      }
+      if (!mounted) return;
+      setState(() => _loadCampaign());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Nie udało się zapisać sesji: $e')),
+      );
+    }
+  }
+
+  Future<void> _deleteSession(CampaignSession session) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Usuń sesję'),
+        content: Text('Usunąć sesję "${session.title}"?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Anuluj'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Usuń', style: TextStyle(color: Colors.red)),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm != true) return;
+
+    try {
+      await CampaignSessionService.deleteSession(
+        campaignId: widget.campaignId,
+        sessionId: session.id,
+      );
+      if (!mounted) return;
+      setState(() => _loadCampaign());
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Nie udało się usunąć sesji: $e')),
+      );
+    }
   }
 
   Future<void> _goToEditPage(CampaignById campaign) async {
@@ -235,6 +371,7 @@ class _CampaignPageState extends State<CampaignPage> {
           final campaign = data.campaign;
           final playable = data.playable;
           final npcs = data.npcs;
+          final sessions = data.sessions;
 
           final shown = _selectedCharactersTab == 0 ? playable : npcs;
 
@@ -304,6 +441,88 @@ class _CampaignPageState extends State<CampaignPage> {
                         ),
                       ),
                     ],
+                  ),
+
+                  const SizedBox(height: 16),
+                  Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              const Icon(Icons.event_note),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  'Sesje (${sessions.length})',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                tooltip: 'Dodaj sesję',
+                                onPressed: () => _showCreateOrEditSessionDialog(),
+                                icon: const Icon(Icons.add),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          if (sessions.isEmpty)
+                            const Text('Brak sesji w tej kampanii. Dodaj pierwszą sesję.'),
+                          if (sessions.isNotEmpty)
+                            Column(
+                              children: sessions
+                                  .map(
+                                    (s) => Padding(
+                                      padding: const EdgeInsets.only(bottom: 6),
+                                      child: Card(
+                                        elevation: 0,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(12),
+                                          side: BorderSide(color: Theme.of(context).dividerColor),
+                                        ),
+                                        child: ListTile(
+                                          dense: true,
+                                          visualDensity: const VisualDensity(vertical: -2),
+                                          contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                                          title: Text(s.title, maxLines: 1, overflow: TextOverflow.ellipsis),
+                                          subtitle: Text(
+                                            '${_formatDate(s.createDate)}${(s.description?.isNotEmpty ?? false) ? " — ${s.description}" : ""}',
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          onTap: () => _showCreateOrEditSessionDialog(existing: s),
+                                          trailing: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              IconButton(
+                                                tooltip: 'Edytuj',
+                                                onPressed: () => _showCreateOrEditSessionDialog(existing: s),
+                                                icon: const Icon(Icons.edit),
+                                              ),
+                                              IconButton(
+                                                tooltip: 'Usuń',
+                                                onPressed: () => _deleteSession(s),
+                                                icon: const Icon(Icons.delete_outline),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                  .toList(),
+                            ),
+                        ],
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 24),
                   const Text(
@@ -375,17 +594,21 @@ class _CampaignPageState extends State<CampaignPage> {
           characters
               .map(
                 (ch) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.only(bottom: 6),
                   child: Card(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: ListTile(
+                      dense: true,
+                      visualDensity: const VisualDensity(vertical: -2),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       title: Text(ch.name),
                       subtitle: Text("${ch.race} - ${ch.career}"),
-                      trailing: ElevatedButton(
+                      trailing: IconButton(
+                        tooltip: 'Edytuj',
                         onPressed: () => _goToEditCharacter(ch.id),
-                        child: const Text("Edytuj"),
+                        icon: const Icon(Icons.edit),
                       ),
                     ),
                   ),
@@ -400,11 +623,13 @@ class _CampaignViewData {
   final CampaignById campaign;
   final List<Character> playable;
   final List<Character> npcs;
+  final List<CampaignSession> sessions;
 
   const _CampaignViewData({
     required this.campaign,
     required this.playable,
     required this.npcs,
+    required this.sessions,
   });
 }
 

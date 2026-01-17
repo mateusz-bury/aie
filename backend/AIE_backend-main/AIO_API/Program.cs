@@ -106,6 +106,8 @@ builder.Services.AddScoped<ISkillService, SkillService>();
 builder.Services.AddScoped<IAbilityRepository, AbilityRepository>();
 builder.Services.AddScoped<IAbilityService, AbilityService>();
 builder.Services.AddScoped<ICampaignRepository, CampaignRepository>();
+builder.Services.AddTransient<ICampaignSessionRepository, CampaignSessionRepository>();
+builder.Services.AddTransient<ICampaignSessionService, CampaignSessionService>();
 
 // ---------- SWAGGER ----------
 builder.Services.AddEndpointsApiExplorer();

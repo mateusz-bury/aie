@@ -7,7 +7,7 @@ namespace AIO_API.Interfaces.Repo
     {
         public IEnumerable<Campaign> GetAllCampaigns(int userId);
         public Campaign GetCampaignById(int id, int userId);
-        public int CreateCampaign(Campaign campaign);
+        public int AddCampaign(Campaign campaign);
         public void DeleteCampaign(int id, int userId);
         public IEnumerable<PlayableCharacter> GetPlayableCharactersInCampaign(int id, int userId);
         public IEnumerable<NpcCharacter> GetNpcCharactersInCampaign(int id, int userId);

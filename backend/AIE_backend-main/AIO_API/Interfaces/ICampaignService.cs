@@ -10,7 +10,7 @@ namespace AIO_API.Interfaces
         public CampaignByIdDto GetById(int id, int userId);
         public IEnumerable<CampaignDto> GetAll(int userId);
         public void UpdateCampaign(int id, int userId, UpdateCampaignDto dto);
-        public Campaign CreateCampaign(int userId, CreateCampaignDto dto);
+        public CampaignByIdDto CreateCampaign(int userId, CreateCampaignDto dto);
         public void DeleteCampaign(int id, int userId);
         public IEnumerable<CharacterDto> GetPlayableCharactersInCampaign(int id, int userId);
         public IEnumerable<CharacterDto> GetNpcCharactersInCampaign(int id, int userId);

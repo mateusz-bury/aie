@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:aie/core/theme/app_colors.dart';
+import 'package:aie/core/theme/aie_theme_extension.dart';
 
-/// Tło aplikacji (gradient jak na ekranie logowania).
+/// App background (gradient). Gradient colors come from theme extension,
+/// so the look can be switched in settings.
 class AieBackground extends StatelessWidget {
   final Widget child;
   final EdgeInsetsGeometry padding;
@@ -14,11 +16,15 @@ class AieBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ext = Theme.of(context).extension<AieThemeExtension>();
+    final top = ext?.gradientTop ?? AppColors.surface2;
+    final bottom = ext?.gradientBottom ?? AppColors.background2;
+
     return Container(
       width: double.infinity,
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         gradient: LinearGradient(
-          colors: [AppColors.surface2, AppColors.background2],
+          colors: [top, bottom],
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
         ),

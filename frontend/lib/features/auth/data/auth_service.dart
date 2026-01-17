@@ -181,4 +181,62 @@ class AuthService {
       return false;
     }
   }
+
+  static Future<bool> changeEmail({
+    required String newEmail,
+    required String currentPassword,
+  }) async {
+    final token = await getToken();
+    if (token == null) return false;
+
+    final url = _endpoint('/changeEmail');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final body = jsonEncode({
+      'newEmail': newEmail,
+      'currentPassword': currentPassword,
+    });
+
+    try {
+      final response = await http.put(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        return true;
+      }
+      AppLogger.w('Błąd zmiany maila: ${response.statusCode}');
+      AppLogger.d('Treść: ${response.body}');
+      return false;
+    } catch (e) {
+      AppLogger.e('Wyjątek podczas zmiany maila: $e', e);
+      return false;
+    }
+  }
+
+  static Future<bool> deleteAccount({required String currentPassword}) async {
+    final token = await getToken();
+    if (token == null) return false;
+
+    final url = _endpoint('/delete');
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final body = jsonEncode({'currentPassword': currentPassword});
+
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      if (response.statusCode == 200) {
+        await logOut();
+        return true;
+      }
+      AppLogger.w('Błąd usuwania konta: ${response.statusCode}');
+      AppLogger.d('Treść: ${response.body}');
+      return false;
+    } catch (e) {
+      AppLogger.e('Wyjątek podczas usuwania konta: $e', e);
+      return false;
+    }
+  }
 }

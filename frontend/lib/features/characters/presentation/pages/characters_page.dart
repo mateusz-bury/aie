@@ -114,14 +114,17 @@ class _CharactersPageState extends State<CharactersPage> {
                               ],
                             )
                           : ListView.separated(
-                              padding: const EdgeInsets.all(4),
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                               itemCount: shown.length,
                               separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 8),
+                                  const SizedBox(height: 6),
                               itemBuilder: (context, i) {
                                 final ch = shown[i];
                                 return Card(
                                   child: ListTile(
+                                    dense: true,
+                                    visualDensity: const VisualDensity(vertical: -2),
+                                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                                     leading: Icon(
                                       _selectedTab == 0
                                           ? Icons.person

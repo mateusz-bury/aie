@@ -1,7 +1,6 @@
 ﻿using AIO_API.Entities;
 using AIO_API.Entities.Campaigns;
 using AIO_API.Entities.Characters;
-using AIO_API.Entities.Users;
 using AIO_API.Exceptions;
 using AIO_API.Interfaces.Repo;
 using Microsoft.EntityFrameworkCore;
@@ -36,7 +35,7 @@ namespace AIO_API.Repositories
             return campaigns;
         }
 
-        public int CreateCampaign(Campaign campaign)
+        public int AddCampaign(Campaign campaign)
         {
             _dbContext.Campaigns.Add(campaign);
             return campaign.Id;

@@ -38,6 +38,8 @@ namespace AIO_API.Entities
         public DbSet<Campaign> Campaigns { get; set; }
 
 
+        public DbSet<CampaignSession> CampaignSessions { get; set; }
+
 
         public AieDbContext(DbContextOptions<AieDbContext> options): base(options)
         { 
@@ -132,6 +134,17 @@ namespace AIO_API.Entities
             .WithMany()                   
             .HasForeignKey(c => c.UserId) 
             .OnDelete(DeleteBehavior.NoAction);
+
+
+            modelBuilder.Entity<CampaignSession>()
+                .Property(p => p.CreateDate)
+                .HasColumnType("datetime");
+
+            modelBuilder.Entity<CampaignSession>()
+            .HasOne(cs => cs.Campaign)
+            .WithMany(c => c.CampaignSessions)
+            .HasForeignKey(cs => cs.CampaignId)
+            .OnDelete(DeleteBehavior.Cascade);
 
 
         }

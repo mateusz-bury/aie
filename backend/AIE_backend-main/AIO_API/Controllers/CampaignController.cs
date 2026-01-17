@@ -25,7 +25,7 @@ namespace AIO_API.Controllers
 
 
         [HttpGet("{id}")]
-        public ActionResult<Campaign> Get([FromRoute] int id)
+        public ActionResult<CampaignByIdDto> Get([FromRoute] int id)
         {
             var campaignById = _campaignService.GetById(id, UserId);
             return Ok(campaignById);
@@ -48,7 +48,7 @@ namespace AIO_API.Controllers
 
 
         [HttpPost]
-        public ActionResult<Campaign> CreateCampaign([FromBody] CreateCampaignDto dto)
+        public ActionResult<CampaignByIdDto> CreateCampaign([FromBody] CreateCampaignDto dto)
         {
 
             var campaign = _campaignService.CreateCampaign(UserId,dto);

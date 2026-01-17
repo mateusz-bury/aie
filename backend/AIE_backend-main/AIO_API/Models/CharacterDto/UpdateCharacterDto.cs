@@ -4,11 +4,6 @@ namespace AIO_API.Models.CharacterDto
 {
     public class UpdateCharacterDto
     {
-        // Umożliwia przepinanie istniejącej postaci do kampanii przez standardowy PUT /api/character/{id}
-        // (spójne z CreateCharacterDto, gdzie CampaignId jest wymagane).
-        [Required]
-        public int CampaignId { get; set; }
-
         [Required]
         [MaxLength(50)]
         public string Name { get; set; }
